@@ -3578,6 +3578,12 @@ public class AudioManager {
         return AudioSystem.setAudioPortConfig(config);
     }
 
+	// RUBIS ockwon
+	public int setForceUse(int usage, int config) {
+		return AudioSystem.setForceUse(usage, config);
+	}
+	// END
+
     /**
      * Listener registered by client to be notified upon new audio port connections,
      * disconnections or attributes update.

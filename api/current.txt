@@ -14072,6 +14072,7 @@ package android.media {
     method public int requestAudioFocus(android.media.AudioManager.OnAudioFocusChangeListener, int, int);
     method public deprecated void setBluetoothA2dpOn(boolean);
     method public void setBluetoothScoOn(boolean);
+    method public int setForceUse(int, int);
     method public void setMicrophoneMute(boolean);
     method public void setMode(int);
     method public void setParameters(java.lang.String);

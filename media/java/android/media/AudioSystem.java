@@ -518,7 +518,13 @@ public class AudioSystem
     public static final int FORCE_NO_BT_A2DP = 10;
     public static final int FORCE_SYSTEM_ENFORCED = 11;
     public static final int FORCE_HDMI_SYSTEM_AUDIO_ENFORCED = 12;
-    private static final int NUM_FORCE_CONFIG = 13;
+
+	// RUBIS ockwon
+	public static final int FORCE_WIFI_SYSTEM_AUDIO_ENFORCED = 13;
+    // private static final int NUM_FORCE_CONFIG = 13;
+   	private static final int NUM_FORCE_CONFIG = 14;
+	// END
+
     public static final int FORCE_DEFAULT = FORCE_NONE;
 
     // usage for setForceUse, must match AudioSystem::force_use

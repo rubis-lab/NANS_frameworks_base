@@ -66,12 +66,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
+/**
  * Date: Feb 25, 2016
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  * 
  * Comments
- *
  */
 import android.view.Display;
 // END
