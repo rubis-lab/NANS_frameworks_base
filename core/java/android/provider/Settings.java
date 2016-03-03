@@ -3932,14 +3932,12 @@ public final class Settings {
                 "accessibility_display_magnification_enabled";
 
 		
-		/*
+		/**
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 *
 		 * Comments
 		 *
-		 */
-        /*
          * @hide
          */
         public static final String ACCESSIBILITY_SCREEN_SWIPE_ENABLED =
@@ -4870,13 +4868,11 @@ public final class Settings {
             ACCESSIBILITY_DISPLAY_MAGNIFICATION_ENABLED,
             ACCESSIBILITY_DISPLAY_MAGNIFICATION_SCALE,
             ACCESSIBILITY_DISPLAY_MAGNIFICATION_AUTO_UPDATE,
-        
-			/*
+			/**
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 *
 			 * Comments
-			 *
 			 */
             ACCESSIBILITY_SCREEN_SWIPE_ENABLED,
             // END
@@ -6672,13 +6668,14 @@ public final class Settings {
          */
         public static final String LTE_SERVICE_FORCED = "lte_service_forced";
 
-		/*
+		/**
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 *
-		 */
-        /**
          * Whether the NANS should be on. Only the NANS service should touch this.
+		 * <p>
+		 * Type: int (0 for false, 1 for true)
+		 * @hide
          */
         public static final String NANS_ENABLED = "nans";
         // END
@@ -6700,12 +6697,11 @@ public final class Settings {
          * @hide
          */
         public static final String[] SETTINGS_TO_BACKUP = {
-			/*
+			/**
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 *
 			 * Comments
-			 *
 			 */
 			NANS_ENABLED,
 			// END
