@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -519,7 +520,12 @@ public class AudioSystem
     public static final int FORCE_SYSTEM_ENFORCED = 11;
     public static final int FORCE_HDMI_SYSTEM_AUDIO_ENFORCED = 12;
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	public static final int FORCE_WIFI_SYSTEM_AUDIO_ENFORCED = 13;
     // private static final int NUM_FORCE_CONFIG = 13;
    	private static final int NUM_FORCE_CONFIG = 14;

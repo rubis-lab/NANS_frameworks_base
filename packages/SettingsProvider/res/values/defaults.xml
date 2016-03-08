@@ -145,13 +145,10 @@
     <bool name="def_accessibility_display_magnification_auto_update">true</bool>
 
     <!--
-	/*
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
-	 */
+	 * Define a default value of screen swipe enabled.
     -->
     <bool name="def_screen_swipe_enabled">false</bool>
     <!-- END -->

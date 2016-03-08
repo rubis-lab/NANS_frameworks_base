@@ -70,7 +70,7 @@ import java.util.List;
  * Date: Feb 25, 2016
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  * 
- * Comments
+ * Add android.view.Display class for NANS framework.
  */
 import android.view.Display;
 // END
@@ -2700,14 +2700,15 @@ public class ActivityManager {
         }
     }
 
-    /*
+    /**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Display the package on the selected display.
 	 *
-	 * @param parameter_name discribtion
-	 * @return discribtion
+	 * @param packageName The name of package that is displayed on the display.
+	 * @param display The instance of Display that displays the package.
+     * @return Returns true if the package is successfully displayed on the display.
 	 */
 	public boolean setExternalDisplay(String packageName, Display display) {
         try {
@@ -2719,7 +2720,18 @@ public class ActivityManager {
             return false;
         }
     }
+	// END
 
+    /**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Display the task on the selected display.
+	 *
+	 * @param taskId The identifier of task that is displayed on the display.
+	 * @param display The instance of Display that displays the package.
+     * @return Returns true if the task is successfully displayed on the display.
+	 */
     public boolean setExternalDisplay(int taskId, Display display) {
         try {
 			if (display == null)

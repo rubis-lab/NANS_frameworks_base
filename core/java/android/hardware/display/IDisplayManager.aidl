@@ -77,14 +77,11 @@ interface IDisplayManager {
     void releaseVirtualDisplay(in IVirtualDisplayCallback token);
     
     
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
-	 * @param parameter_name discribtion
-	 * @return discribtion
+	 * Add AIDL functions of DisplayManager for NANS framework.
 	 */
     void setDisplayLayerStack(int displayId, int layerStack);
     // END

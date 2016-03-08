@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -72,7 +72,6 @@ import java.util.Locale;
 import java.util.List;
 import java.util.ArrayList;
 
-// RUBIS ockwon
 public final class ScreenSwiper implements WindowManagerInternal.MagnificationCallbacks,
         EventStreamTransformation {
 

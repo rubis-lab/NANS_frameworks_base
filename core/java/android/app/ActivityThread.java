@@ -2339,12 +2339,11 @@ public final class ActivityThread {
         Context baseContext = appContext;
 
 		
-		/*
+		/**
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 *
-		 * Comments
-		 *
+		 * Disable the Presentation API and debug.use-second-display for NANS service.
 		 */
 		/*
         final DisplayManagerGlobal dm = DisplayManagerGlobal.getInstance();
