@@ -67,7 +67,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-// RUBIS ockwon
+/**
+ * Date: Feb 25, 2016
+ * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+ * 
+ * Comments
+ */
 import android.content.pm.ActivityInfo;
 // END
 
@@ -305,7 +310,12 @@ public final class DisplayManagerService extends SystemService {
         synchronized (mSyncRoot) {
 			LogicalDisplay display = mLogicalDisplays.get(displayId);
 			if (display != null) {
-				// RUBIS ockwon
+				/**
+				 * Date: Feb 25, 2016
+				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+				 * 
+				 * Comments
+				 */
 				if (displayId != Display.DEFAULT_DISPLAY) {
 					info = mLogicalDisplays.get(Display.DEFAULT_DISPLAY).getDisplayInfoLocked();
 				}
@@ -650,7 +660,12 @@ public final class DisplayManagerService extends SystemService {
             handleDisplayDeviceAddedLocked(device);
         }
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		if(mDisplayDevices.size() > 1 && mWindowManagerInternal != null)
 			mWindowManagerInternal.setForcedRotation(Surface.ROTATION_90);
 		// END
@@ -696,7 +711,12 @@ public final class DisplayManagerService extends SystemService {
             handleDisplayDeviceRemovedLocked(device);
         }
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		if(mDisplayDevices.size() == 1 && mWindowManagerInternal != null)
 			mWindowManagerInternal.setForcedRotation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 		// END
@@ -870,8 +890,13 @@ public final class DisplayManagerService extends SystemService {
                 // If the display does not have any content of its own, then
                 // automatically mirror the default logical display contents.
                 
-				// RUBIS ockwon
-				// display = null;
+				/**
+				 * Date: Feb 25, 2016
+				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+				 * 
+				 * Comments
+				 * display = null;
+				 */
 				// END
             }
             if (display == null) {
@@ -887,7 +912,12 @@ public final class DisplayManagerService extends SystemService {
             return;
         }
 		
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		display.configureDisplayInTransactionLocked(device, info.state == Display.STATE_OFF);
 		/*
 		if (display.getDisplayIdLocked() == Display.DEFAULT_DISPLAY) {
@@ -1033,7 +1063,15 @@ public final class DisplayManagerService extends SystemService {
         }
     }
 
-    // RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param displayId, layerStack
+	 * @return void
+	 */
     private void setDisplayLayerStackInternal(int displayId, int layerStack) {
         Slog.d(TAG, "setDisplayLayerStackInternal(), displayId=" + displayId + ", layerStack=" + layerStack);
         LogicalDisplay logicalDisplay = mLogicalDisplays.get(displayId);
@@ -1437,8 +1475,17 @@ public final class DisplayManagerService extends SystemService {
             }
         }
 
-        // RUBIS ockwon
-        @Override // Binder call
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 *
+		 * Comments
+		 * Binder call
+		 *
+		 * @param displayId, layerStack
+		 * @return void
+		 */
+        @Override
         public void setDisplayLayerStack(int displayId, int layerStack) {
             final long token = Binder.clearCallingIdentity();
             try {

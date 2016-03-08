@@ -88,8 +88,12 @@ public class TaskViewHeader extends FrameLayout {
     Paint mDimLayerPaint = new Paint();
     PorterDuffColorFilter mDimColorFilter = new PorterDuffColorFilter(0, PorterDuff.Mode.SRC_ATOP);
 
-	// RUBIS ockwon
-
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
     ImageView mDisplayButton;
     Drawable mDisplayDrawable;
     Context mContext;
@@ -282,7 +286,12 @@ public class TaskViewHeader extends FrameLayout {
                     .start();
         }
 
-        // RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         final boolean isNansEnabled = Settings.Global.getInt(
                 mContext.getContentResolver(), Settings.Global.NANS_ENABLED, 0) == 1;
         if (isNansEnabled == false)
@@ -314,8 +323,12 @@ public class TaskViewHeader extends FrameLayout {
                     .withLayer()
                     .start();
         }
-
-        // RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         final boolean isNansEnabled = Settings.Global.getInt(
                 mContext.getContentResolver(), Settings.Global.NANS_ENABLED, 0) == 1;
         if(isNansEnabled == false) {
@@ -341,8 +354,12 @@ public class TaskViewHeader extends FrameLayout {
             mDismissButton.setVisibility(View.VISIBLE);
             mDismissButton.setAlpha(1f);
         }
-
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         final boolean isNansEnabled = Settings.Global.getInt(
                 mContext.getContentResolver(), Settings.Global.NANS_ENABLED, 0) == 1;
         if (isNansEnabled == false)

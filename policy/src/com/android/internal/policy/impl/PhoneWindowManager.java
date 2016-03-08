@@ -127,7 +127,12 @@ import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_CO
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_UNCOVERED;
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_COVERED;
 
-// RUBIS ockwon
+/**
+ * Date: Feb 25, 2016
+ * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+ * 
+ * Comments
+ */
 import android.hardware.display.DisplayManager;
 // END
 
@@ -350,7 +355,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     int mDemoRotation;
     boolean mDemoRotationLock;
 
-    // RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
     int mForcedRotation;
 	// END
 
@@ -1481,7 +1491,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // $ adb shell wm size reset
                 !"true".equals(SystemProperties.get("config.override_forced_orient"));
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         mForcedRotation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
 		// END
     }
@@ -4396,7 +4411,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     }
 	
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param roation
+	 * @return void
+	 */
     @Override
     public void setForcedRotation(int rotation) {
         if (mForcedRotation != rotation) {
@@ -5347,7 +5370,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             final int preferredRotation;
-			// RUBIS ockwon
+			/**
+			 * Date: Feb 25, 2016
+			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+			 * 
+			 * Comments
+			 */
             if (mForcedRotation >= 0) {
                 preferredRotation = mForcedRotation;
             }

@@ -166,7 +166,12 @@ final class TaskRecord {
 
     final ActivityManagerService mService;
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	int displayId = 0;
 	// END
 

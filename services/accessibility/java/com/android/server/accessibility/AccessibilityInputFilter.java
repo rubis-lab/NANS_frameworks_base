@@ -64,12 +64,15 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
      */
     static final int FLAG_FEATURE_FILTER_KEY_EVENTS = 0x00000004;
 
-    // RUBIS ockwon
-    /**
-     * Flag for enabling the filtering screen swipe events feature.
-     *
-     * @see #setEnabledFeatures(int)
-     */
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 * Flag for enabling the filtering screen swipe events feature.
+	 *
+	 * @see #setEnabledFeatures(int)    
+	 */
     static final int FLAG_FEATURE_SCREEN_SWIPER = 0x00000008;
     // END
 
@@ -108,7 +111,12 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
 
     private ScreenMagnifier mScreenMagnifier;
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	private ScreenSwiper mScreenSwiper;
 	// END
 
@@ -350,7 +358,12 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
                     Display.DEFAULT_DISPLAY, mAms);
             mEventHandler.setNext(this);
         }
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         if ((mEnabledFeatures & FLAG_FEATURE_SCREEN_SWIPER) != 0) {
             mEventHandler = mScreenSwiper = new ScreenSwiper(mContext,
                     Display.DEFAULT_DISPLAY, mAms);
@@ -382,7 +395,12 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
             mScreenMagnifier.onDestroy();
             mScreenMagnifier = null;
         }
-		// RUBIS ockwon 
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         if (mScreenSwiper != null) {
             mScreenSwiper.clear();
             mScreenSwiper.onDestroy();
