@@ -162,7 +162,7 @@ public class TaskViewHeader extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         // Initialize the icon and description views
-        mApplicationIcon = (I
+        mApplicationIcon = (ImageView) findViewById(R.id.application_icon);
         mActivityDescription = (TextView) findViewById(R.id.activity_description);
         mDismissButton = (ImageView) findViewById(R.id.dismiss_task);
 
