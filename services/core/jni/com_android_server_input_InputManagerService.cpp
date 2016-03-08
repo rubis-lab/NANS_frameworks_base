@@ -193,7 +193,12 @@ public:
     void setInteractive(bool interactive);
     void reloadCalibration();
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	void setInputDisplay(int32_t layerStack);
 	// END
 
@@ -689,7 +694,15 @@ void NativeInputManager::setInputWindows(JNIEnv* env, jobjectArray windowHandleO
     }
 }
 
-// RUBIS ockwon
+/**
+* Date: Feb 25, 2016
+* Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+*
+* Comments
+*
+* @param layerStack
+* @return void
+*/
 void NativeInputManager::setInputDisplay(int32_t layerStack) {
 	mInputManager->getDispatcher()->setInputDisplay(layerStack);
 }
@@ -1221,7 +1234,15 @@ static void nativeSetInputWindows(JNIEnv* env, jclass clazz,
     im->setInputWindows(env, windowHandleObjArray);
 }
 
-// RUBIS ockwon
+/**
+ * Date: Feb 25, 2016
+ * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+ *
+ * Comments
+ *
+ * @param env, clazz
+ * @return void
+ */
 static void nativeSetInputDisplay(JNIEnv* env, jclass clazz,
         jlong ptr, jint layerStack) {
     NativeInputManager* im = reinterpret_cast<NativeInputManager*>(ptr);
@@ -1419,9 +1440,16 @@ static JNINativeMethod gInputManagerMethods[] = {
             (void*) nativeDump },
     { "nativeMonitor", "(J)V",
             (void*) nativeMonitor },
-	// RUBIS ockwon
+
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	{ "nativeSetInputDisplay", "(JI)V",
 			(void*) nativeSetInputDisplay },
+	//END
 };
 
 #define FIND_CLASS(var, className) \

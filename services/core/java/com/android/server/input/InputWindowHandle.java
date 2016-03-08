@@ -89,7 +89,12 @@ public final class InputWindowHandle {
     public int inputFeatures;
 
     // Display this input is on.
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
     // public final int displayId;
     public int displayId;
 	// END

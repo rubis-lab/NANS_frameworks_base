@@ -63,7 +63,12 @@ final class LogicalDisplay {
 
     private final int mDisplayId;
 
-    // RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
     // private final int mLayerStack;
     private int mLayerStack;
     // END
@@ -127,7 +132,12 @@ final class LogicalDisplay {
                 mInfo.uniqueId = mBaseDisplayInfo.uniqueId;
                 mInfo.state = mBaseDisplayInfo.state;
 
-				// RUBIS ockwon
+				/**
+				 * Date: Feb 25, 2016
+				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+				 * 
+				 * Comments
+				 */
 				mInfo.type = mBaseDisplayInfo.type;
 				mInfo.address = mBaseDisplayInfo.address;
 				//mInfo.logicalWidth = mBaseDisplayInfo.logicalWidth;
@@ -369,7 +379,15 @@ final class LogicalDisplay {
         return mRequestedRefreshRate;
     }
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param layerStack
+	 * @return void
+	 */
     public void setDisplayLayerStack(int layerStack) {
         if(mLayerStack != layerStack) {
             mLayerStack = layerStack;

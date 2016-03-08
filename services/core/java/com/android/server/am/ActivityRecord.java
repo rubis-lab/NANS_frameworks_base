@@ -168,7 +168,12 @@ final class ActivityRecord {
 
     String stringName;      // for caching of toString().
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	int mLayerStack;
 	// END
 
@@ -517,7 +522,12 @@ final class ActivityRecord {
             immersive = false;
         }
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		mLayerStack = 0;
 		// END
     }

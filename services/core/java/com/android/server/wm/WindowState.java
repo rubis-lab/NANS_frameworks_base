@@ -346,7 +346,12 @@ final class WindowState implements WindowManagerPolicy.WindowState {
      * the status bar */
     boolean mUnderStatusBar = true;
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	public int layerStack;
 	// END
 
@@ -491,7 +496,12 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                 mAppToken != null ? mAppToken.mInputApplicationHandle : null, this,
                 displayContent.getDisplayId());
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		layerStack = 0;
 		// END
     }
@@ -1642,7 +1652,15 @@ final class WindowState implements WindowManagerPolicy.WindowState {
             + " " + mAttrs.getTitle();
     }
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param
+	 * @return CharSequece
+	 */
     public CharSequence getTitle() {
         CharSequence title = mAttrs.getTitle();
         if (title == null || title.length() <= 0) {

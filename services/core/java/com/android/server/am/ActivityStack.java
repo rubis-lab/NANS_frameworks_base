@@ -1498,7 +1498,12 @@ final class ActivityStack {
             final int returnTaskType = prevTask == null || !prevTask.isOverHomeStack() ?
                     HOME_ACTIVITY_TYPE : prevTask.getTaskToReturnTo();
 
-			// RUBIS ockwon
+			/**
+			 * Date: Feb 25, 2016
+			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+			 * 
+			 * Comments
+			 */
 			if (prevTask != null) {
 				ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prevTask.displayId);
 				if (ac.mDisplayMode == ActivityDisplay.NANS) {
@@ -2693,7 +2698,12 @@ final class ActivityStack {
      */
     final boolean finishActivityLocked(ActivityRecord r, int resultCode, Intent resultData,
             String reason, boolean oomAdj) {
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		ActivityDisplay ac = mStackSupervisor.getActivityDisplay(r.task.displayId);
 		ActivityRecord top = mStackSupervisor.getFocusedStack().topRunningActivityLocked(r);
 		if (ac != null && top != null) {
@@ -3499,7 +3509,12 @@ final class ActivityStack {
 
     final void moveTaskToFrontLocked(TaskRecord tr, ActivityRecord source, Bundle options,
             String reason) {
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		Slog.d(TAG, "moveTaskToFrontLocked(), task=" + tr);
 		if (tr.displayId != 0) {
 			ActivityDisplay ac = mStackSupervisor.getActivityDisplay(tr.displayId);
@@ -4156,7 +4171,12 @@ final class ActivityStack {
         return mStackId;
     }
 
-    // RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
     public int[] getTaskIds() {
         int[] taskIds = new int[mTaskHistory.size()];
         for (int taskNdx = mTaskHistory.size() - 1; taskNdx >= 0; --taskNdx) {
@@ -4166,7 +4186,15 @@ final class ActivityStack {
     }
 	// END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param
+	 * @return ArrayList<TaskRecord>
+	 */
 	public ArrayList<TaskRecord> getTaskHistory() {
 		return mTaskHistory;
 	}

@@ -651,7 +651,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
             userState.mEnabledServices.add(sFakeAccessibilityServiceComponentName);
             userState.mTouchExplorationGrantedServices.add(sFakeAccessibilityServiceComponentName);
 
-			// RUBIS ockwon
+			/**
+			 * Date: Feb 25, 2016
+			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+			 * 
+			 * Comments
+			 */
 			userState.mIsScreenSwipeEnabled = false;
 			// END
 
@@ -706,7 +711,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
             userState.mTouchExplorationGrantedServices.clear();
             userState.mTouchExplorationGrantedServices.add(service);
 
-			// RUBIS ockwon
+			/**
+			 * Date: Feb 25, 2016
+			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+			 * 
+			 * Comments
+			 */
 			userState.mIsScreenSwipeEnabled = false;
 			// END
 
@@ -1243,7 +1253,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
             if (userState.mIsDisplayMagnificationEnabled) {
                 flags |= AccessibilityInputFilter.FLAG_FEATURE_SCREEN_MAGNIFIER;
             }
-			// RUBIS ockwon
+			/**
+			 * Date: Feb 25, 2016
+			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+			 * 
+			 * Comments
+			 */
             if (userState.mIsScreenSwipeEnabled) {
                 flags |= AccessibilityInputFilter.FLAG_FEATURE_SCREEN_SWIPER;
             }
@@ -1460,7 +1475,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
         somthingChanged |= readEnhancedWebAccessibilityEnabledChangedLocked(userState);
         somthingChanged |= readDisplayMagnificationEnabledSettingLocked(userState);
         somthingChanged |= readDisplayColorAdjustmentSettingsLocked(userState);
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         somthingChanged |= readScreenSwipeEnabledSettingLocked(userState);
 		// END
         return somthingChanged;
@@ -1500,7 +1520,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
         return false;
     }
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
     private boolean readScreenSwipeEnabledSettingLocked(UserState userState) {
         final boolean screenSwipeEnabled = Settings.Secure.getIntForUser(
                 mContext.getContentResolver(),
@@ -1666,7 +1691,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
                 pw.append(", touchExplorationEnabled=" + userState.mIsTouchExplorationEnabled);
                 pw.append(", displayMagnificationEnabled="
                         + userState.mIsDisplayMagnificationEnabled);
-	            // RUBIS ockwon
+				/**
+				 * Date: Feb 25, 2016
+				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+				 * 
+				 * Comments
+				 */
                 pw.append(", screenSwipeEnabled="
                         + userState.mIsScreenSwipeEnabled);
                 // END
@@ -3752,7 +3782,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
         public boolean mHasDisplayColorAdjustment;
         public boolean mAccessibilityFocusOnlyInActiveWindow;
 
-        // RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         public boolean mIsScreenSwipeEnabled;
 		// END
 
@@ -3817,7 +3852,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
             mIsEnhancedWebAccessibilityEnabled = false;
             mIsDisplayMagnificationEnabled = false;
 
-			// RUBIS ockwon
+			/**
+			 * Date: Feb 25, 2016
+			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+			 * 
+			 * Comments
+			 */
             mIsScreenSwipeEnabled = false;
 			// END
         }
@@ -3844,7 +3884,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
         private final Uri mDisplayMagnificationEnabledUri = Settings.Secure.getUriFor(
                 Settings.Secure.ACCESSIBILITY_DISPLAY_MAGNIFICATION_ENABLED);
 		
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         private final Uri mScreenSwipeEnabledUri = Settings.Secure.getUriFor(
                 Settings.Secure.ACCESSIBILITY_SCREEN_SWIPE_ENABLED);
 		// END
@@ -3922,7 +3967,12 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
                     if (readDisplayMagnificationEnabledSettingLocked(userState)) {
                         onUserStateChangedLocked(userState);
                     }
-                // RUBIS ockwon
+				/**
+				 * Date: Feb 25, 2016
+				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+				 * 
+				 * Comments
+				 */
                 } else if (mScreenSwipeEnabledUri.equals(uri)) {
                     if (readScreenSwipeEnabledSettingLocked(userState)) {
                         onUserStateChangedLocked(userState);

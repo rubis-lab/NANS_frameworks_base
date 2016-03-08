@@ -132,10 +132,13 @@ abstract class DisplayDevice {
     public void requestRefreshRateLocked(float refreshRate) {
     }
 
-	// RUBIS ockwon
-    /**
-     * Gets the display layer stack.
-     */
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 * Gets the display layer stack.
+	 */
     public int getLayerStack() {
         return mCurrentLayerStack;
     }

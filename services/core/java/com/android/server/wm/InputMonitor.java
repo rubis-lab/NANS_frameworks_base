@@ -293,7 +293,12 @@ final class InputMonitor implements InputManagerService.WindowManagerCallbacks {
                         && (privateFlags & WindowManager.LayoutParams.PRIVATE_FLAG_KEYGUARD) == 0
                         && !disableWallpaperTouchEvents;
 				
-				// RUBIS ockwon
+				/**
+				 * Date: Feb 25, 2016
+				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+				 * 
+				 * Comments
+				 */
 				// final boolean onDefaultDisplay = (child.getDisplayId() == Display.DEFAULT_DISPLAY);
 				final boolean onDefaultDisplay = true;
 				// END

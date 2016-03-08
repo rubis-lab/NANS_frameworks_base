@@ -197,7 +197,15 @@ public class InputManagerService extends IInputManager.Stub
     private static native String nativeDump(long ptr);
     private static native void nativeMonitor(long ptr);
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param ptr, layerStack
+	 * @return void
+	 */
 	private static native void nativeSetInputDisplay(long ptr, int layerStack);
 	// END
 
@@ -535,7 +543,15 @@ public class InputManagerService extends IInputManager.Stub
         return injectInputEventInternal(event, Display.DEFAULT_DISPLAY, mode);
     }
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param event, displayId, mode
+	 * @return boolean
+	 */
 	@Override
 	public boolean injectInputEventToDisplay(InputEvent event, int displayId, int mode) {
         return injectInputEventInternal(event, displayId, mode);
@@ -1806,7 +1822,15 @@ public class InputManagerService extends IInputManager.Stub
             nativeSetInteractive(mPtr, interactive);
         }
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 *
+		 * Comments
+		 *
+		 * @param layerStack
+		 * @return void
+		 */
 		@Override
 		public void setInputDisplay(int layerStack) {
 			nativeSetInputDisplay(mPtr, layerStack);

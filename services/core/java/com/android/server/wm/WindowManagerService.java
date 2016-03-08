@@ -3063,7 +3063,12 @@ public class WindowManagerService extends IWindowManager.Stub
             if (DEBUG_LAYOUT) Slog.v(TAG, "Relayout " + win + ": viewVisibility=" + viewVisibility
                     + " req=" + requestedWidth + "x" + requestedHeight + " " + win.mAttrs);
 
-			// RUBIS ockwon
+			/**
+			 * Date: Feb 25, 2016
+			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+			 * 
+			 * Comments
+			 */
 			/*
             Log.d(TAG, "Relayout " + win + ": viewVisibility=" + viewVisibility
 					+ " req=" + requestedWidth + "x" + requestedHeight + " " + win.mAttrs);
@@ -4928,7 +4933,15 @@ public class WindowManagerService extends IWindowManager.Stub
         }
     }
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param windows
+	 * @return void
+	 */
 	void dumpWindowList(WindowList windows) {
 		Slog.d(TAG, "dumpWindowList(), windows.size()="+windows.size());
 		for (int winNdx = windows.size()-1; winNdx >= 0; --winNdx) {
@@ -5576,7 +5589,15 @@ public class WindowManagerService extends IWindowManager.Stub
         mPointerEventDispatcher.unregisterInputEventListener(listener);
     }
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param rotation
+	 * @return void
+	 */
     public void setForcedRotation(int rotation) {
         mPolicy.setForcedRotation(rotation);
     }
@@ -11540,7 +11561,12 @@ public class WindowManagerService extends IWindowManager.Stub
         configureDisplayPolicyLocked(displayContent);
 
         // TODO: Create an input channel for each display with touch capability.
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		/*
         if (displayId == Display.DEFAULT_DISPLAY) {
             displayContent.mTapDetector = new StackTapPointerEventListener(this, displayContent);
@@ -11620,7 +11646,12 @@ public class WindowManagerService extends IWindowManager.Stub
             if (display != null) {
                 createDisplayContentLocked(display);
 
-				// RUBIS ockwon
+				/**
+				 * Date: Feb 25, 2016
+				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+				 * 
+				 * Comments
+				 */
 				try {
 					mActivityManager.createStackOnDisplay(displayId);
 				} catch (RemoteException e) {
@@ -11673,14 +11704,30 @@ public class WindowManagerService extends IWindowManager.Stub
         return mWindowMap;
     }
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param token, layerStack
+	 * @return void
+	 */
     public void setLayerStack(IBinder token, int layerStack) {
         AppWindowToken wtoken = findAppWindowToken(token);
 	    setLayerStackLocked(wtoken, layerStack);
     }
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param wtoken, layerStack
+	 * @return void
+	 */
     public void setLayerStackLocked(AppWindowToken wtoken, int layerStack) {
         Slog.d(TAG, "setLayerStack(), wtoken=" + wtoken + ", layerStack=" + layerStack );
 		dumpWindowsLocked();
@@ -11722,7 +11769,15 @@ public class WindowManagerService extends IWindowManager.Stub
     }
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param taskId, stackId
+	 * @return void
+	 */
 	public void moveTaskToOtherStack(int taskId, int stackId) {
 		Slog.d(TAG, "moveTaskToOtherStack(), taskId="+taskId+", stackId="+stackId);
 		Task task = mTaskIdToTask.get(taskId);
@@ -11736,7 +11791,15 @@ public class WindowManagerService extends IWindowManager.Stub
 	}
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param
+	 * @return void
+	 */
 	public void dumpTaskIdToTask() {
 		Slog.i(TAG, "dumpTaskIdToTask()");
 		for(int i=0; i<=mTaskIdToTask.size()-1; i++) {
@@ -11747,7 +11810,15 @@ public class WindowManagerService extends IWindowManager.Stub
 	}
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param
+	 * @return void
+	 */
 	public void dumpStackIdToStack() {
 		Slog.i(TAG, "dumpStackIdToStack()");
 		for(int i=0; i<=mStackIdToStack.size()-1; i++) {
@@ -11908,7 +11979,15 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 *
+		 * Comments
+		 *
+		 * @param rotation
+		 * @return void
+		 */
         @Override
         public void setForcedRotation(int rotation) {
             WindowManagerService.this.setForcedRotation(rotation);

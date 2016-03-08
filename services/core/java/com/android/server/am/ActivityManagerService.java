@@ -2395,7 +2395,12 @@ public final class ActivityManagerService extends ActivityManagerNative
                 if (r != null) {
                     setFocusedActivityLocked(r, "setFocusedStack");
 					
-					// RUBIS ockwon
+					/**
+					 * Date: Feb 25, 2016
+					 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+					 * 
+					 * Comments
+					 */
 					Slog.d(TAG, "  r="+r);
 					moveTaskToFront(r.task.taskId, 0, null);
 					// END
@@ -19612,7 +19617,12 @@ public final class ActivityManagerService extends ActivityManagerNative
         return info;
     }
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
     @Override
     public boolean setExternalDisplay(String packageName, int displayId) {
         synchronized (this) {
@@ -19621,7 +19631,12 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 	// END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	@Override
     public boolean setExternalDisplay(int taskId, int displayId) {
         synchronized (this) {
@@ -19630,7 +19645,12 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 	// END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	@Override
     public void createStackOnDisplay(int displayId) {
         synchronized (this) {
@@ -19639,7 +19659,12 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 	// END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	@Override
     public int getTaskIdByDisplayId(int displayId) {
         synchronized (this) {
@@ -19648,7 +19673,12 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 	// END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
 	@Override
     public int getDisplayIdByTaskId(int taskId) {
         synchronized (this) {
@@ -19657,7 +19687,12 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 	// END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 * 
+	 * Comments
+	 */
     @Override
     public int getDisplayIdOfFocusedStack() {
     	synchronized (this) {

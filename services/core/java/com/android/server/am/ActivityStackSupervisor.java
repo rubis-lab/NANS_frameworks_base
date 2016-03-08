@@ -400,7 +400,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void moveHomeStack(boolean toFront, String reason) {
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		//Slog.d(TAG, "moveHomeStack(), toFront=" + toFront);
 		dumpActivityStack();
 		int taskId = getTaskIdByDisplayId(0);
@@ -1891,7 +1896,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
                             }
                             movedHome = true;
 							
-							// RUBIS ockwon
+							/**
+							 * Date: Feb 25, 2016
+							 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+							 * 
+							 * Comments
+							 */
 							if (r.task.displayId != 0 && 
 								targetStack.mActivityContainer.mActivityDisplay.mDisplayMode == ActivityDisplay.NANS) {
 								setExternalDisplayLocked(r.task.taskId, 0);
@@ -2541,7 +2551,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void findTaskToMoveToFrontLocked(TaskRecord task, int flags, Bundle options, String reason) {
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		// Slog.d(TAG, "findTaskToMoveToFrontLocked(), task=" + task);
 		dumpActivityStack();
 		int taskId = getTaskIdByDisplayId(0);
@@ -3441,7 +3456,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
             if (activityDisplay != null) {
                 ArrayList<ActivityStack> stacks = activityDisplay.mStacks;
                 for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
-					// RUBIS ockwon
+					/**
+					 * Date: Feb 25, 2016
+					 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+					 * 
+					 * Comments
+					 */
                     // stacks.get(stackNdx).mActivityContainer.detachLocked();
 					ActivityContainer ac = stacks.get(stackNdx).mActivityContainer;
                     ac.detachLocked();
@@ -3468,7 +3488,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
         StackInfo info = new StackInfo();
         mWindowManager.getStackBounds(stack.mStackId, info.bounds);
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         // info.displayId = Display.DEFAULT_DISPLAY;
 		info.displayId = stack.mDisplayId;
 		// END
@@ -3561,14 +3586,30 @@ public final class ActivityStackSupervisor implements DisplayListener {
         return mLockTaskModeTask != null;
     }
 
-    // RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param packageName, displayId
+	 * @return boolean
+	 */
     public boolean setExternalDisplayLocked(String packageName, int displayId) {
         int taskId = getTaskIdByPackageName(packageName);
         return setExternalDisplayLocked(taskId, displayId);
     }
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param taskId, displayId
+	 * @return boolean
+	 */
     public boolean setExternalDisplayLocked(int taskId, int displayId) {
 		Slog.d(TAG, "setExternalDisplayLocked(), displayId="+displayId);
         dumpActivityStack();
@@ -3720,7 +3761,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param task, targetStack, displayId
+	 * @return void
+	 */
 	private void moveTaskToOtherStackLocked(TaskRecord task, ActivityStack targetStack, int displayId) {
 		Slog.d(TAG, "moveTaskToOtherStackLocked(), task=" + task + ", displayId = " + displayId);
 		final ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
@@ -3747,7 +3796,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
 	}
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param r, displayId
+	 * @return void
+	 */
 	private void setLayerStackLocked(ActivityRecord r, int displayId) {
 		Slog.d(TAG, "setLayerStackLocked(), displayId = " + displayId);
 		if (r != null)
@@ -3763,7 +3820,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
 	}
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param task, targetStack
+	 * @return void
+	 */
 	private void moveTaskToOtherStackInnerLocked(TaskRecord task, ActivityStack targetStack) {
 		// Remove Task
 		endLockTaskModeIfTaskEnding(task);
@@ -3817,13 +3882,29 @@ public final class ActivityStackSupervisor implements DisplayListener {
 	}
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param displayId
+	 * @return void
+	 */
 	public void createStackOnDisplay(int displayId) {
 		createStackOnDisplay(getNextStackId(), displayId);
 	}
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param displayId
+	 * @return int
+	 */
     public int getTaskIdByDisplayId(int displayId) {
 		Slog.d(TAG, "getTaskIdByDisplayId(), displayId=" + displayId);
 		ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
@@ -3844,7 +3925,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param taskId
+	 * @return int
+	 */
     public int getDisplayIdByTaskId(int taskId) {
         final TaskRecord task = anyTaskForIdLocked(taskId);
         if(task != null)
@@ -3853,7 +3942,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param pakageName
+	 * @return int
+	 */
     private int getTaskIdByPackageName(String packageName) {
         int numDisplays = mActivityDisplays.size();
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
@@ -3874,20 +3971,44 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param displayId
+	 * @return Activitydisplay
+	 */
 	public ActivityDisplay getActivityDisplay(int displayId) {
 		return mActivityDisplays.get(displayId);
 	}
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param displayId, layerStack
+	 * @return void
+	 */
     public void setDisplayLayerStack(int displayId, int layerStack) {
     	DisplayManagerGlobal.getInstance().setDisplayLayerStack(displayId, layerStack);
 		mWindowManager.reevaluateStatusBarVisibility();	
     }
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param layerStack
+	 * @return boolean
+	 */
     private boolean isWifiDisplay(int layerStack) {
         Display[] displays = mDisplayManager.getDisplays();
         for(int i=0; i<displays.length; i++) {
@@ -3899,7 +4020,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
     // END
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param  
+	 * @return void
+	 */
     private void dumpActivityStack() {
 		Slog.d(TAG, "dumpActivityStack()");
         for (int displayNdx = mActivityDisplays.size() - 1; displayNdx >= 0; --displayNdx) {
@@ -4420,7 +4549,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
     /** Exactly one of these classes per Display in the system. Capable of holding zero or more
      * attached {@link ActivityStack}s */
     class ActivityDisplay {
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		final static int BLANK 		= 0;
 		final static int MIRRORED	= 1;
 		final static int MIRRORING	= 2;
@@ -4457,7 +4591,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
             mDisplayId = display.getDisplayId();
             mDisplay.getDisplayInfo(mDisplayInfo);
 
-			// RUBIS ockwon
+			/**
+			 * Date: Feb 25, 2016
+			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+			 * 
+			 * Comments
+			 */
 			mDisplayMode = ActivityDisplay.BLANK;
 			// END
         }
