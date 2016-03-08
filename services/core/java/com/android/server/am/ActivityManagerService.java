@@ -19667,31 +19667,6 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 	// END
 
-	// RUBIS ockwon
-    public boolean relayoutWindow(int stackId) {
-        long ident = Binder.clearCallingIdentity();
-        try {
-            //mWindowManager.relayoutWindow(stackId);
-		} finally {
-            Binder.restoreCallingIdentity(ident);
-        }
-        return true;
-    }
-	// END
-
-	// RUBIS ockwon
-    public boolean closeActivity(int stackId) {
-        boolean succeed = false;
-        long ident = Binder.clearCallingIdentity();
-        int[] taskIds = mStackSupervisor.getStack(stackId).getTaskIds();
-        for(int i=taskIds.length-1; i>=0; --i) {
-            succeed = removeTask(taskIds[i]);
-        }
-        Binder.restoreCallingIdentity(ident);
-        return succeed;
-    }
-    // END
-
     private final class LocalService extends ActivityManagerInternal {
         @Override
         public void onWakefulnessChanged(int wakefulness) {

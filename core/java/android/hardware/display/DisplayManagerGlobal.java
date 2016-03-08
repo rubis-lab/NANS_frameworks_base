@@ -509,14 +509,14 @@ public final class DisplayManagerGlobal {
     }
 
 	
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Set the layerStack that the display device has to display.
 	 *
-	 * @param parameter_name discribtion
-	 * @return discribtion
+	 * @param displayId The identifier of the display device.
+	 * @param layerStack The identifier of layerStack.
 	 */
     public void setDisplayLayerStack(int displayId, int layerStack) {
         try {

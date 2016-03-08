@@ -50,7 +50,12 @@ import com.android.systemui.recents.RecentsConfiguration;
 import com.android.systemui.recents.misc.Utilities;
 import com.android.systemui.recents.model.Task;
 
-// RUBIS ockwon
+/**
+ * Date: Feb 25, 2016
+ * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+ * 
+ * Comments
+ */
 import android.provider.Settings;
 import android.util.Slog;
 // END
@@ -84,6 +89,7 @@ public class TaskViewHeader extends FrameLayout {
     PorterDuffColorFilter mDimColorFilter = new PorterDuffColorFilter(0, PorterDuff.Mode.SRC_ATOP);
 
 	// RUBIS ockwon
+
     ImageView mDisplayButton;
     Drawable mDisplayDrawable;
     Context mContext;
@@ -130,7 +136,12 @@ public class TaskViewHeader extends FrameLayout {
             sHighlightPaint.setAntiAlias(true);
         }
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         mDisplayDrawable = res.getDrawable(R.drawable.ic_qs_cast_on);
         mContext = context;
         // END
@@ -147,11 +158,16 @@ public class TaskViewHeader extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         // Initialize the icon and description views
-        mApplicationIcon = (ImageView) findViewById(R.id.application_icon);
+        mApplicationIcon = (I
         mActivityDescription = (TextView) findViewById(R.id.activity_description);
         mDismissButton = (ImageView) findViewById(R.id.dismiss_task);
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
 		mDisplayButton = (ImageView) findViewById(R.id.display_task);
 		// END
 
@@ -235,7 +251,12 @@ public class TaskViewHeader extends FrameLayout {
         mDismissButton.setContentDescription(String.format(mDismissContentDescription,
                 t.activityLabel));
 
-		// RUBIS ockwon
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
         mDisplayButton.setImageDrawable(mDisplayDrawable);
         mDisplayButton.setContentDescription(
                 getContext().getString(R.string.accessibility_recents_item_will_be_dismissed,

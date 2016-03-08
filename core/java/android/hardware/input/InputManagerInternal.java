@@ -42,14 +42,11 @@ public abstract class InputManagerInternal {
     public abstract void setInteractive(boolean interactive);
 
 	
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
-	 * @param parameter_name discribtion
-	 * @return discribtion
+	 * Add a interface function of InputManager for NANS framework.
 	 */
 	public abstract void setInputDisplay(int layerStack);
 	// END

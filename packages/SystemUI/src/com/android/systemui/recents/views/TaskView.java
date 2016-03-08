@@ -511,9 +511,6 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks,
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
 	 * Comments
-	 *
-	 * @param parameter_name discribtion
-	 * @return discribtion
 	 */   
     private int index;
     private Display[] displays;

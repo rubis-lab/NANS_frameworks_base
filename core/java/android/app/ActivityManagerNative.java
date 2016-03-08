@@ -2366,12 +2366,11 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
-	   /*
+	   /**
 	    * Date: Feb 25, 2016
 	    * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	    * 
-	    * Comments
-	    *
+	    * Add transaction code of binder function for NANS framework.
    	    */
         case SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME: {
             data.enforceInterface(IActivityManager.descriptor);
@@ -5528,12 +5527,11 @@ class ActivityManagerProxy implements IActivityManager
         reply.recycle();
     }
 
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
+	 * Add binder functions for NANS framework.
 	 */
     @Override
     public boolean setExternalDisplay(String packageName, int displayId)

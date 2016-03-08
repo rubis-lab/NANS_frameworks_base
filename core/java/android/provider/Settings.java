@@ -3930,13 +3930,12 @@ public final class Settings {
          */
         public static final String ACCESSIBILITY_DISPLAY_MAGNIFICATION_ENABLED =
                 "accessibility_display_magnification_enabled";
-
 		
 		/**
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 *
-		 * Comments
+		 * Setting that specifies whether the screen swipe for NANS service is enabled.
 		 *
          * @hide
          */
@@ -4872,7 +4871,7 @@ public final class Settings {
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 *
-			 * Comments
+			 * Add a String varible for screen swipe setting.
 			 */
             ACCESSIBILITY_SCREEN_SWIPE_ENABLED,
             // END
@@ -6701,7 +6700,7 @@ public final class Settings {
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 *
-			 * Comments
+			 * Add a String variable for NANS setting.
 			 */
 			NANS_ENABLED,
 			// END

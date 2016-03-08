@@ -3578,7 +3578,15 @@ public class AudioManager {
         return AudioSystem.setAudioPortConfig(config);
     }
 
-	// RUBIS ockwon
+	/**
+	 * Date: Feb 25, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Comments
+	 *
+	 * @param parameter_name discribtion
+	 * @return discribtion
+	 */
 	public int setForceUse(int usage, int config) {
 		return AudioSystem.setForceUse(usage, config);
 	}

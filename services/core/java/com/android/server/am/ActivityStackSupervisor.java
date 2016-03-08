@@ -3736,12 +3736,14 @@ public final class ActivityStackSupervisor implements DisplayListener {
 			mWindowManager.moveTaskToOtherStack(task.taskId, targetStack.mStackId);
 		}
 
+		/*
 		Point points = new Point();
 		activityDisplay.getBounds(points);
 		Slog.d(TAG, "  x=" + points.x + ", y=" + points.y);
 		
-		//if (displayId != 0)
-		//	mWindowManager.resizeStack(targetStack.mStackId, new Rect(0, 0, points.x, points.y));
+		if (displayId != 0)
+			mWindowManager.resizeStack(targetStack.mStackId, new Rect(0, 0, points.x, points.y));
+		*/
 	}
     // END
 

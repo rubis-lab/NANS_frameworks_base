@@ -472,12 +472,11 @@ public interface IActivityManager extends IInterface {
     public void systemBackupRestored() throws RemoteException;
 
 	
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
+	 * Add interface functions for NANS framework.
 	 */
     public boolean setExternalDisplay(String packageName, int displayId) throws RemoteException;
     public boolean setExternalDisplay(int taskId, int displayId) throws RemoteException;
@@ -811,12 +810,11 @@ public interface IActivityManager extends IInterface {
     int SYSTEM_BACKUP_RESTORED = IBinder.FIRST_CALL_TRANSACTION+243;
 
 	
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
+	 * Add transaction codes for NANS framework.
 	 */
     int SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME = IBinder.FIRST_CALL_TRANSACTION+244;
     int SET_EXTERNAL_DISPLAY_BY_TASK_ID = IBinder.FIRST_CALL_TRANSACTION+245;

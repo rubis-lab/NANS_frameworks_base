@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -685,15 +685,17 @@ public final class InputManager {
         }
     }
 
-	
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-	 *
-	 * Comments
-	 *
-	 * @param parameter_name discribtion
-	 * @return discribtion
+     *
+	 * Injects an input event into event system. 
+     * It is delivered to the application displayed on the target display device.
+     *
+     * @param event The event to inject.
+     * @param displayId The identifier of display.
+     * @param mode The synchronization mode.
+     * @return True if input event injection succeeded.
 	 */
 	public boolean injectInputEventToDisplay(InputEvent event, int displayId, int mode) {
         if (event == null) {

@@ -42,14 +42,11 @@ interface IInputManager {
     boolean injectInputEvent(in InputEvent ev, int mode);
 
     
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
-	 * @param parameter_name discribtion
-	 * @return discribtion
+	 * Add an AIDL function of InputManager for NANS framework.
 	 */
     boolean injectInputEventToDisplay(in InputEvent ev, int displayId, int mode);
     // END

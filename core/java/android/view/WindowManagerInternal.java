@@ -192,14 +192,11 @@ public abstract class WindowManagerInternal {
     public abstract void removeWindowToken(android.os.IBinder token, boolean removeWindows);
 
 	
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
-	 * @param parameter_name discribtion
-	 * @return discribtion
+	 * Add a interface function of WindowManager for NANS framework.
 	 */
 	public abstract void setForcedRotation(int rotation);
 }

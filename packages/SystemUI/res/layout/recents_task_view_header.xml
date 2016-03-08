@@ -46,13 +46,10 @@
         android:ellipsize="marquee"
         android:fadingEdge="horizontal" />
     <!--
-	/*
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
-	 */
+	 * Add an image button to select the display device that displays the application.
     -->
     <com.android.systemui.recents.views.FixedSizeImageView
         android:id="@+id/display_task"
