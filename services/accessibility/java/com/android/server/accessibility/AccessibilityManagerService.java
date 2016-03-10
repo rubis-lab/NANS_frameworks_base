@@ -655,7 +655,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 * 
-			 * Comments
+			 * Set the temporary stste of screen swiper.
 			 */
 			userState.mIsScreenSwipeEnabled = false;
 			// END
@@ -715,7 +715,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 * 
-			 * Comments
+			 * Set the state of screen swiper until keyguard removed.
 			 */
 			userState.mIsScreenSwipeEnabled = false;
 			// END
@@ -1257,7 +1257,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 * 
-			 * Comments
+			 * Set the flag for screen swiper on updateInputFilter().
 			 */
             if (userState.mIsScreenSwipeEnabled) {
                 flags |= AccessibilityInputFilter.FLAG_FEATURE_SCREEN_SWIPER;
@@ -1479,7 +1479,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Read the configuration of screen swiper.
 		 */
         somthingChanged |= readScreenSwipeEnabledSettingLocked(userState);
 		// END
@@ -1524,7 +1524,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Read the configuration of screen swiper.
 	 */
     private boolean readScreenSwipeEnabledSettingLocked(UserState userState) {
         final boolean screenSwipeEnabled = Settings.Secure.getIntForUser(
@@ -1695,7 +1695,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 				 * Date: Feb 25, 2016
 				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 				 * 
-				 * Comments
+				 * Append the mIsScreenSwiperEnabled.
 				 */
                 pw.append(", screenSwipeEnabled="
                         + userState.mIsScreenSwipeEnabled);
@@ -3786,7 +3786,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Add a variable for the screen swiper.
 		 */
         public boolean mIsScreenSwipeEnabled;
 		// END
@@ -3856,7 +3856,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 * 
-			 * Comments
+			 * Set the initial value of mIsScreenSwiperEnabled.
 			 */
             mIsScreenSwipeEnabled = false;
 			// END
@@ -3888,7 +3888,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Add a uri variable for the mScreenSwiperEnabled.
 		 */
         private final Uri mScreenSwipeEnabledUri = Settings.Secure.getUriFor(
                 Settings.Secure.ACCESSIBILITY_SCREEN_SWIPE_ENABLED);
@@ -3971,7 +3971,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
 				 * Date: Feb 25, 2016
 				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 				 * 
-				 * Comments
+				 * Read and handle for the changed screen swiper configuration.
 				 */
                 } else if (mScreenSwipeEnabledUri.equals(uri)) {
                     if (readScreenSwipeEnabledSettingLocked(userState)) {

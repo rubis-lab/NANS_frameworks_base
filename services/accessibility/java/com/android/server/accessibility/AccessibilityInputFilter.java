@@ -68,7 +68,6 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
 	 * Flag for enabling the filtering screen swipe events feature.
 	 *
 	 * @see #setEnabledFeatures(int)    
@@ -115,7 +114,7 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a instance of ScreenSwiper.
 	 */
 	private ScreenSwiper mScreenSwiper;
 	// END
@@ -362,7 +361,7 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Enable the feature of screen swiper.
 		 */
         if ((mEnabledFeatures & FLAG_FEATURE_SCREEN_SWIPER) != 0) {
             mEventHandler = mScreenSwiper = new ScreenSwiper(mContext,
@@ -399,7 +398,7 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Disable the feature of screen swiper.
 		 */
         if (mScreenSwiper != null) {
             mScreenSwiper.clear();

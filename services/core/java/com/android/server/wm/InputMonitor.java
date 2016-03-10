@@ -297,7 +297,7 @@ final class InputMonitor implements InputManagerService.WindowManagerCallbacks {
 				 * Date: Feb 25, 2016
 				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 				 * 
-				 * Comments
+				 * All events have to be considered events to aim the default display.
 				 */
 				// final boolean onDefaultDisplay = (child.getDisplayId() == Display.DEFAULT_DISPLAY);
 				final boolean onDefaultDisplay = true;

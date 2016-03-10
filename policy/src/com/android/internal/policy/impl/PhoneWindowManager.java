@@ -131,7 +131,7 @@ import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_CO
  * Date: Feb 25, 2016
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  * 
- * Comments
+ * Add DisplayManager classs for NANS framework
  */
 import android.hardware.display.DisplayManager;
 // END
@@ -359,7 +359,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a variable for forced rotation.
 	 */
     int mForcedRotation;
 	// END
@@ -1495,7 +1495,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Set the initial value of mForcedRotation.
 		 */
         mForcedRotation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
 		// END
@@ -4415,10 +4415,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Set the system-wide forced rotation value.
 	 *
-	 * @param roation
-	 * @return void
+	 * @param rotation The parameter of screen orientation 
 	 */
     @Override
     public void setForcedRotation(int rotation) {
@@ -5374,7 +5373,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 * 
-			 * Comments
+			 * Set the preferred rotation to forced rotation at first.
 			 */
             if (mForcedRotation >= 0) {
                 preferredRotation = mForcedRotation;

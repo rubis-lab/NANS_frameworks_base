@@ -172,7 +172,7 @@ final class ActivityRecord {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a layerStack identifier.
 	 */
 	int mLayerStack;
 	// END
@@ -526,7 +526,7 @@ final class ActivityRecord {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Set the initial value of mLayerStack.
 		 */
 		mLayerStack = 0;
 		// END

@@ -2394,17 +2394,6 @@ public final class ActivityManagerService extends ActivityManagerNative
                 ActivityRecord r = stack.topRunningActivityLocked(null);
                 if (r != null) {
                     setFocusedActivityLocked(r, "setFocusedStack");
-					
-					/**
-					 * Date: Feb 25, 2016
-					 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-					 * 
-					 * Comments
-					 */
-					Slog.d(TAG, "  r="+r);
-					moveTaskToFront(r.task.taskId, 0, null);
-					// END
-
                 }
             }
         }
@@ -19621,7 +19610,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a function to call the same function of ActivityStackSupervisor.
 	 */
     @Override
     public boolean setExternalDisplay(String packageName, int displayId) {
@@ -19635,7 +19624,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a function to call the same function of ActivityStackSupervisor.
 	 */
 	@Override
     public boolean setExternalDisplay(int taskId, int displayId) {
@@ -19649,7 +19638,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a function to call the same function of ActivityStackSupervisor.
 	 */
 	@Override
     public void createStackOnDisplay(int displayId) {
@@ -19663,7 +19652,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a function to call the same function of ActivityStackSupervisor.
 	 */
 	@Override
     public int getTaskIdByDisplayId(int displayId) {
@@ -19677,7 +19666,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a function to call the same function of ActivityStackSupervisor.
 	 */
 	@Override
     public int getDisplayIdByTaskId(int taskId) {
@@ -19691,7 +19680,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Return the displayId of current focused stack.
 	 */
     @Override
     public int getDisplayIdOfFocusedStack() {

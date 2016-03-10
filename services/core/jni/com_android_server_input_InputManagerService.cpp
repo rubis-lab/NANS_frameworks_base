@@ -197,7 +197,7 @@ public:
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a function for native function call of InputManager.
 	 */
 	void setInputDisplay(int32_t layerStack);
 	// END
@@ -698,10 +698,7 @@ void NativeInputManager::setInputWindows(JNIEnv* env, jobjectArray windowHandleO
 * Date: Feb 25, 2016
 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 *
-* Comments
-*
-* @param layerStack
-* @return void
+* Add a function for native funtion call of InputManager.
 */
 void NativeInputManager::setInputDisplay(int32_t layerStack) {
 	mInputManager->getDispatcher()->setInputDisplay(layerStack);
@@ -1238,10 +1235,7 @@ static void nativeSetInputWindows(JNIEnv* env, jclass clazz,
  * Date: Feb 25, 2016
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  *
- * Comments
- *
- * @param env, clazz
- * @return void
+ * Add a native function of InputManager.
  */
 static void nativeSetInputDisplay(JNIEnv* env, jclass clazz,
         jlong ptr, jint layerStack) {
@@ -1445,7 +1439,7 @@ static JNINativeMethod gInputManagerMethods[] = {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a JNI method of InputManager.
 	 */
 	{ "nativeSetInputDisplay", "(JI)V",
 			(void*) nativeSetInputDisplay },

@@ -350,7 +350,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add a layerStack identifier.
 	 */
 	public int layerStack;
 	// END
@@ -500,7 +500,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Set the initial value of layerStack.
 		 */
 		layerStack = 0;
 		// END
@@ -1656,10 +1656,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
-	 * @param
-	 * @return CharSequece
+	 * Gets the title of this WindowState.
 	 */
     public CharSequence getTitle() {
         CharSequence title = mAttrs.getTitle();

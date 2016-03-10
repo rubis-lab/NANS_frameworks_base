@@ -1266,7 +1266,7 @@ public interface WindowManagerPolicy {
     public void startKeyguardExitAnimation(long startTime, long fadeoutDuration);
 
 	
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *

@@ -136,7 +136,6 @@ abstract class DisplayDevice {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
 	 * Gets the display layer stack.
 	 */
     public int getLayerStack() {

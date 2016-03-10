@@ -911,23 +911,7 @@ public final class DisplayManagerService extends SystemService {
                     + device.getDisplayDeviceInfoLocked());
             return;
         }
-		
-		/**
-		 * Date: Feb 25, 2016
-		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-		 * 
-		 * Comments
-		 */
 		display.configureDisplayInTransactionLocked(device, info.state == Display.STATE_OFF);
-		/*
-		if (display.getDisplayIdLocked() == Display.DEFAULT_DISPLAY) {
-			display.configureDisplayInTransactionLocked(device, info.state == Display.STATE_OFF);
-		} else {
-	    	mLogicalDisplays.get(Display.DEFAULT_DISPLAY)
-					.configureDisplayInTransactionLocked(device, info.state == Display.STATE_OFF);
-		}
-		*/
-		// END	
 
         // Update the viewports if needed.
         if (!mDefaultViewport.valid
