@@ -3582,9 +3582,10 @@ public class AudioManager {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Set the forced audio output configuration for type
 	 *
-	 * @param parameter_name discribtion
+	 * @param usage
+	 * @param config
 	 * @return discribtion
 	 */
 	public int setForceUse(int usage, int config) {

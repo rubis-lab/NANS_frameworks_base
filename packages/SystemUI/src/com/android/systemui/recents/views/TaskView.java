@@ -34,12 +34,11 @@ import com.android.systemui.recents.misc.Utilities;
 import com.android.systemui.recents.model.Task;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
-/*
+/**
  * Date: Feb 25, 2016
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  *
- * Comments
- *
+ * Add classes for NANS framework.
  */
 import android.os.SystemClock;
 import android.app.AlertDialog;
@@ -506,11 +505,11 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks,
         });
     }
 
-	/*
+	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Handle the event which the display button is clicked.
 	 */   
     private int index;
     private Display[] displays;
@@ -736,12 +735,11 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks,
             mHeaderView.mApplicationIcon.setOnClickListener(this);
             mHeaderView.mDismissButton.setOnClickListener(this);
 		
-			/*
+			/**
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 *
-			 * Comments
-			 *
+			 * Add the setOnClickListener of display button.
 			 */
 			mHeaderView.mDisplayButton.setOnClickListener(this);
 			// END
@@ -798,12 +796,11 @@ public class TaskView extends FrameLayout implements Task.TaskCallbacks,
                         dismissTask();
                     }
 				
-					/*
+					/**
 					 * Date: Feb 25, 2016
 					 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 					 *
-					 * Comments
-					 *
+					 * Call the handler of display button.
 					 */
                     else if (v == mHeaderView.mDisplayButton) {
                         setExternalDisplay();

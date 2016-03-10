@@ -524,7 +524,7 @@ public class AudioSystem
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Forced audio configuration for WiFi display
 	 */
 	public static final int FORCE_WIFI_SYSTEM_AUDIO_ENFORCED = 13;
     // private static final int NUM_FORCE_CONFIG = 13;

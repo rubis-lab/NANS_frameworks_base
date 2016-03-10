@@ -67,7 +67,7 @@ final class LogicalDisplay {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Remove final keyword of mLayerStack in order to modify on run-time.
 	 */
     // private final int mLayerStack;
     private int mLayerStack;
@@ -136,7 +136,7 @@ final class LogicalDisplay {
 				 * Date: Feb 25, 2016
 				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 				 * 
-				 * Comments
+				 * Add two parameters of base display info.
 				 */
 				mInfo.type = mBaseDisplayInfo.type;
 				mInfo.address = mBaseDisplayInfo.address;
@@ -383,10 +383,9 @@ final class LogicalDisplay {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Set the layerStack which display device has to display.
 	 *
-	 * @param layerStack
-	 * @return void
+	 * @param layerStack The layerStack identifier.
 	 */
     public void setDisplayLayerStack(int layerStack) {
         if(mLayerStack != layerStack) {

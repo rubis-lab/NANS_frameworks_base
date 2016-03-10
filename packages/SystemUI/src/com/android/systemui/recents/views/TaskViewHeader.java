@@ -54,7 +54,7 @@ import com.android.systemui.recents.model.Task;
  * Date: Feb 25, 2016
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  * 
- * Comments
+ * Add classes for NANS framework.
  */
 import android.provider.Settings;
 import android.util.Slog;
@@ -92,7 +92,7 @@ public class TaskViewHeader extends FrameLayout {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 * 
-	 * Comments
+	 * Add views and context instance for display button.
 	 */
     ImageView mDisplayButton;
     Drawable mDisplayDrawable;
@@ -144,7 +144,7 @@ public class TaskViewHeader extends FrameLayout {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Add initiations for the display button.
 		 */
         mDisplayDrawable = res.getDrawable(R.drawable.ic_qs_cast_on);
         mContext = context;
@@ -162,7 +162,7 @@ public class TaskViewHeader extends FrameLayout {
     @Override
     protected void onFinishInflate() {
         // Initialize the icon and description views
-        mApplicationIcon = (I
+        mApplicationIcon = (ImageView) findViewById(R.id.application_icon);
         mActivityDescription = (TextView) findViewById(R.id.activity_description);
         mDismissButton = (ImageView) findViewById(R.id.dismiss_task);
 
@@ -170,7 +170,7 @@ public class TaskViewHeader extends FrameLayout {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Add the initiation for display buttion.
 		 */
 		mDisplayButton = (ImageView) findViewById(R.id.display_task);
 		// END
@@ -259,7 +259,7 @@ public class TaskViewHeader extends FrameLayout {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Set the display button on rebindToTask().
 		 */
         mDisplayButton.setImageDrawable(mDisplayDrawable);
         mDisplayButton.setContentDescription(
@@ -290,7 +290,7 @@ public class TaskViewHeader extends FrameLayout {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Set the display button on startLaunchTaskDismissAnimation().
 		 */
         final boolean isNansEnabled = Settings.Global.getInt(
                 mContext.getContentResolver(), Settings.Global.NANS_ENABLED, 0) == 1;
@@ -327,7 +327,7 @@ public class TaskViewHeader extends FrameLayout {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Set the display button on startNoUserInteractionAnimation.
 		 */
         final boolean isNansEnabled = Settings.Global.getInt(
                 mContext.getContentResolver(), Settings.Global.NANS_ENABLED, 0) == 1;
@@ -358,7 +358,7 @@ public class TaskViewHeader extends FrameLayout {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Set the display button on setNoUserInteractionState().
 		 */
         final boolean isNansEnabled = Settings.Global.getInt(
                 mContext.getContentResolver(), Settings.Global.NANS_ENABLED, 0) == 1;

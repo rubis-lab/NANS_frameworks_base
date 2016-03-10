@@ -515,7 +515,7 @@ public final class DisplayManagerGlobal {
 	 *
 	 * Set the layerStack that the display device has to display.
 	 *
-	 * @param displayId The identifier of the display device.
+	 * @param displayId The identifier of the display device which layerStack is changed.
 	 * @param layerStack The identifier of layerStack.
 	 */
     public void setDisplayLayerStack(int displayId, int layerStack) {

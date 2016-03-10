@@ -1502,7 +1502,7 @@ final class ActivityStack {
 			 * Date: Feb 25, 2016
 			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 			 * 
-			 * Comments
+			 * Do nothing for the closed NANS task on resumeTopActivity.
 			 */
 			if (prevTask != null) {
 				ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prevTask.displayId);
@@ -2702,22 +2702,15 @@ final class ActivityStack {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * Reset the displayLayerStack and task's displayId. 
+		 * Set the display mode of ActivityDisplay to BLANK.
 		 */
 		ActivityDisplay ac = mStackSupervisor.getActivityDisplay(r.task.displayId);
 		ActivityRecord top = mStackSupervisor.getFocusedStack().topRunningActivityLocked(r);
-		if (ac != null && top != null) {
-			Slog.d(TAG, "finishActivityLocked(), r="+r);
-			Slog.d(TAG, "  r.task"+r.task);
-			Slog.d(TAG, "  r.task.displayId="+r.task.displayId);
-			Slog.d(TAG, "  mDisplayMode=" + ac.mDisplayMode);
-			Slog.d(TAG, "  top="+top);
-			if (r.task.displayId != 0 && top.task.taskId != r.task.taskId) {
-				Slog.d(TAG, "Application being displayed on external screen is finished... r=" + r);
-				mStackSupervisor.setDisplayLayerStack(r.task.displayId, r.task.displayId);
-				r.task.displayId = 0;
-				ac.mDisplayMode = ActivityDisplay.BLANK;
-			}
+		if (ac != null && top != null && r.task.displayId != 0 && r.task.stack.mTaskHistory.size() <= 0) {
+			mStackSupervisor.setDisplayLayerStack(r.task.displayId, r.task.displayId);
+			r.task.displayId = 0;
+			ac.mDisplayMode = ActivityDisplay.BLANK;
 		}
 		// END
 
@@ -3513,14 +3506,12 @@ final class ActivityStack {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * If the task moving to front is on NANS mode,
+		 * It has to be changed to MIRRORED mode.
 		 */
-		Slog.d(TAG, "moveTaskToFrontLocked(), task=" + tr);
 		if (tr.displayId != 0) {
 			ActivityDisplay ac = mStackSupervisor.getActivityDisplay(tr.displayId);
-			if (ac != null && 
-					//(ac.mDisplayMode == ActivityDisplay.MIRRORED || 
-					ac.mDisplayMode == ActivityDisplay.NANS) {
+			if (ac != null && ac.mDisplayMode == ActivityDisplay.NANS) {
 				mStackSupervisor.setExternalDisplayLocked(tr.taskId, 0);
 			}
 		}
@@ -4174,8 +4165,8 @@ final class ActivityStack {
 	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-	 * 
-	 * Comments
+	 *
+	 * Gets the integer array of taskIds.
 	 */
     public int[] getTaskIds() {
         int[] taskIds = new int[mTaskHistory.size()];
@@ -4190,10 +4181,7 @@ final class ActivityStack {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
-	 *
-	 * @param
-	 * @return ArrayList<TaskRecord>
+	 * Gets the task history of this activity stack.
 	 */
 	public ArrayList<TaskRecord> getTaskHistory() {
 		return mTaskHistory;

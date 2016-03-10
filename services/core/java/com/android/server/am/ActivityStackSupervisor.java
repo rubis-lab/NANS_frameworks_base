@@ -406,21 +406,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
 		 * 
 		 * Comments
 		 */
-		//Slog.d(TAG, "moveHomeStack(), toFront=" + toFront);
-		dumpActivityStack();
 		int taskId = getTaskIdByDisplayId(0);
         final TaskRecord task = anyTaskForIdLocked(taskId);
-		if (toFront && task != null) {
-			//Slog.d(TAG, "  taskId=" + taskId);
-			if (task.displayId != 0) {
-				//Slog.d(TAG, "  mDisplayId=" + task.displayId);
-				ActivityDisplay ac = mActivityDisplays.get(task.displayId);
-				if (ac != null) {
-					//Slog.d(TAG, "  mDisplayMode=" + ac.mDisplayMode);
-					if (ac.mDisplayMode == ActivityDisplay.MIRRORED) {
-						setExternalDisplayLocked(taskId, task.displayId);
-					} 
-				}
+		if (toFront && task != null && task.displayId != 0) {
+			ActivityDisplay ac = mActivityDisplays.get(task.displayId);
+			if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
+				setExternalDisplayLocked(taskId, task.displayId);
 			}
 		}
 		// END
@@ -1628,6 +1619,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
         final Intent intent = r.intent;
         final int callingUid = r.launchedFromUid;
 
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
+		ActivityRecord reason = sourceRecord;
+		// END
+
         // In some flows in to this function, we retrieve the task record and hold on to it
         // without a lock before calling back in to here...  so the task at this point may
         // not actually be in recents.  Check for that, and if it isn't in recents just
@@ -1902,12 +1902,11 @@ public final class ActivityStackSupervisor implements DisplayListener {
 							 * 
 							 * Comments
 							 */
-							if (r.task.displayId != 0 && 
-								targetStack.mActivityContainer.mActivityDisplay.mDisplayMode == ActivityDisplay.NANS) {
+							if (r.task.displayId != 0 && reason != null && reason.task != r.task &&
+									targetStack.mActivityContainer.mActivityDisplay.mDisplayMode == ActivityDisplay.NANS) {
 								setExternalDisplayLocked(r.task.taskId, 0);
 							} else {
-	                             targetStack.moveTaskToFrontLocked(intentActivity.task, r, options,
-                                    "bringingFoundTaskToFront");
+	                        	targetStack.moveTaskToFrontLocked(intentActivity.task, r, options,"bringingFoundTaskToFront");
 							}
 							// END
                            
@@ -2512,6 +2511,17 @@ public final class ActivityStackSupervisor implements DisplayListener {
         if (isFrontStack(targetStack)) {
             result = targetStack.resumeTopActivityLocked(target, targetOptions);
         }
+
+		/**
+		 * Date: Feb 25, 2016
+		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+		 * 
+		 * Comments
+		 */
+		if (targetStack.mStackId > 1)
+			return result;
+		// END
+
         for (int displayNdx = mActivityDisplays.size() - 1; displayNdx >= 0; --displayNdx) {
             final ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
             for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
@@ -2557,21 +2567,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
 		 * 
 		 * Comments
 		 */
-		// Slog.d(TAG, "findTaskToMoveToFrontLocked(), task=" + task);
-		dumpActivityStack();
 		int taskId = getTaskIdByDisplayId(0);
         final TaskRecord prev = anyTaskForIdLocked(taskId);
-		if (prev != null) {
-			// Slog.d(TAG, "  taskId=" + taskId);
-			if (prev.displayId != 0) {
-				// Slog.d(TAG, "  mDisplayId=" + prev.displayId);
-				ActivityDisplay ac = mActivityDisplays.get(prev.displayId);
-				if (ac != null) {
-					// Slog.d(TAG, "  mDisplayMode=" + ac.mDisplayMode);
-					if (ac.mDisplayMode == ActivityDisplay.MIRRORED) {
-						setExternalDisplayLocked(taskId, prev.displayId);
-					} 
-				}
+		if (prev != null && prev.displayId != 0) {
+			ActivityDisplay ac = mActivityDisplays.get(prev.displayId);
+			if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
+				setExternalDisplayLocked(taskId, prev.displayId);
 			}
 		}
 		// END
