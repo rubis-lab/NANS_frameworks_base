@@ -585,15 +585,15 @@ public final class ScreenSwiper implements WindowManagerInternal.MagnificationCa
 	   	private void setExternalCurrentTask(int type) {
             Slog.d(TAG, "setExternalCurrentTask(), type="+type);
 			try {
-	            final List<RunningTaskInfo> tasks =
-    	            iam.getTasks(2, 0);
+	            final List<RunningTaskInfo> tasks = iam.getTasks(2, 0);
        	    	Display[] displays = dm.getDisplays();
        	    	if (displays.length > 1) {
        	        	for (int i=1; i<displays.length; i++) {
                     	if (displays[i].getType() == type) {
                     		final RunningTaskInfo task = tasks.get(0);
 							if (!isHomeActivity(task))
-								am.setExternalDisplay(task.id, displays[i]);
+								iam.setExternalDisplay(task.id, displays[i].getLayerStack(), 
+										ActivityManager.SET_EXTERNAL_DISPLAY_AND_GO_HOME);
         	            	return;
             	        }
 	                }
@@ -615,7 +615,8 @@ public final class ScreenSwiper implements WindowManagerInternal.MagnificationCa
 							int taskId = iam.getTaskIdByDisplayId(displayId);
                             Slog.d(TAG, "  taskId="+taskId);
     						if (taskId != -1) {
-	    						iam.setExternalDisplay(taskId, 0);
+	    						iam.setExternalDisplay(taskId, 0, 
+										ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
 		    					Slog.d(TAG, "  success!");
 			    				return;
 				    		}

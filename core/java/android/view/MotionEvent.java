@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package android.view;
-
 import android.graphics.Matrix;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.SparseArray;
-
 /**
  * Object used to report movement (mouse, pen, finger, trackball) events.
  * Motion events may hold either absolute or relative movements and other data,
@@ -168,7 +166,6 @@ import android.util.SparseArray;
 public final class MotionEvent extends InputEvent implements Parcelable {
     private static final long NS_PER_MS = 1000000;
     private static final String LABEL_PREFIX = "AXIS_";
-
     /**
      * An invalid pointer id.
      *
@@ -177,7 +174,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * a pointer id inside a {@link MotionEvent}.
      */
     public static final int INVALID_POINTER_ID = -1;
-
     /**
      * Bit mask of the parts of the action code that are the action itself.
      */
@@ -222,7 +218,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * but only the initial location of the movement/touch.
      */
     public static final int ACTION_OUTSIDE          = 4;
-
     /**
      * Constant for {@link #getActionMasked}: A non-primary pointer has gone down.
      * <p>
@@ -244,7 +239,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * </p>
      */
     public static final int ACTION_POINTER_UP       = 6;
-
     /**
      * Constant for {@link #getActionMasked}: A change happened but the pointer
      * is not down (unlike {@link #ACTION_MOVE}).  The motion contains the most
@@ -259,7 +253,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * </p>
      */
     public static final int ACTION_HOVER_MOVE       = 7;
-
     /**
      * Constant for {@link #getActionMasked}: The motion event contains relative
      * vertical and/or horizontal scroll offsets.  Use {@link #getAxisValue(int)}
@@ -275,7 +268,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * </p>
      */
     public static final int ACTION_SCROLL           = 8;
-
     /**
      * Constant for {@link #getActionMasked}: The pointer is not down but has entered the
      * boundaries of a window or view.
@@ -288,7 +280,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * </p>
      */
     public static final int ACTION_HOVER_ENTER      = 9;
-
     /**
      * Constant for {@link #getActionMasked}: The pointer is not down but has exited the
      * boundaries of a window or view.
@@ -301,7 +292,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * </p>
      */
     public static final int ACTION_HOVER_EXIT       = 10;
-
     /**
      * Bits in the action code that represent a pointer index, used with
      * {@link #ACTION_POINTER_DOWN} and {@link #ACTION_POINTER_UP}.  Shifting
@@ -321,7 +311,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see #getActionIndex
      */
     public static final int ACTION_POINTER_INDEX_SHIFT = 8;
-
     /**
      * @deprecated Use {@link #ACTION_POINTER_INDEX_MASK} to retrieve the
      * data index associated with {@link #ACTION_POINTER_DOWN}.
@@ -389,7 +378,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * actual intent.
      */
     public static final int FLAG_WINDOW_IS_OBSCURED = 0x1;
-
     /**
      * Private flag that indicates when the system has detected that this motion event
      * may be inconsistent with respect to the sequence of previously delivered motion events,
@@ -400,7 +388,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see #setTainted
      */
     public static final int FLAG_TAINTED = 0x80000000;
-
     /**
      * Private flag indicating that this event was synthesized by the system and
      * should be delivered to the accessibility focused view first. When being
@@ -416,28 +403,22 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see #setTargetAccessibilityFocus(boolean)
      */
     public static final int FLAG_TARGET_ACCESSIBILITY_FOCUS = 0x40000000;
-
-
     /**
      * Flag indicating the motion event intersected the top edge of the screen.
      */
     public static final int EDGE_TOP = 0x00000001;
-
     /**
      * Flag indicating the motion event intersected the bottom edge of the screen.
      */
     public static final int EDGE_BOTTOM = 0x00000002;
-
     /**
      * Flag indicating the motion event intersected the left edge of the screen.
      */
     public static final int EDGE_LEFT = 0x00000004;
-
     /**
      * Flag indicating the motion event intersected the right edge of the screen.
      */
     public static final int EDGE_RIGHT = 0x00000008;
-
     /**
      * Axis constant: X axis of a motion event.
      * <p>
@@ -462,7 +443,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_X = 0;
-
     /**
      * Axis constant: Y axis of a motion event.
      * <p>
@@ -487,7 +467,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_Y = 1;
-
     /**
      * Axis constant: Pressure axis of a motion event.
      * <p>
@@ -509,7 +488,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_PRESSURE = 2;
-
     /**
      * Axis constant: Size axis of a motion event.
      * <p>
@@ -529,7 +507,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_SIZE = 3;
-
     /**
      * Axis constant: TouchMajor axis of a motion event.
      * <p>
@@ -550,7 +527,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_TOUCH_MAJOR = 4;
-
     /**
      * Axis constant: TouchMinor axis of a motion event.
      * <p>
@@ -573,7 +549,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_TOUCH_MINOR = 5;
-
     /**
      * Axis constant: ToolMajor axis of a motion event.
      * <p>
@@ -598,7 +573,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_TOOL_MAJOR = 6;
-
     /**
      * Axis constant: ToolMinor axis of a motion event.
      * <p>
@@ -623,7 +597,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_TOOL_MINOR = 7;
-
     /**
      * Axis constant: Orientation axis of a motion event.
      * <p>
@@ -650,7 +623,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_ORIENTATION = 8;
-
     /**
      * Axis constant: Vertical Scroll axis of a motion event.
      * <p>
@@ -668,7 +640,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_VSCROLL = 9;
-
     /**
      * Axis constant: Horizontal Scroll axis of a motion event.
      * <p>
@@ -686,7 +657,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_HSCROLL = 10;
-
     /**
      * Axis constant: Z axis of a motion event.
      * <p>
@@ -704,7 +674,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_Z = 11;
-
     /**
      * Axis constant: X Rotation axis of a motion event.
      * <p>
@@ -720,7 +689,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_RX = 12;
-
     /**
      * Axis constant: Y Rotation axis of a motion event.
      * <p>
@@ -736,7 +704,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_RY = 13;
-
     /**
      * Axis constant: Z Rotation axis of a motion event.
      * <p>
@@ -754,7 +721,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_RZ = 14;
-
     /**
      * Axis constant: Hat X axis of a motion event.
      * <p>
@@ -770,7 +736,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_HAT_X = 15;
-
     /**
      * Axis constant: Hat Y axis of a motion event.
      * <p>
@@ -786,7 +751,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_HAT_Y = 16;
-
     /**
      * Axis constant: Left Trigger axis of a motion event.
      * <p>
@@ -802,7 +766,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_LTRIGGER = 17;
-
     /**
      * Axis constant: Right Trigger axis of a motion event.
      * <p>
@@ -818,7 +781,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_RTRIGGER = 18;
-
     /**
      * Axis constant: Throttle axis of a motion event.
      * <p>
@@ -834,7 +796,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_THROTTLE = 19;
-
     /**
      * Axis constant: Rudder axis of a motion event.
      * <p>
@@ -850,7 +811,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_RUDDER = 20;
-
     /**
      * Axis constant: Wheel axis of a motion event.
      * <p>
@@ -866,7 +826,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_WHEEL = 21;
-
     /**
      * Axis constant: Gas axis of a motion event.
      * <p>
@@ -883,7 +842,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GAS = 22;
-
     /**
      * Axis constant: Brake axis of a motion event.
      * <p>
@@ -899,7 +857,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_BRAKE = 23;
-
     /**
      * Axis constant: Distance axis of a motion event.
      * <p>
@@ -916,7 +873,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_DISTANCE = 24;
-
     /**
      * Axis constant: Tilt axis of a motion event.
      * <p>
@@ -934,7 +890,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_TILT = 25;
-
     /**
      * Axis constant: Generic 1 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -945,7 +900,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_1 = 32;
-
     /**
      * Axis constant: Generic 2 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -956,7 +910,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_2 = 33;
-
     /**
      * Axis constant: Generic 3 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -967,7 +920,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_3 = 34;
-
     /**
      * Axis constant: Generic 4 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -978,7 +930,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_4 = 35;
-
     /**
      * Axis constant: Generic 5 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -989,7 +940,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_5 = 36;
-
     /**
      * Axis constant: Generic 6 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1000,7 +950,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_6 = 37;
-
     /**
      * Axis constant: Generic 7 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1011,7 +960,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_7 = 38;
-
     /**
      * Axis constant: Generic 8 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1022,7 +970,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_8 = 39;
-
     /**
      * Axis constant: Generic 9 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1033,7 +980,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_9 = 40;
-
     /**
      * Axis constant: Generic 10 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1044,7 +990,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_10 = 41;
-
     /**
      * Axis constant: Generic 11 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1055,7 +1000,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_11 = 42;
-
     /**
      * Axis constant: Generic 12 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1066,7 +1010,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_12 = 43;
-
     /**
      * Axis constant: Generic 13 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1077,7 +1020,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_13 = 44;
-
     /**
      * Axis constant: Generic 14 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1088,7 +1030,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_14 = 45;
-
     /**
      * Axis constant: Generic 15 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1099,7 +1040,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_15 = 46;
-
     /**
      * Axis constant: Generic 16 axis of a motion event.
      * The interpretation of a generic axis is device-specific.
@@ -1110,11 +1050,9 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see InputDevice#getMotionRange
      */
     public static final int AXIS_GENERIC_16 = 47;
-
     // NOTE: If you add a new axis here you must also add it to:
     //  native/include/android/input.h
     //  frameworks/base/include/ui/KeycodeLabels.h
-
     // Symbolic names of all axes.
     private static final SparseArray<String> AXIS_SYMBOLIC_NAMES = new SparseArray<String>();
     static {
@@ -1162,7 +1100,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         names.append(AXIS_GENERIC_15, "AXIS_GENERIC_15");
         names.append(AXIS_GENERIC_16, "AXIS_GENERIC_16");
     }
-
     /**
      * Button constant: Primary button (left mouse button).
      *
@@ -1172,21 +1109,18 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see #getButtonState
      */
     public static final int BUTTON_PRIMARY = 1 << 0;
-
     /**
      * Button constant: Secondary button (right mouse button, stylus first button).
      *
      * @see #getButtonState
      */
     public static final int BUTTON_SECONDARY = 1 << 1;
-
     /**
      * Button constant: Tertiary button (middle mouse button, stylus second button).
      *
      * @see #getButtonState
      */
     public static final int BUTTON_TERTIARY = 1 << 2;
-
     /**
      * Button constant: Back button pressed (mouse back button).
      * <p>
@@ -1197,7 +1131,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see #getButtonState
      */
     public static final int BUTTON_BACK = 1 << 3;
-
     /**
      * Button constant: Forward button pressed (mouse forward button).
      * <p>
@@ -1208,10 +1141,8 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see #getButtonState
      */
     public static final int BUTTON_FORWARD = 1 << 4;
-
     // NOTE: If you add a new axis here you must also add it to:
     //  native/include/android/input.h
-
     // Symbolic names of all button states in bit order from least significant
     // to most significant.
     private static final String[] BUTTON_SYMBOLIC_NAMES = new String[] {
@@ -1248,7 +1179,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         "0x40000000",
         "0x80000000",
     };
-
     /**
      * Tool type constant: Unknown tool type.
      * This constant is used when the tool type is not known or is not relevant,
@@ -1257,38 +1187,32 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see #getToolType
      */
     public static final int TOOL_TYPE_UNKNOWN = 0;
-
     /**
      * Tool type constant: The tool is a finger.
      *
      * @see #getToolType
      */
     public static final int TOOL_TYPE_FINGER = 1;
-
     /**
      * Tool type constant: The tool is a stylus.
      *
      * @see #getToolType
      */
     public static final int TOOL_TYPE_STYLUS = 2;
-
     /**
      * Tool type constant: The tool is a mouse or trackpad.
      *
      * @see #getToolType
      */
     public static final int TOOL_TYPE_MOUSE = 3;
-
     /**
      * Tool type constant: The tool is an eraser or a stylus being used in an inverted posture.
      *
      * @see #getToolType
      */
     public static final int TOOL_TYPE_ERASER = 4;
-
     // NOTE: If you add a new tool type here you must also add it to:
     //  native/include/android/input.h
-
     // Symbolic names of all tool types.
     private static final SparseArray<String> TOOL_TYPE_SYMBOLIC_NAMES = new SparseArray<String>();
     static {
@@ -1299,22 +1223,18 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         names.append(TOOL_TYPE_MOUSE, "TOOL_TYPE_MOUSE");
         names.append(TOOL_TYPE_ERASER, "TOOL_TYPE_ERASER");
     }
-
     // Private value for history pos that obtains the current sample.
     private static final int HISTORY_CURRENT = -0x80000000;
-
     private static final int MAX_RECYCLED = 10;
     private static final Object gRecyclerLock = new Object();
     private static int gRecyclerUsed;
     private static MotionEvent gRecyclerTop;
-
     // Shared temporary objects used when translating coordinates supplied by
     // the caller into single element PointerCoords and pointer id arrays.
     private static final Object gSharedTempLock = new Object();
     private static PointerCoords[] gSharedTempPointerCoords;
     private static PointerProperties[] gSharedTempPointerProperties;
     private static int[] gSharedTempPointerIndexMap;
-
     private static final void ensureSharedTempPointerCapacity(int desiredCapacity) {
         if (gSharedTempPointerCoords == null
                 || gSharedTempPointerCoords.length < desiredCapacity) {
@@ -1327,12 +1247,9 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             gSharedTempPointerIndexMap = new int[capacity];
         }
     }
-
     // Pointer to the native MotionEvent object that contains the actual data.
     private long mNativePtr;
-
     private MotionEvent mNext;
-
     private static native long nativeInitialize(long nativePtr,
             int deviceId, int source, int action, int flags, int edgeFlags,
             int metaState, int buttonState,
@@ -1344,7 +1261,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     private static native void nativeDispose(long nativePtr);
     private static native void nativeAddBatch(long nativePtr, long eventTimeNanos,
             PointerCoords[] pointerCoords, int metaState);
-
     private static native int nativeGetDeviceId(long nativePtr);
     private static native int nativeGetSource(long nativePtr);
     private static native int nativeSetSource(long nativePtr, int source);
@@ -1364,12 +1280,10 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     private static native float nativeGetYPrecision(long nativePtr);
     private static native long nativeGetDownTimeNanos(long nativePtr);
     private static native void nativeSetDownTimeNanos(long nativePtr, long downTime);
-
     private static native int nativeGetPointerCount(long nativePtr);
     private static native int nativeGetPointerId(long nativePtr, int pointerIndex);
     private static native int nativeGetToolType(long nativePtr, int pointerIndex);
     private static native int nativeFindPointerIndex(long nativePtr, int pointerId);
-
     private static native int nativeGetHistorySize(long nativePtr);
     private static native long nativeGetEventTimeNanos(long nativePtr, int historyPos);
     private static native float nativeGetRawAxisValue(long nativePtr,
@@ -1380,19 +1294,14 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             int pointerIndex, int historyPos, PointerCoords outPointerCoords);
     private static native void nativeGetPointerProperties(long nativePtr,
             int pointerIndex, PointerProperties outPointerProperties);
-
     private static native void nativeScale(long nativePtr, float scale);
     private static native void nativeTransform(long nativePtr, Matrix matrix);
-
     private static native long nativeReadFromParcel(long nativePtr, Parcel parcel);
     private static native void nativeWriteToParcel(long nativePtr, Parcel parcel);
-
     private static native String nativeAxisToString(int axis);
     private static native int nativeAxisFromString(String label);
-
     private MotionEvent() {
     }
-
     @Override
     protected void finalize() throws Throwable {
         try {
@@ -1404,7 +1313,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             super.finalize();
         }
     }
-
     static private MotionEvent obtain() {
         final MotionEvent ev;
         synchronized (gRecyclerLock) {
@@ -1419,7 +1327,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         ev.prepareForReuse();
         return ev;
     }
-
     /**
      * Create a new MotionEvent, filling in all of the basic values that
      * define the motion.
@@ -1461,7 +1368,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
                 pointerCount, pointerProperties, pointerCoords);
         return ev;
     }
-
     /**
      * Create a new MotionEvent, filling in all of the basic values that
      * define the motion.
@@ -1508,7 +1414,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
                     edgeFlags, source, flags);
         }
     }
-
     /**
      * Create a new MotionEvent, filling in all of the basic values that
      * define the motion.
@@ -1547,14 +1452,12 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             final PointerProperties[] pp = gSharedTempPointerProperties;
             pp[0].clear();
             pp[0].id = 0;
-
             final PointerCoords pc[] = gSharedTempPointerCoords;
             pc[0].clear();
             pc[0].x = x;
             pc[0].y = y;
             pc[0].pressure = pressure;
             pc[0].size = size;
-
             ev.mNativePtr = nativeInitialize(ev.mNativePtr,
                     deviceId, InputDevice.SOURCE_UNKNOWN, action, 0, edgeFlags, metaState, 0,
                     0, 0, xPrecision, yPrecision,
@@ -1563,7 +1466,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             return ev;
         }
     }
-
     /**
      * Create a new MotionEvent, filling in all of the basic values that
      * define the motion.
@@ -1604,7 +1506,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         return obtain(downTime, eventTime, action, x, y, pressure, size,
                 metaState, xPrecision, yPrecision, deviceId, edgeFlags);
     }
-
     /**
      * Create a new MotionEvent, filling in a subset of the basic motion
      * values.  Those not specified here are: device id (always 0), pressure
@@ -1625,7 +1526,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         return obtain(downTime, eventTime, action, x, y, 1.0f, 1.0f,
                 metaState, 1.0f, 1.0f, 0, 0);
     }
-
     /**
      * Create a new MotionEvent, copying from an existing one.
      */
@@ -1633,12 +1533,10 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         if (other == null) {
             throw new IllegalArgumentException("other motion event must not be null");
         }
-
         MotionEvent ev = obtain();
         ev.mNativePtr = nativeCopy(ev.mNativePtr, other.mNativePtr, true /*keepHistory*/);
         return ev;
     }
-
     /**
      * Create a new MotionEvent, copying from an existing one, but not including
      * any historical point information.
@@ -1647,18 +1545,15 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         if (other == null) {
             throw new IllegalArgumentException("other motion event must not be null");
         }
-
         MotionEvent ev = obtain();
         ev.mNativePtr = nativeCopy(ev.mNativePtr, other.mNativePtr, false /*keepHistory*/);
         return ev;
     }
-
     /** @hide */
     @Override
     public MotionEvent copy() {
         return obtain(this);
     }
-
     /**
      * Recycle the MotionEvent, to be re-used by a later caller.  After calling
      * this function you must not ever touch the event again.
@@ -1666,7 +1561,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     @Override
     public final void recycle() {
         super.recycle();
-
         synchronized (gRecyclerLock) {
             if (gRecyclerUsed < MAX_RECYCLED) {
                 gRecyclerUsed++;
@@ -1675,7 +1569,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             }
         }
     }
-
     /**
      * Applies a scale factor to all points within this event.
      *
@@ -1692,25 +1585,21 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             nativeScale(mNativePtr, scale);
         }
     }
-
     /** {@inheritDoc} */
     @Override
     public final int getDeviceId() {
         return nativeGetDeviceId(mNativePtr);
     }
-
     /** {@inheritDoc} */
     @Override
     public final int getSource() {
         return nativeGetSource(mNativePtr);
     }
-
     /** {@inheritDoc} */
     @Override
     public final void setSource(int source) {
         nativeSetSource(mNativePtr, source);
     }
-
     /**
      * Return the kind of action being performed.
      * Consider using {@link #getActionMasked} and {@link #getActionIndex} to retrieve
@@ -1721,7 +1610,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int getAction() {
         return nativeGetAction(mNativePtr);
     }
-
     /**
      * Return the masked action being performed, without pointer index information.
      * Use {@link #getActionIndex} to return the index associated with pointer actions.
@@ -1730,7 +1618,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int getActionMasked() {
         return nativeGetAction(mNativePtr) & ACTION_MASK;
     }
-
     /**
      * For {@link #ACTION_POINTER_DOWN} or {@link #ACTION_POINTER_UP}
      * as returned by {@link #getActionMasked}, this returns the associated
@@ -1745,7 +1632,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         return (nativeGetAction(mNativePtr) & ACTION_POINTER_INDEX_MASK)
                 >> ACTION_POINTER_INDEX_SHIFT;
     }
-
     /**
      * Returns true if this motion event is a touch event.
      * <p>
@@ -1759,7 +1645,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final boolean isTouchEvent() {
         return nativeIsTouchEvent(mNativePtr);
     }
-
     /**
      * Gets the motion event flags.
      *
@@ -1768,27 +1653,23 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int getFlags() {
         return nativeGetFlags(mNativePtr);
     }
-
     /** @hide */
     @Override
     public final boolean isTainted() {
         final int flags = getFlags();
         return (flags & FLAG_TAINTED) != 0;
     }
-
     /** @hide */
     @Override
     public final void setTainted(boolean tainted) {
         final int flags = getFlags();
         nativeSetFlags(mNativePtr, tainted ? flags | FLAG_TAINTED : flags & ~FLAG_TAINTED);
     }
-
     /** @hide */
     public final boolean isTargetAccessibilityFocus() {
         final int flags = getFlags();
         return (flags & FLAG_TARGET_ACCESSIBILITY_FOCUS) != 0;
     }
-
     /** @hide */
     public final void setTargetAccessibilityFocus(boolean targetsFocus) {
         final int flags = getFlags();
@@ -1796,7 +1677,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
                 ? flags | FLAG_TARGET_ACCESSIBILITY_FOCUS
                 : flags & ~FLAG_TARGET_ACCESSIBILITY_FOCUS);
     }
-
     /**
      * Returns the time (in ms) when the user originally pressed down to start
      * a stream of position events.
@@ -1804,7 +1684,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final long getDownTime() {
         return nativeGetDownTimeNanos(mNativePtr) / NS_PER_MS;
     }
-
     /**
      * Sets the time (in ms) when the user originally pressed down to start
      * a stream of position events.
@@ -1814,7 +1693,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final void setDownTime(long downTime) {
         nativeSetDownTimeNanos(mNativePtr, downTime * NS_PER_MS);
     }
-
     /**
      * Retrieve the time this event occurred,
      * in the {@link android.os.SystemClock#uptimeMillis} time base.
@@ -1826,7 +1704,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final long getEventTime() {
         return nativeGetEventTimeNanos(mNativePtr, HISTORY_CURRENT) / NS_PER_MS;
     }
-
     /**
      * Retrieve the time this event occurred,
      * in the {@link android.os.SystemClock#uptimeMillis} time base but with
@@ -1845,7 +1722,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final long getEventTimeNano() {
         return nativeGetEventTimeNanos(mNativePtr, HISTORY_CURRENT);
     }
-
     /**
      * {@link #getX(int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -1855,7 +1731,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getX() {
         return nativeGetAxisValue(mNativePtr, AXIS_X, 0, HISTORY_CURRENT);
     }
-
     /**
      * {@link #getY(int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -1865,7 +1740,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getY() {
         return nativeGetAxisValue(mNativePtr, AXIS_Y, 0, HISTORY_CURRENT);
     }
-
     /**
      * {@link #getPressure(int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -1875,7 +1749,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getPressure() {
         return nativeGetAxisValue(mNativePtr, AXIS_PRESSURE, 0, HISTORY_CURRENT);
     }
-
     /**
      * {@link #getSize(int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -1895,7 +1768,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getTouchMajor() {
         return nativeGetAxisValue(mNativePtr, AXIS_TOUCH_MAJOR, 0, HISTORY_CURRENT);
     }
-
     /**
      * {@link #getTouchMinor(int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -1915,7 +1787,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getToolMajor() {
         return nativeGetAxisValue(mNativePtr, AXIS_TOOL_MAJOR, 0, HISTORY_CURRENT);
     }
-
     /**
      * {@link #getToolMinor(int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -1925,7 +1796,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getToolMinor() {
         return nativeGetAxisValue(mNativePtr, AXIS_TOOL_MINOR, 0, HISTORY_CURRENT);
     }
-
     /**
      * {@link #getOrientation(int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -1935,7 +1805,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getOrientation() {
         return nativeGetAxisValue(mNativePtr, AXIS_ORIENTATION, 0, HISTORY_CURRENT);
     }
-
     /**
      * {@link #getAxisValue(int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -1948,7 +1817,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getAxisValue(int axis) {
         return nativeGetAxisValue(mNativePtr, axis, 0, HISTORY_CURRENT);
     }
-
     /**
      * The number of pointers of data contained in this event.  Always
      * >= 1.
@@ -1968,7 +1836,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int getPointerId(int pointerIndex) {
         return nativeGetPointerId(mNativePtr, pointerIndex);
     }
-
     /**
      * Gets the tool type of a pointer for the given pointer index.
      * The tool type indicates the type of tool used to make contact such
@@ -1986,7 +1853,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int getToolType(int pointerIndex) {
         return nativeGetToolType(mNativePtr, pointerIndex);
     }
-
     /**
      * Given a pointer identifier, find the index of its data in the event.
      * 
@@ -1998,7 +1864,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int findPointerIndex(int pointerId) {
         return nativeFindPointerIndex(mNativePtr, pointerId);
     }
-
     /**
      * Returns the X coordinate of this event for the given pointer
      * <em>index</em> (use {@link #getPointerId(int)} to find the pointer
@@ -2013,7 +1878,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getX(int pointerIndex) {
         return nativeGetAxisValue(mNativePtr, AXIS_X, pointerIndex, HISTORY_CURRENT);
     }
-
     /**
      * Returns the Y coordinate of this event for the given pointer
      * <em>index</em> (use {@link #getPointerId(int)} to find the pointer
@@ -2028,7 +1892,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getY(int pointerIndex) {
         return nativeGetAxisValue(mNativePtr, AXIS_Y, pointerIndex, HISTORY_CURRENT);
     }
-
     /**
      * Returns the current pressure of this event for the given pointer
      * <em>index</em> (use {@link #getPointerId(int)} to find the pointer
@@ -2045,7 +1908,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getPressure(int pointerIndex) {
         return nativeGetAxisValue(mNativePtr, AXIS_PRESSURE, pointerIndex, HISTORY_CURRENT);
     }
-
     /**
      * Returns a scaled value of the approximate size for the given pointer
      * <em>index</em> (use {@link #getPointerId(int)} to find the pointer
@@ -2142,7 +2004,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getOrientation(int pointerIndex) {
         return nativeGetAxisValue(mNativePtr, AXIS_ORIENTATION, pointerIndex, HISTORY_CURRENT);
     }
-
     /**
      * Returns the value of the requested axis for the given pointer <em>index</em>
      * (use {@link #getPointerId(int)} to find the pointer identifier for this index).
@@ -2158,7 +2019,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getAxisValue(int axis, int pointerIndex) {
         return nativeGetAxisValue(mNativePtr, axis, pointerIndex, HISTORY_CURRENT);
     }
-
     /**
      * Populates a {@link PointerCoords} object with pointer coordinate data for
      * the specified pointer index.
@@ -2172,7 +2032,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final void getPointerCoords(int pointerIndex, PointerCoords outPointerCoords) {
         nativeGetPointerCoords(mNativePtr, pointerIndex, HISTORY_CURRENT, outPointerCoords);
     }
-
     /**
      * Populates a {@link PointerProperties} object with pointer properties for
      * the specified pointer index.
@@ -2187,7 +2046,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             PointerProperties outPointerProperties) {
         nativeGetPointerProperties(mNativePtr, pointerIndex, outPointerProperties);
     }
-
     /**
      * Returns the state of any meta / modifier keys that were in effect when
      * the event was generated.  This is the same values as those
@@ -2201,7 +2059,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int getMetaState() {
         return nativeGetMetaState(mNativePtr);
     }
-
     /**
      * Gets the state of all buttons that are pressed such as a mouse or stylus button.
      *
@@ -2216,7 +2073,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int getButtonState() {
         return nativeGetButtonState(mNativePtr);
     }
-
     /**
      * Returns the original raw X coordinate of this event.  For touch
      * events on the screen, this is the original location of the event
@@ -2229,7 +2085,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getRawX() {
         return nativeGetRawAxisValue(mNativePtr, AXIS_X, 0, HISTORY_CURRENT);
     }
-
     /**
      * Returns the original raw Y coordinate of this event.  For touch
      * events on the screen, this is the original location of the event
@@ -2242,7 +2097,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getRawY() {
         return nativeGetRawAxisValue(mNativePtr, AXIS_Y, 0, HISTORY_CURRENT);
     }
-
     /**
      * Return the precision of the X coordinates being reported.  You can
      * multiply this number with {@link #getX} to find the actual hardware
@@ -2254,7 +2108,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getXPrecision() {
         return nativeGetXPrecision(mNativePtr);
     }
-
     /**
      * Return the precision of the Y coordinates being reported.  You can
      * multiply this number with {@link #getY} to find the actual hardware
@@ -2266,7 +2119,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getYPrecision() {
         return nativeGetYPrecision(mNativePtr);
     }
-
     /**
      * Returns the number of historical points in this event.  These are
      * movements that have occurred between this event and the previous event.
@@ -2278,7 +2130,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int getHistorySize() {
         return nativeGetHistorySize(mNativePtr);
     }
-
     /**
      * Returns the time that a historical movement occurred between this event
      * and the previous event, in the {@link android.os.SystemClock#uptimeMillis} time base.
@@ -2298,7 +2149,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final long getHistoricalEventTime(int pos) {
         return nativeGetEventTimeNanos(mNativePtr, pos) / NS_PER_MS;
     }
-
     /**
      * Returns the time that a historical movement occurred between this event
      * and the previous event, in the {@link android.os.SystemClock#uptimeMillis} time base
@@ -2324,7 +2174,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final long getHistoricalEventTimeNano(int pos) {
         return nativeGetEventTimeNanos(mNativePtr, pos);
     }
-
     /**
      * {@link #getHistoricalX(int, int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -2339,7 +2188,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalX(int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_X, 0, pos);
     }
-
     /**
      * {@link #getHistoricalY(int, int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -2354,7 +2202,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalY(int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_Y, 0, pos);
     }
-
     /**
      * {@link #getHistoricalPressure(int, int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -2369,7 +2216,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalPressure(int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_PRESSURE, 0, pos);
     }
-
     /**
      * {@link #getHistoricalSize(int, int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -2384,7 +2230,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalSize(int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_SIZE, 0, pos);
     }
-
     /**
      * {@link #getHistoricalTouchMajor(int, int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -2399,7 +2244,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalTouchMajor(int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_TOUCH_MAJOR, 0, pos);
     }
-
     /**
      * {@link #getHistoricalTouchMinor(int, int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -2429,7 +2273,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalToolMajor(int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_TOOL_MAJOR, 0, pos);
     }
-
     /**
      * {@link #getHistoricalToolMinor(int, int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -2459,7 +2302,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalOrientation(int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_ORIENTATION, 0, pos);
     }
-
     /**
      * {@link #getHistoricalAxisValue(int, int, int)} for the first pointer index (may be an
      * arbitrary pointer identifier).
@@ -2476,7 +2318,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalAxisValue(int axis, int pos) {
         return nativeGetAxisValue(mNativePtr, axis, 0, pos);
     }
-
     /**
      * Returns a historical X coordinate, as per {@link #getX(int)}, that
      * occurred between this event and the previous event for the given pointer.
@@ -2494,7 +2335,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalX(int pointerIndex, int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_X, pointerIndex, pos);
     }
-
     /**
      * Returns a historical Y coordinate, as per {@link #getY(int)}, that
      * occurred between this event and the previous event for the given pointer.
@@ -2512,7 +2352,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalY(int pointerIndex, int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_Y, pointerIndex, pos);
     }
-
     /**
      * Returns a historical pressure coordinate, as per {@link #getPressure(int)},
      * that occurred between this event and the previous event for the given
@@ -2530,7 +2369,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalPressure(int pointerIndex, int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_PRESSURE, pointerIndex, pos);
     }
-
     /**
      * Returns a historical size coordinate, as per {@link #getSize(int)}, that
      * occurred between this event and the previous event for the given pointer.
@@ -2566,7 +2404,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalTouchMajor(int pointerIndex, int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_TOUCH_MAJOR, pointerIndex, pos);
     }
-
     /**
      * Returns a historical touch minor axis coordinate, as per {@link #getTouchMinor(int)}, that
      * occurred between this event and the previous event for the given pointer.
@@ -2584,7 +2421,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalTouchMinor(int pointerIndex, int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_TOUCH_MINOR, pointerIndex, pos);
     }
-
     /**
      * Returns a historical tool major axis coordinate, as per {@link #getToolMajor(int)}, that
      * occurred between this event and the previous event for the given pointer.
@@ -2602,7 +2438,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalToolMajor(int pointerIndex, int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_TOOL_MAJOR, pointerIndex, pos);
     }
-
     /**
      * Returns a historical tool minor axis coordinate, as per {@link #getToolMinor(int)}, that
      * occurred between this event and the previous event for the given pointer.
@@ -2620,7 +2455,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalToolMinor(int pointerIndex, int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_TOOL_MINOR, pointerIndex, pos);
     }
-
     /**
      * Returns a historical orientation coordinate, as per {@link #getOrientation(int)}, that
      * occurred between this event and the previous event for the given pointer.
@@ -2638,7 +2472,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalOrientation(int pointerIndex, int pos) {
         return nativeGetAxisValue(mNativePtr, AXIS_ORIENTATION, pointerIndex, pos);
     }
-
     /**
      * Returns the historical value of the requested axis, as per {@link #getAxisValue(int, int)},
      * occurred between this event and the previous event for the given pointer.
@@ -2657,7 +2490,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final float getHistoricalAxisValue(int axis, int pointerIndex, int pos) {
         return nativeGetAxisValue(mNativePtr, axis, pointerIndex, pos);
     }
-
     /**
      * Populates a {@link PointerCoords} object with historical pointer coordinate data,
      * as per {@link #getPointerCoords}, that occurred between this event and the previous
@@ -2694,7 +2526,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final int getEdgeFlags() {
         return nativeGetEdgeFlags(mNativePtr);
     }
-
     /**
      * Sets the bitfield indicating which edges, if any, were touched by this
      * MotionEvent.
@@ -2704,14 +2535,12 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final void setEdgeFlags(int flags) {
         nativeSetEdgeFlags(mNativePtr, flags);
     }
-
     /**
      * Sets this event's action.
      */
     public final void setAction(int action) {
         nativeSetAction(mNativePtr, action);
     }
-
     /**
      * Adjust this event's location.
      * @param deltaX Amount to add to the current X coordinate of the event.
@@ -2722,7 +2551,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             nativeOffsetLocation(mNativePtr, deltaX, deltaY);
         }
     }
-
     /**
      * Set this event's location.  Applies {@link #offsetLocation} with a
      * delta from the current location to the given new location.
@@ -2745,10 +2573,8 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         if (matrix == null) {
             throw new IllegalArgumentException("matrix must not be null");
         }
-
         nativeTransform(mNativePtr, matrix);
     }
-
     /**
      * Add a new movement to the batch of movements in this event.  The event's
      * current location, position and size is updated to the new values.
@@ -2773,11 +2599,9 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             pc[0].y = y;
             pc[0].pressure = pressure;
             pc[0].size = size;
-
             nativeAddBatch(mNativePtr, eventTime * NS_PER_MS, pc, metaState);
         }
     }
-
     /**
      * Add a new movement to the batch of movements in this event.  The event's
      * current location, position and size is updated to the new values.
@@ -2792,7 +2616,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     public final void addBatch(long eventTime, PointerCoords[] pointerCoords, int metaState) {
         nativeAddBatch(mNativePtr, eventTime * NS_PER_MS, pointerCoords, metaState);
     }
-
     /**
      * Adds all of the movement samples of the specified event to this one if
      * it is compatible.  To be compatible, the event must have the same device id,
@@ -2813,23 +2636,19 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         if (action != nativeGetAction(event.mNativePtr)) {
             return false;
         }
-
         if (nativeGetDeviceId(mNativePtr) != nativeGetDeviceId(event.mNativePtr)
                 || nativeGetSource(mNativePtr) != nativeGetSource(event.mNativePtr)
                 || nativeGetFlags(mNativePtr) != nativeGetFlags(event.mNativePtr)) {
             return false;
         }
-
         final int pointerCount = nativeGetPointerCount(mNativePtr);
         if (pointerCount != nativeGetPointerCount(event.mNativePtr)) {
             return false;
         }
-
         synchronized (gSharedTempLock) {
             ensureSharedTempPointerCapacity(Math.max(pointerCount, 2));
             final PointerProperties[] pp = gSharedTempPointerProperties;
             final PointerCoords[] pc = gSharedTempPointerCoords;
-
             for (int i = 0; i < pointerCount; i++) {
                 nativeGetPointerProperties(mNativePtr, i, pp[0]);
                 nativeGetPointerProperties(event.mNativePtr, i, pp[1]);
@@ -2837,23 +2656,19 @@ public final class MotionEvent extends InputEvent implements Parcelable {
                     return false;
                 }
             }
-
             final int metaState = nativeGetMetaState(event.mNativePtr);
             final int historySize = nativeGetHistorySize(event.mNativePtr);
             for (int h = 0; h <= historySize; h++) {
                 final int historyPos = (h == historySize ? HISTORY_CURRENT : h);
-
                 for (int i = 0; i < pointerCount; i++) {
                     nativeGetPointerCoords(event.mNativePtr, i, historyPos, pc[i]);
                 }
-
                 final long eventTimeNanos = nativeGetEventTimeNanos(event.mNativePtr, historyPos);
                 nativeAddBatch(mNativePtr, eventTimeNanos, pc, metaState);
             }
         }
         return true;
     }
-
     /**
      * Returns true if all points in the motion event are completely within the specified bounds.
      * @hide
@@ -2870,7 +2685,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         }
         return true;
     }
-
     private static final float clamp(float value, float low, float high) {
         if (value < low) {
             return low;
@@ -2879,7 +2693,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         }
         return value;
     }
-
     /**
      * Returns a new motion events whose points have been clamped to the specified bounds.
      * @hide
@@ -2888,11 +2701,9 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         MotionEvent ev = obtain();
         synchronized (gSharedTempLock) {
             final int pointerCount = nativeGetPointerCount(mNativePtr);
-
             ensureSharedTempPointerCapacity(pointerCount);
             final PointerProperties[] pp = gSharedTempPointerProperties;
             final PointerCoords[] pc = gSharedTempPointerCoords;
-
             for (int i = 0; i < pointerCount; i++) {
                 nativeGetPointerProperties(mNativePtr, i, pp[i]);
                 nativeGetPointerCoords(mNativePtr, i, HISTORY_CURRENT, pc[i]);
@@ -2912,7 +2723,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             return ev;
         }
     }
-
     /**
      * Gets an integer where each pointer id present in the event is marked as a bit.
      * @hide
@@ -2925,7 +2735,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         }
         return idBits;
     }
-
     /**
      * Splits a motion event such that it includes only a subset of pointer ids.
      * @hide
@@ -2938,7 +2747,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             final PointerProperties[] pp = gSharedTempPointerProperties;
             final PointerCoords[] pc = gSharedTempPointerCoords;
             final int[] map = gSharedTempPointerIndexMap;
-
             final int oldAction = nativeGetAction(mNativePtr);
             final int oldActionMasked = oldAction & ACTION_MASK;
             final int oldActionPointerIndex = (oldAction & ACTION_POINTER_INDEX_MASK)
@@ -2958,11 +2766,9 @@ public final class MotionEvent extends InputEvent implements Parcelable {
                     newIdBits |= idBit;
                 }
             }
-
             if (newPointerCount == 0) {
                 throw new IllegalArgumentException("idBits did not match any ids in the event");
             }
-
             final int newAction;
             if (oldActionMasked == ACTION_POINTER_DOWN || oldActionMasked == ACTION_POINTER_UP) {
                 if (newActionPointerIndex < 0) {
@@ -2981,15 +2787,12 @@ public final class MotionEvent extends InputEvent implements Parcelable {
                 // Simple up/down/cancel/move or other motion action.
                 newAction = oldAction;
             }
-
             final int historySize = nativeGetHistorySize(mNativePtr);
             for (int h = 0; h <= historySize; h++) {
                 final int historyPos = h == historySize ? HISTORY_CURRENT : h;
-
                 for (int i = 0; i < newPointerCount; i++) {
                     nativeGetPointerCoords(mNativePtr, map[i], historyPos, pc[i]);
                 }
-
                 final long eventTimeNanos = nativeGetEventTimeNanos(mNativePtr, historyPos);
                 if (h == 0) {
                     ev.mNativePtr = nativeInitialize(ev.mNativePtr,
@@ -3009,11 +2812,21 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         }
     }
 
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * get the name of action.
+	 */
+	public String getActionString() {
+		return actionToString(getAction());
+	}
+	// END
+
     @Override
     public String toString() {
         StringBuilder msg = new StringBuilder();
         msg.append("MotionEvent { action=").append(actionToString(getAction()));
-
         final int pointerCount = getPointerCount();
         for (int i = 0; i < pointerCount; i++) {
             msg.append(", id[").append(i).append("]=").append(getPointerId(i));
@@ -3022,7 +2835,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             msg.append(", toolType[").append(i).append("]=").append(
                     toolTypeToString(getToolType(i)));
         }
-
         msg.append(", buttonState=").append(MotionEvent.buttonStateToString(getButtonState()));
         msg.append(", metaState=").append(KeyEvent.metaStateToString(getMetaState()));
         msg.append(", flags=0x").append(Integer.toHexString(getFlags()));
@@ -3036,7 +2848,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         msg.append(" }");
         return msg.toString();
     }
-
     /**
      * Returns a string that represents the symbolic name of the specified unmasked action
      * such as "ACTION_DOWN", "ACTION_POINTER_DOWN(3)" or an equivalent numeric constant
@@ -3077,7 +2888,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
                 return Integer.toString(action);
         }
     }
-
     /**
      * Returns a string that represents the symbolic name of the specified axis
      * such as "AXIS_X" or an equivalent numeric constant such as "42" if unknown.
@@ -3089,7 +2899,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         String symbolicName = nativeAxisToString(axis);
         return symbolicName != null ? LABEL_PREFIX + symbolicName : Integer.toString(axis);
     }
-
     /**
      * Gets an axis by its symbolic name such as "AXIS_X" or an
      * equivalent numeric constant such as "42".
@@ -3112,7 +2921,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             return -1;
         }
     }
-
     /**
      * Returns a string that represents the symbolic name of the specified combined
      * button state flags such as "0", "BUTTON_PRIMARY",
@@ -3148,7 +2956,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         }
         return result.toString();
     }
-
     /**
      * Returns a string that represents the symbolic name of the specified tool type
      * such as "TOOL_TYPE_FINGER" or an equivalent numeric constant such as "42" if unknown.
@@ -3161,7 +2968,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         String symbolicName = TOOL_TYPE_SYMBOLIC_NAMES.get(toolType);
         return symbolicName != null ? symbolicName : Integer.toString(toolType);
     }
-
     /**
      * Checks if a mouse or stylus button (or combination of buttons) is pressed.
      * @param button Button (or combination of buttons).
@@ -3179,37 +2985,31 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         }
         return (getButtonState() & button) == button;
     }
-
     public static final Parcelable.Creator<MotionEvent> CREATOR
             = new Parcelable.Creator<MotionEvent>() {
         public MotionEvent createFromParcel(Parcel in) {
             in.readInt(); // skip token, we already know this is a MotionEvent
             return MotionEvent.createFromParcelBody(in);
         }
-
         public MotionEvent[] newArray(int size) {
             return new MotionEvent[size];
         }
     };
-
     /** @hide */
     public static MotionEvent createFromParcelBody(Parcel in) {
         MotionEvent ev = obtain();
         ev.mNativePtr = nativeReadFromParcel(ev.mNativePtr, in);
         return ev;
     }
-
     /** @hide */
     @Override
     public final void cancel() {
         setAction(ACTION_CANCEL);
     }
-
     public void writeToParcel(Parcel out, int flags) {
         out.writeInt(PARCEL_TOKEN_MOTION_EVENT);
         nativeWriteToParcel(mNativePtr, out);
     }
-
     /**
      * Transfer object for pointer coordinates.
      * 
@@ -3224,13 +3024,11 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         private static final int INITIAL_PACKED_AXIS_VALUES = 8;
         private long mPackedAxisBits;
         private float[] mPackedAxisValues;
-
         /**
          * Creates a pointer coords object with all axes initialized to zero.
          */
         public PointerCoords() {
         }
-
         /**
          * Creates a pointer coords object as a copy of the
          * contents of another pointer coords object.
@@ -3240,7 +3038,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         public PointerCoords(PointerCoords other) {
             copyFrom(other);
         }
-
         /** @hide */
         public static PointerCoords[] createArray(int size) {
             PointerCoords[] array = new PointerCoords[size];
@@ -3249,7 +3046,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             }
             return array;
         }
-
         /**
          * The X component of the pointer movement.
          *
@@ -3344,14 +3140,12 @@ public final class MotionEvent extends InputEvent implements Parcelable {
          * @see MotionEvent#AXIS_ORIENTATION
          */
         public float orientation;
-
         /**
          * Clears the contents of this object.
          * Resets all axes to zero.
          */
         public void clear() {
             mPackedAxisBits = 0;
-
             x = 0;
             y = 0;
             pressure = 0;
@@ -3362,7 +3156,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             toolMinor = 0;
             orientation = 0;
         }
-
         /**
          * Copies the contents of another pointer coords object.
          *
@@ -3381,7 +3174,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
                 }
                 System.arraycopy(otherValues, 0, values, 0, count);
             }
-
             x = other.x;
             y = other.y;
             pressure = other.pressure;
@@ -3392,7 +3184,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             toolMinor = other.toolMinor;
             orientation = other.orientation;
         }
-
         /**
          * Gets the value associated with the specified axis.
          *
@@ -3436,7 +3227,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
                 }
             }
         }
-
         /**
          * Sets the value associated with the specified axis.
          *
@@ -3510,7 +3300,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             }
         }
     }
-
     /**
      * Transfer object for pointer properties.
      *
@@ -3524,7 +3313,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         public PointerProperties() {
             clear();
         }
-
         /**
          * Creates a pointer properties object as a copy of the contents of
          * another pointer properties object.
@@ -3533,7 +3321,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
         public PointerProperties(PointerProperties other) {
             copyFrom(other);
         }
-
         /** @hide */
         public static PointerProperties[] createArray(int size) {
             PointerProperties[] array = new PointerProperties[size];
@@ -3542,7 +3329,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             }
             return array;
         }
-
         /**
          * The pointer id.
          * Initially set to {@link #INVALID_POINTER_ID} (-1).
@@ -3550,7 +3336,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
          * @see MotionEvent#getPointerId(int)
          */
         public int id;
-
         /**
          * The pointer tool type.
          * Initially set to 0.
@@ -3558,7 +3343,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
          * @see MotionEvent#getToolType(int)
          */
         public int toolType;
-
         /**
          * Resets the pointer properties to their initial values.
          */
@@ -3566,7 +3350,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             id = INVALID_POINTER_ID;
             toolType = TOOL_TYPE_UNKNOWN;
         }
-
         /**
          * Copies the contents of another pointer properties object.
          *
@@ -3576,7 +3359,6 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             id = other.id;
             toolType = other.toolType;
         }
-
         @Override
         public boolean equals(Object other) {
             if (other instanceof PointerProperties) {
@@ -3584,11 +3366,9 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             }
             return false;
         }
-
         private boolean equals(PointerProperties other) {
             return other != null && id == other.id && toolType == other.toolType;
         }
-
         @Override
         public int hashCode() {
             return id | (toolType << 8);

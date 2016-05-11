@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
- * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -167,15 +166,6 @@ final class ActivityRecord {
     ArrayList<ActivityContainer> mChildContainers = new ArrayList<ActivityContainer>();
 
     String stringName;      // for caching of toString().
-
-	/**
-	 * Date: Feb 25, 2016
-	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-	 * 
-	 * Add a layerStack identifier.
-	 */
-	int mLayerStack;
-	// END
 
     private boolean inHistory;  // are we in the history stack?
     final ActivityStackSupervisor mStackSupervisor;
@@ -521,15 +511,6 @@ final class ActivityRecord {
             mActivityType = APPLICATION_ACTIVITY_TYPE;
             immersive = false;
         }
-
-		/**
-		 * Date: Feb 25, 2016
-		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-		 * 
-		 * Set the initial value of mLayerStack.
-		 */
-		mLayerStack = 0;
-		// END
     }
 
     void setTask(TaskRecord newTask, TaskRecord taskToAffiliateWith) {

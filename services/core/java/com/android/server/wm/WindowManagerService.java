@@ -14,11 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.android.server.wm;
-
 import static android.view.WindowManager.LayoutParams.*;
-
 import static android.view.WindowManagerPolicy.FINISH_LAYOUT_REDO_WALLPAPER;
 import android.app.AppOpsManager;
 import android.os.Build;
@@ -26,7 +23,6 @@ import android.os.SystemService;
 import android.util.ArraySet;
 import android.util.TimeUtils;
 import android.view.IWindowId;
-
 import android.view.IWindowSessionCallback;
 import android.view.WindowContentFrameStats;
 import com.android.internal.app.IBatteryStats;
@@ -46,7 +42,6 @@ import com.android.server.Watchdog;
 import com.android.server.am.BatteryStatsService;
 import com.android.server.input.InputManagerService;
 import com.android.server.power.ShutdownThread;
-
 import android.Manifest;
 import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
@@ -139,7 +134,6 @@ import android.view.WindowManagerPolicy.PointerEventListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
-
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
@@ -158,7 +152,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
 /** {@hide} */
 public class WindowManagerService extends IWindowManager.Stub
         implements Watchdog.Monitor, WindowManagerPolicy.WindowManagerFuncs {
@@ -200,69 +193,55 @@ public class WindowManagerService extends IWindowManager.Stub
     static final boolean SHOW_LIGHT_TRANSACTIONS = false || SHOW_TRANSACTIONS;
     static final boolean HIDE_STACK_CRAWLS = true;
     static final int LAYOUT_REPEAT_THRESHOLD = 4;
-
     static final boolean PROFILE_ORIENTATION = false;
     static final boolean localLOGV = DEBUG;
-
     /** How much to multiply the policy's type layer, to reserve room
      * for multiple windows of the same type and Z-ordering adjustment
      * with TYPE_LAYER_OFFSET. */
     static final int TYPE_LAYER_MULTIPLIER = 10000;
-
     /** Offset from TYPE_LAYER_MULTIPLIER for moving a group of windows above
      * or below others in the same layer. */
     static final int TYPE_LAYER_OFFSET = 1000;
-
     /** How much to increment the layer for each window, to reserve room
      * for effect surfaces between them.
      */
     static final int WINDOW_LAYER_MULTIPLIER = 5;
-
     /**
      * Dim surface layer is immediately below target window.
      */
     static final int LAYER_OFFSET_DIM = 1;
-
     /**
      * Blur surface layer is immediately below dim layer.
      */
     static final int LAYER_OFFSET_BLUR = 2;
-
     /**
      * FocusedStackFrame layer is immediately above focused window.
      */
     static final int LAYER_OFFSET_FOCUSED_STACK = 1;
-
     /**
      * Animation thumbnail is as far as possible below the window above
      * the thumbnail (or in other words as far as possible above the window
      * below it).
      */
     static final int LAYER_OFFSET_THUMBNAIL = WINDOW_LAYER_MULTIPLIER-1;
-
     /**
      * Layer at which to put the rotation freeze snapshot.
      */
     static final int FREEZE_LAYER = (TYPE_LAYER_MULTIPLIER * 200) + 1;
-
     /**
      * Layer at which to put the mask for emulated screen sizes.
      */
     static final int MASK_LAYER = TYPE_LAYER_MULTIPLIER * 200;
-
     /** The maximum length we will accept for a loaded animation duration:
      * this is 10 seconds.
      */
     static final int MAX_ANIMATION_DURATION = 10*1000;
-
     /** Amount of time (in milliseconds) to animate the fade-in-out transition for
      * compatible windows.
      */
     static final int DEFAULT_FADE_IN_OUT_DURATION = 400;
-
     /** Amount of time (in milliseconds) to delay before declaring a window freeze timeout. */
     static final int WINDOW_FREEZE_TIMEOUT_DURATION = 2000;
-
     /** Amount of time to allow a last ANR message to exist before freeing the memory. */
     static final int LAST_ANR_LIFETIME_DURATION_MSECS = 2 * 60 * 60 * 1000; // Two hours
     /**
@@ -270,48 +249,34 @@ public class WindowManagerService extends IWindowManager.Stub
      * management of the screen during rotation.
      */
     static final boolean CUSTOM_SCREEN_ROTATION = true;
-
     // Maximum number of milliseconds to wait for input devices to be enumerated before
     // proceding with safe mode detection.
     private static final int INPUT_DEVICES_READY_FOR_SAFE_MODE_DETECTION_TIMEOUT_MILLIS = 1000;
-
     // Default input dispatching timeout in nanoseconds.
     static final long DEFAULT_INPUT_DISPATCHING_TIMEOUT_NANOS = 5000 * 1000000L;
-
     // Poll interval in milliseconds for watching boot animation finished.
     private static final int BOOT_ANIMATION_POLL_INTERVAL = 200;
-
     // The name of the boot animation service in init.rc.
     private static final String BOOT_ANIMATION_SERVICE = "bootanim";
-
     /** Minimum value for attachStack and resizeStack weight value */
     public static final float STACK_WEIGHT_MIN = 0.2f;
-
     /** Maximum value for attachStack and resizeStack weight value */
     public static final float STACK_WEIGHT_MAX = 0.8f;
-
     static final int UPDATE_FOCUS_NORMAL = 0;
     static final int UPDATE_FOCUS_WILL_ASSIGN_LAYERS = 1;
     static final int UPDATE_FOCUS_PLACING_SURFACES = 2;
     static final int UPDATE_FOCUS_WILL_PLACE_SURFACES = 3;
-
     private static final String SYSTEM_SECURE = "ro.secure";
     private static final String SYSTEM_DEBUGGABLE = "ro.debuggable";
-
     private static final String DENSITY_OVERRIDE = "ro.config.density_override";
     private static final String SIZE_OVERRIDE = "ro.config.size_override";
-
     private static final int MAX_SCREENSHOT_RETRIES = 3;
-
     // The flag describing a full screen app window (where the app takes care of drawing under the
     // SystemUI bars)
     private static final int SYSTEM_UI_FLAGS_LAYOUT_STABLE_FULLSCREEN =
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-
     private static final String PROPERTY_EMULATOR_CIRCULAR = "ro.emulator.circular";
-
     final private KeyguardDisableHandler mKeyguardDisableHandler;
-
     final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -322,7 +287,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     };
-
     /**
      * Current user when multi-user is enabled. Don't show windows of
      * non-current user. Also see mCurrentProfileIds.
@@ -333,95 +297,72 @@ public class WindowManagerService extends IWindowManager.Stub
      * on the current user.
      */
     int[] mCurrentProfileIds = new int[] {UserHandle.USER_OWNER};
-
     final Context mContext;
-
     final boolean mHaveInputMethods;
-
     final boolean mHasPermanentDpad;
-
     final boolean mAllowBootMessages;
-
     final boolean mLimitedAlphaCompositing;
-
     final WindowManagerPolicy mPolicy = PolicyManager.makeNewWindowManager();
-
     final IActivityManager mActivityManager;
-
     final IBatteryStats mBatteryStats;
-
     final AppOpsManager mAppOps;
-
     final DisplaySettings mDisplaySettings;
-
     /**
      * All currently active sessions with clients.
      */
     final ArraySet<Session> mSessions = new ArraySet<Session>();
-
     /**
      * Mapping from an IWindow IBinder to the server's Window object.
      * This is also used as the lock for all of our state.
      * NOTE: Never call into methods that lock ActivityManagerService while holding this object.
      */
     final HashMap<IBinder, WindowState> mWindowMap = new HashMap<IBinder, WindowState>();
-
     /**
      * Mapping from a token IBinder to a WindowToken object.
      */
     final HashMap<IBinder, WindowToken> mTokenMap = new HashMap<IBinder, WindowToken>();
-
     /**
      * List of window tokens that have finished starting their application,
      * and now need to have the policy remove their windows.
      */
     final ArrayList<AppWindowToken> mFinishedStarting = new ArrayList<AppWindowToken>();
-
     /**
      * Fake windows added to the window manager.  Note: ordered from top to
      * bottom, opposite of mWindows.
      */
     final ArrayList<FakeWindowImpl> mFakeWindows = new ArrayList<FakeWindowImpl>();
-
     /**
      * Windows that are being resized.  Used so we can tell the client about
      * the resize after closing the transaction in which we resized the
      * underlying surface.
      */
     final ArrayList<WindowState> mResizingWindows = new ArrayList<WindowState>();
-
     /**
      * Windows whose animations have ended and now must be removed.
      */
     final ArrayList<WindowState> mPendingRemove = new ArrayList<WindowState>();
-
     /**
      * Stacks whose animations have ended and whose tasks, apps, selves may now be removed.
      */
     final ArraySet<TaskStack> mPendingStacksRemove = new ArraySet<TaskStack>();
-
     /**
      * Used when processing mPendingRemove to avoid working on the original array.
      */
     WindowState[] mPendingRemoveTmp = new WindowState[20];
-
     /**
      * Windows whose surface should be destroyed.
      */
     final ArrayList<WindowState> mDestroySurface = new ArrayList<WindowState>();
-
     /**
      * Windows that have lost input focus and are waiting for the new
      * focus window to be displayed before they are told about this.
      */
     ArrayList<WindowState> mLosingFocus = new ArrayList<WindowState>();
-
     /**
      * This is set when we have run out of memory, and will either be an empty
      * list or contain windows that need to be force removed.
      */
     ArrayList<WindowState> mForceRemoves;
-
     /**
      * Windows that clients are waiting to have drawn.
      */
@@ -430,42 +371,33 @@ public class WindowManagerService extends IWindowManager.Stub
      * And the callback to make when they've all been drawn.
      */
     Runnable mWaitingForDrawnCallback;
-
     /**
      * Windows that have called relayout() while we were running animations,
      * so we need to tell when the animation is done.
      */
     final ArrayList<WindowState> mRelayoutWhileAnimating = new ArrayList<WindowState>();
-
     /**
      * Used when rebuilding window list to keep track of windows that have
      * been removed.
      */
     WindowState[] mRebuildTmp = new WindowState[20];
-
     /**
      * Stores for each user whether screencapture is disabled
      * This array is essentially a cache for all userId for
      * {@link android.app.admin.DevicePolicyManager#getScreenCaptureDisabled}
      */
     SparseArray<Boolean> mScreenCaptureDisabled = new SparseArray<Boolean>();
-
     IInputMethodManager mInputMethodManager;
-
     AccessibilityController mAccessibilityController;
-
     final SurfaceSession mFxSession;
     Watermark mWatermark;
     StrictModeFlash mStrictModeFlash;
     CircularDisplayMask mCircularDisplayMask;
     EmulatorDisplayOverlay mEmulatorDisplayOverlay;
     FocusedStackFrame mFocusedStackFrame;
-
     int mFocusedStackLayer;
-
     final float[] mTmpFloats = new float[9];
     final Rect mTmpContentRect = new Rect();
-
     boolean mDisplayReady;
     boolean mSafeMode;
     boolean mDisplayEnabled = false;
@@ -473,18 +405,13 @@ public class WindowManagerService extends IWindowManager.Stub
     boolean mForceDisplayEnabled = false;
     boolean mShowingBootMessages = false;
     boolean mBootAnimationStopped = false;
-
     String mLastANRState;
-
     /** All DisplayContents in the world, kept here */
     SparseArray<DisplayContent> mDisplayContents = new SparseArray<DisplayContent>(2);
-
     int mRotation = 0;
     int mForcedAppOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
     boolean mAltOrientation = false;
-
     private boolean mKeyguardWaitingForActivityDrawn;
-
     class RotationWatcher {
         IRotationWatcher watcher;
         IBinder.DeathRecipient deathRecipient;
@@ -495,10 +422,8 @@ public class WindowManagerService extends IWindowManager.Stub
     }
     ArrayList<RotationWatcher> mRotationWatchers = new ArrayList<RotationWatcher>();
     int mDeferredRotationPauseCount;
-
     int mSystemDecorLayer = 0;
     final Rect mScreenRect = new Rect();
-
     boolean mTraversalScheduled = false;
     boolean mDisplayFrozen = false;
     long mDisplayFreezeTime = 0;
@@ -509,72 +434,52 @@ public class WindowManagerService extends IWindowManager.Stub
     boolean mClientFreezingScreen = false;
     int mAppsFreezingScreen = 0;
     int mLastWindowForcedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
-
     int mLayoutSeq = 0;
-
     int mLastStatusBarVisibility = 0;
-
     // State while inside of layoutAndPlaceSurfacesLocked().
     boolean mFocusMayChange;
-
     Configuration mCurConfiguration = new Configuration();
-
     // This is held as long as we have the screen frozen, to give us time to
     // perform a rotation animation when turning off shows the lock screen which
     // changes the orientation.
     private final PowerManager.WakeLock mScreenFrozenLock;
-
     final AppTransition mAppTransition;
     boolean mStartingIconInTransition = false;
     boolean mSkipAppTransitionAnimation = false;
-
     final ArraySet<AppWindowToken> mOpeningApps = new ArraySet<AppWindowToken>();
     final ArraySet<AppWindowToken> mClosingApps = new ArraySet<AppWindowToken>();
-
     boolean mIsTouchDevice;
-
     final DisplayMetrics mDisplayMetrics = new DisplayMetrics();
     final DisplayMetrics mRealDisplayMetrics = new DisplayMetrics();
     final DisplayMetrics mTmpDisplayMetrics = new DisplayMetrics();
     final DisplayMetrics mCompatDisplayMetrics = new DisplayMetrics();
-
     final H mH = new H();
-
     final Choreographer mChoreographer = Choreographer.getInstance();
-
     WindowState mCurrentFocus = null;
     WindowState mLastFocus = null;
-
     /** This just indicates the window the input method is on top of, not
      * necessarily the window its input is going to. */
     WindowState mInputMethodTarget = null;
-
     /** If true hold off on modifying the animation layer of mInputMethodTarget */
     boolean mInputMethodTargetWaitingAnim;
     int mInputMethodAnimLayerAdjustment;
-
     WindowState mInputMethodWindow = null;
     final ArrayList<WindowState> mInputMethodDialogs = new ArrayList<WindowState>();
-
     boolean mHardKeyboardAvailable;
     boolean mShowImeWithHardKeyboard;
     OnHardKeyboardStatusChangeListener mHardKeyboardStatusChangeListener;
     SettingsObserver mSettingsObserver;
-
     private final class SettingsObserver extends ContentObserver {
         private final Uri mShowImeWithHardKeyboardUri =
                 Settings.Secure.getUriFor(Settings.Secure.SHOW_IME_WITH_HARD_KEYBOARD);
-
         private final Uri mDisplayInversionEnabledUri =
                 Settings.Secure.getUriFor(Settings.Secure.ACCESSIBILITY_DISPLAY_INVERSION_ENABLED);
-
         public SettingsObserver() {
             super(new Handler());
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(mShowImeWithHardKeyboardUri, false, this);
             resolver.registerContentObserver(mDisplayInversionEnabledUri, false, this);
         }
-
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             if (mShowImeWithHardKeyboardUri.equals(uri)) {
@@ -584,9 +489,7 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     final ArrayList<WindowToken> mWallpaperTokens = new ArrayList<WindowToken>();
-
     // If non-null, this is the currently visible window that is associated
     // with the wallpaper.
     WindowState mWallpaperTarget = null;
@@ -613,35 +516,25 @@ public class WindowManagerService extends IWindowManager.Stub
     // Time we wait after a timeout before trying to wait again.
     static final long WALLPAPER_TIMEOUT_RECOVERY = 10000;
     boolean mAnimateWallpaperWithTarget;
-
     AppWindowToken mFocusedApp = null;
-
     PowerManager mPowerManager;
     PowerManagerInternal mPowerManagerInternal;
-
     float mWindowAnimationScaleSetting = 1.0f;
     float mTransitionAnimationScaleSetting = 1.0f;
     float mAnimatorDurationScaleSetting = 1.0f;
     boolean mAnimationsDisabled = false;
-
     final InputManagerService mInputManager;
     final DisplayManagerInternal mDisplayManagerInternal;
     final DisplayManager mDisplayManager;
-
     // Who is holding the screen on.
     Session mHoldingScreenOn;
     PowerManager.WakeLock mHoldingScreenWakeLock;
-
     boolean mTurnOnScreen;
-
     // Whether or not a layout can cause a wake up when theater mode is enabled.
     boolean mAllowTheaterModeWakeFromLayout;
-
     DragState mDragState = null;
-
     // For frozen screen animations.
     int mExitAnimId, mEnterAnimId;
-
     /** Pulled out of performLayoutAndPlaceSurfacesLockedInner in order to refactor into multiple
      * methods. */
     class LayoutFields {
@@ -651,7 +544,6 @@ public class WindowManagerService extends IWindowManager.Stub
         static final int SET_ORIENTATION_CHANGE_COMPLETE    = 1 << 3;
         static final int SET_TURN_ON_SCREEN                 = 1 << 4;
         static final int SET_WALLPAPER_ACTION_PENDING       = 1 << 5;
-
         boolean mWallpaperForceHidingChanged = false;
         boolean mWallpaperMayChange = false;
         boolean mOrientationChangeComplete = true;
@@ -664,45 +556,32 @@ public class WindowManagerService extends IWindowManager.Stub
         private long mUserActivityTimeout = -1;
         private boolean mUpdateRotation = false;
         boolean mWallpaperActionPending = false;
-
         // Set to true when the display contains content to show the user.
         // When false, the display manager may choose to mirror or blank the display.
         boolean mDisplayHasContent = false;
-
         // Only set while traversing the default display based on its content.
         // Affects the behavior of mirroring on secondary displays.
         boolean mObscureApplicationContentOnSecondaryDisplays = false;
-
         float mPreferredRefreshRate = 0;
     }
     final LayoutFields mInnerFields = new LayoutFields();
-
     boolean mAnimationScheduled;
-
     /** Skip repeated AppWindowTokens initialization. Note that AppWindowsToken's version of this
      * is a long initialized to Long.MIN_VALUE so that it doesn't match this value on startup. */
     private int mTransactionSequence;
-
     /** Only do a maximum of 6 repeated layouts. After that quit */
     private int mLayoutRepeatCount;
-
     final WindowAnimator mAnimator;
-
     SparseArray<Task> mTaskIdToTask = new SparseArray<Task>();
-
     /** All of the TaskStacks in the window manager, unordered. For an ordered list call
      * DisplayContent.getStacks(). */
     SparseArray<TaskStack> mStackIdToStack = new SparseArray<TaskStack>();
-
     private final PointerEventDispatcher mPointerEventDispatcher;
-
     private WindowContentFrameStats mTempWindowRenderStats;
-
     final class DragInputEventReceiver extends InputEventReceiver {
         public DragInputEventReceiver(InputChannel inputChannel, Looper looper) {
             super(inputChannel, looper);
         }
-
         @Override
         public void onInputEvent(InputEvent event) {
             boolean handled = false;
@@ -714,21 +593,18 @@ public class WindowManagerService extends IWindowManager.Stub
                     boolean endDrag = false;
                     final float newX = motionEvent.getRawX();
                     final float newY = motionEvent.getRawY();
-
                     switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
                         if (DEBUG_DRAG) {
                             Slog.w(TAG, "Unexpected ACTION_DOWN in drag layer");
                         }
                     } break;
-
                     case MotionEvent.ACTION_MOVE: {
                         synchronized (mWindowMap) {
                             // move the surface and tell the involved window(s) where we are
                             mDragState.notifyMoveLw(newX, newY);
                         }
                     } break;
-
                     case MotionEvent.ACTION_UP: {
                         if (DEBUG_DRAG) Slog.d(TAG, "Got UP on move channel; dropping at "
                                 + newX + "," + newY);
@@ -736,13 +612,11 @@ public class WindowManagerService extends IWindowManager.Stub
                             endDrag = mDragState.notifyDropLw(newX, newY);
                         }
                     } break;
-
                     case MotionEvent.ACTION_CANCEL: {
                         if (DEBUG_DRAG) Slog.d(TAG, "Drag cancelled!");
                         endDrag = true;
                     } break;
                     }
-
                     if (endDrag) {
                         if (DEBUG_DRAG) Slog.d(TAG, "Drag ended; tearing down state");
                         // tell all the windows that the drag has ended
@@ -750,7 +624,6 @@ public class WindowManagerService extends IWindowManager.Stub
                             mDragState.endDragLw();
                         }
                     }
-
                     handled = true;
                 }
             } catch (Exception e) {
@@ -760,33 +633,26 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     /**
      * Whether the UI is currently running in touch mode (not showing
      * navigational focus because the user is directly pressing the screen).
      */
     boolean mInTouchMode;
-
     private ViewServer mViewServer;
     private final ArrayList<WindowChangeListener> mWindowChangeListeners =
         new ArrayList<WindowChangeListener>();
     private boolean mWindowsChanged = false;
-
     public interface WindowChangeListener {
         public void windowsChanged();
         public void focusChanged();
     }
-
     final Configuration mTempConfiguration = new Configuration();
-
     // The desired scaling factor for compatible apps.
     float mCompatibleScreenScale;
-
     // If true, only the core apps and services are being launched because the device
     // is in a special boot mode, such as being encrypted or waiting for a decryption password.
     // For example, when this flag is true, there will be no wallpaper service.
     final boolean mOnlyCore;
-
     public static WindowManagerService main(final Context context,
             final InputManagerService im,
             final boolean haveInputMethods, final boolean showBootMsgs,
@@ -801,13 +667,11 @@ public class WindowManagerService extends IWindowManager.Stub
         }, 0);
         return holder[0];
     }
-
     private void initPolicy() {
         UiThread.getHandler().runWithScissors(new Runnable() {
             @Override
             public void run() {
                 WindowManagerPolicyThread.set(Thread.currentThread(), Looper.myLooper());
-
                 mPolicy.init(mContext, WindowManagerService.this, WindowManagerService.this);
                 mAnimator.mAboveUniverseLayer = mPolicy.getAboveUniverseLayer()
                         * TYPE_LAYER_MULTIPLIER
@@ -815,7 +679,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }, 0);
     }
-
     private WindowManagerService(Context context, InputManagerService inputManager,
             boolean haveInputMethods, boolean showBootMsgs, boolean onlyCore) {
         mContext = context;
@@ -832,20 +695,15 @@ public class WindowManagerService extends IWindowManager.Stub
         mDisplayManagerInternal = LocalServices.getService(DisplayManagerInternal.class);
         mDisplaySettings = new DisplaySettings();
         mDisplaySettings.readSettingsLocked();
-
         LocalServices.addService(WindowManagerPolicy.class, mPolicy);
-
         mPointerEventDispatcher = new PointerEventDispatcher(mInputManager.monitorInput(TAG));
-
         mFxSession = new SurfaceSession();
         mDisplayManager = (DisplayManager)context.getSystemService(Context.DISPLAY_SERVICE);
         Display[] displays = mDisplayManager.getDisplays();
         for (Display display : displays) {
             createDisplayContentLocked(display);
         }
-
         mKeyguardDisableHandler = new KeyguardDisableHandler(mContext, mPolicy);
-
         mPowerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
         mPowerManagerInternal = LocalServices.getService(PowerManagerInternal.class);
         mPowerManagerInternal.registerLowPowerModeObserver(
@@ -864,9 +722,7 @@ public class WindowManagerService extends IWindowManager.Stub
         mScreenFrozenLock = mPowerManager.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK, "SCREEN_FROZEN");
         mScreenFrozenLock.setReferenceCounted(false);
-
         mAppTransition = new AppTransition(context, mH);
-
         mActivityManager = ActivityManagerNative.getDefault();
         mBatteryStats = BatteryStatsService.getService();
         mAppOps = (AppOpsManager)context.getSystemService(Context.APP_OPS_SERVICE);
@@ -878,7 +734,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 };
         mAppOps.startWatchingMode(AppOpsManager.OP_SYSTEM_ALERT_WINDOW, null, opListener);
         mAppOps.startWatchingMode(AppOpsManager.OP_TOAST_WINDOW, null, opListener);
-
         // Get persisted window scale setting
         mWindowAnimationScaleSetting = Settings.Global.getFloat(context.getContentResolver(),
                 Settings.Global.WINDOW_ANIMATION_SCALE, mWindowAnimationScaleSetting);
@@ -886,30 +741,22 @@ public class WindowManagerService extends IWindowManager.Stub
                 Settings.Global.TRANSITION_ANIMATION_SCALE, mTransitionAnimationScaleSetting);
         setAnimatorDurationScale(Settings.Global.getFloat(context.getContentResolver(),
                 Settings.Global.ANIMATOR_DURATION_SCALE, mAnimatorDurationScaleSetting));
-
         // Track changes to DevicePolicyManager state so we can enable/disable keyguard.
         IntentFilter filter = new IntentFilter();
         filter.addAction(DevicePolicyManager.ACTION_DEVICE_POLICY_MANAGER_STATE_CHANGED);
         mContext.registerReceiver(mBroadcastReceiver, filter);
-
         mSettingsObserver = new SettingsObserver();
         updateShowImeWithHardKeyboard();
-
         mHoldingScreenWakeLock = mPowerManager.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, TAG);
         mHoldingScreenWakeLock.setReferenceCounted(false);
-
         mAnimator = new WindowAnimator(this);
-
         mAllowTheaterModeWakeFromLayout = context.getResources().getBoolean(
                 com.android.internal.R.bool.config_allowTheaterModeWakeFromWindowLayout);
-
         LocalServices.addService(WindowManagerInternal.class, new LocalService());
         initPolicy();
-
         // Add ourself to the Watchdog monitors.
         Watchdog.getInstance().addMonitor(this);
-
         SurfaceControl.openTransaction();
         try {
             createWatermarkInTransaction();
@@ -918,15 +765,12 @@ public class WindowManagerService extends IWindowManager.Stub
         } finally {
             SurfaceControl.closeTransaction();
         }
-
         updateCircularDisplayMaskIfNeeded();
         showEmulatorDisplayOverlayIfNeeded();
     }
-
     public InputMonitor getInputMonitor() {
         return mInputMonitor;
     }
-
     @Override
     public boolean onTransact(int code, Parcel data, Parcel reply, int flags)
             throws RemoteException {
@@ -941,7 +785,6 @@ public class WindowManagerService extends IWindowManager.Stub
             throw e;
         }
     }
-
     private void placeWindowAfter(WindowState pos, WindowState window) {
         final WindowList windows = pos.getWindowList();
         final int i = windows.indexOf(pos);
@@ -951,7 +794,6 @@ public class WindowManagerService extends IWindowManager.Stub
         windows.add(i+1, window);
         mWindowsChanged = true;
     }
-
     private void placeWindowBefore(WindowState pos, WindowState window) {
         final WindowList windows = pos.getWindowList();
         int i = windows.indexOf(pos);
@@ -965,7 +807,6 @@ public class WindowManagerService extends IWindowManager.Stub
         windows.add(i, window);
         mWindowsChanged = true;
     }
-
     //This method finds out the index of a window that has the same app token as
     //win. used for z ordering the windows in mWindows
     private int findIdxBasedOnAppTokens(WindowState win) {
@@ -978,7 +819,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return -1;
     }
-
     /**
      * Return the list of Windows from the passed token on the given Display.
      * @param token The token with all the windows.
@@ -996,7 +836,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return windowList;
     }
-
     /**
      * Recursive search through a WindowList and all of its windows' children.
      * @param targetWin The window to search for.
@@ -1017,7 +856,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return -1;
     }
-
     private int addAppWindowToListLocked(final WindowState win) {
         final IWindow client = win.mClient;
         final WindowToken token = win.mToken;
@@ -1026,7 +864,6 @@ public class WindowManagerService extends IWindowManager.Stub
             // It doesn't matter this display is going away.
             return 0;
         }
-
         final WindowList windows = win.getWindowList();
         final int N = windows.size();
         WindowList tokenWindowList = getTokenWindowsOnDisplay(token, displayContent);
@@ -1069,14 +906,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             return tokenWindowsPos;
         }
-
         // No windows from this token on this display
         if (localLOGV) Slog.v(TAG, "Figuring out where to add app window " + client.asBinder()
                 + " (token=" + token + ")");
         // Figure out where the window should go, based on the
         // order of applications.
         WindowState pos = null;
-
         final ArrayList<Task> tasks = displayContent.getTasks();
         int taskNdx;
         int tokenNdx = -1;
@@ -1094,7 +929,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 // We haven't reached the token yet; if this token
                 // is not going to the bottom and has windows on this display, we can
                 // use it as an anchor for when we do reach the token.
@@ -1108,7 +942,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 break;
             }
         }
-
         // We now know the index into the apps.  If we found
         // an app window above, that gives us the position; else
         // we need to look some more.
@@ -1129,7 +962,6 @@ public class WindowManagerService extends IWindowManager.Stub
             placeWindowBefore(pos, win);
             return tokenWindowsPos;
         }
-
         // Continue looking down until we find the first
         // token that has windows on this display.
         for ( ; taskNdx >= 0; --taskNdx) {
@@ -1148,7 +980,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 break;
             }
         }
-
         if (pos != null) {
             // Move in front of any windows attached to this
             // one.
@@ -1165,7 +996,6 @@ public class WindowManagerService extends IWindowManager.Stub
             placeWindowAfter(pos, win);
             return tokenWindowsPos;
         }
-
         // Just search for the start of this layer.
         final int myLayer = win.mBaseLayer;
         int i;
@@ -1181,10 +1011,8 @@ public class WindowManagerService extends IWindowManager.Stub
         mWindowsChanged = true;
         return tokenWindowsPos;
     }
-
     private void addFreeWindowToListLocked(final WindowState win) {
         final WindowList windows = win.getWindowList();
-
         // Figure out where window should go, based on layer.
         final int myLayer = win.mBaseLayer;
         int i;
@@ -1199,7 +1027,6 @@ public class WindowManagerService extends IWindowManager.Stub
         windows.add(i, win);
         mWindowsChanged = true;
     }
-
     private void addAttachedWindowToListLocked(final WindowState win, boolean addToToken) {
         final WindowToken token = win.mToken;
         final DisplayContent displayContent = win.getDisplayContent();
@@ -1207,9 +1034,7 @@ public class WindowManagerService extends IWindowManager.Stub
             return;
         }
         final WindowState attached = win.mAttachedWindow;
-
         WindowList tokenWindowList = getTokenWindowsOnDisplay(token, displayContent);
-
         // Figure out this window's ordering relative to the window
         // it is attached to.
         final int NA = tokenWindowList.size();
@@ -1263,7 +1088,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     private void addWindowToListInOrderLocked(final WindowState win, boolean addToToken) {
         if (DEBUG_FOCUS_LIGHT) Slog.d(TAG, "addWindowToListInOrderLocked: win=" + win +
                 " Callers=" + Debug.getCallers(4));
@@ -1282,12 +1106,10 @@ public class WindowManagerService extends IWindowManager.Stub
         } else {
             addAttachedWindowToListLocked(win, addToToken);
         }
-
         if (win.mAppToken != null && addToToken) {
             win.mAppToken.allAppWindows.add(win);
         }
     }
-
     static boolean canBeImeTarget(WindowState w) {
         final int fl = w.mAttrs.flags
                 & (FLAG_NOT_FOCUSABLE|FLAG_ALT_FOCUSABLE_IM);
@@ -1311,7 +1133,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return false;
     }
-
     /**
      * Dig through the WindowStates and find the one that the Input Method will target.
      * @param willMove
@@ -1326,13 +1147,11 @@ public class WindowManagerService extends IWindowManager.Stub
         int i;
         for (i = windows.size() - 1; i >= 0; --i) {
             WindowState win = windows.get(i);
-
             if (DEBUG_INPUT_METHOD && willMove) Slog.i(TAG, "Checking window @" + i
                     + " " + win + " fl=0x" + Integer.toHexString(win.mAttrs.flags));
             if (canBeImeTarget(win)) {
                 w = win;
                 //Slog.i(TAG, "Putting input method here!");
-
                 // Yet more tricksyness!  If this window is a "starting"
                 // window, we do actually want to be on top of it, but
                 // it is not -really- where input will go.  So if the caller
@@ -1350,11 +1169,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 break;
             }
         }
-
         // Now w is either mWindows[0] or an IME (or null if mWindows is empty).
-
         if (DEBUG_INPUT_METHOD && willMove) Slog.v(TAG, "Proposed new IME target: " + w);
-
         // Now, a special case -- if the last target's window is in the
         // process of exiting, and is above the new target, keep on the
         // last target to avoid flicker.  Consider for example a Dialog with
@@ -1369,14 +1185,11 @@ public class WindowManagerService extends IWindowManager.Stub
             if (DEBUG_INPUT_METHOD) Slog.v(TAG, "Current target higher, not changing");
             return windows.indexOf(curTarget) + 1;
         }
-
         if (DEBUG_INPUT_METHOD) Slog.v(TAG, "Desired input method target="
                 + w + " willMove=" + willMove);
-
         if (willMove && w != null) {
             AppWindowToken token = curTarget == null ? null : curTarget.mAppToken;
             if (token != null) {
-
                 // Now some fun for dealing with window animations that
                 // modify the Z order.  We need to look at all windows below
                 // the current target that are in this app, finding the highest
@@ -1401,13 +1214,11 @@ public class WindowManagerService extends IWindowManager.Stub
                         pos--;
                     }
                 }
-
                 if (highestTarget != null) {
                     if (DEBUG_INPUT_METHOD) Slog.v(TAG, mAppTransition + " " + highestTarget
                             + " animating=" + highestTarget.mWinAnimator.isAnimating()
                             + " layer=" + highestTarget.mWinAnimator.mAnimLayer
                             + " new layer=" + w.mWinAnimator.mAnimLayer);
-
                     if (mAppTransition.isTransitionSet()) {
                         // If we are currently setting up for an animation,
                         // hold everything until we can find out what will happen.
@@ -1427,7 +1238,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         //Slog.i(TAG, "Placing input method @" + (i+1));
         if (w != null) {
             if (willMove) {
@@ -1451,7 +1261,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return -1;
     }
-
     void addInputMethodWindowToListLocked(WindowState win) {
         int pos = findDesiredInputMethodWindowIndexLocked(true);
         if (pos >= 0) {
@@ -1468,7 +1277,6 @@ public class WindowManagerService extends IWindowManager.Stub
         addWindowToListInOrderLocked(win, true);
         moveInputMethodDialogsLocked(pos);
     }
-
     void setInputMethodAnimLayerAdjustment(int adj) {
         if (DEBUG_LAYERS) Slog.v(TAG, "Setting im layer adj to " + adj);
         mInputMethodAnimLayerAdjustment = adj;
@@ -1495,7 +1303,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     + " anim layer: " + imw.mWinAnimator.mAnimLayer);
         }
     }
-
     private int tmpRemoveWindowLocked(int interestingPos, WindowState win) {
         WindowList windows = win.getWindowList();
         int wpos = windows.indexOf(win);
@@ -1519,7 +1326,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return interestingPos;
     }
-
     private void reAddWindowToListInOrderLocked(WindowState win) {
         addWindowToListInOrderLocked(win, false);
         // This is a hack to get all of the child windows added as well
@@ -1534,7 +1340,6 @@ public class WindowManagerService extends IWindowManager.Stub
             reAddWindowLocked(wpos, win);
         }
     }
-
     void logWindowList(final WindowList windows, String prefix) {
         int N = windows.size();
         while (N > 0) {
@@ -1542,10 +1347,8 @@ public class WindowManagerService extends IWindowManager.Stub
             Slog.v(TAG, prefix + "#" + N + ": " + windows.get(N));
         }
     }
-
     void moveInputMethodDialogsLocked(int pos) {
         ArrayList<WindowState> dialogs = mInputMethodDialogs;
-
         // TODO(multidisplay): IMEs are only supported on the default display.
         WindowList windows = getDefaultWindowListLocked();
         final int N = dialogs.size();
@@ -1557,7 +1360,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Slog.v(TAG, "Window list w/pos=" + pos);
             logWindowList(windows, "  ");
         }
-
         if (pos >= 0) {
             final AppWindowToken targetAppToken = mInputMethodTarget.mAppToken;
             // Skip windows owned by the input method.
@@ -1593,28 +1395,23 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     boolean moveInputMethodWindowsIfNeededLocked(boolean needAssignLayers) {
         final WindowState imWin = mInputMethodWindow;
         final int DN = mInputMethodDialogs.size();
         if (imWin == null && DN == 0) {
             return false;
         }
-
         // TODO(multidisplay): IMEs are only supported on the default display.
         WindowList windows = getDefaultWindowListLocked();
-
         int imPos = findDesiredInputMethodWindowIndexLocked(true);
         if (imPos >= 0) {
             // In this case, the input method windows are to be placed
             // immediately above the window they are targeting.
-
             // First check to see if the input method windows are already
             // located here, and contiguous.
             final int N = windows.size();
             WindowState firstImWin = imPos < N
                     ? windows.get(imPos) : null;
-
             // Figure out the actual input method window that should be
             // at the bottom of their stack.
             WindowState baseImWin = imWin != null
@@ -1623,7 +1420,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 WindowState cw = baseImWin.mChildWindows.get(0);
                 if (cw.mSubLayer < 0) baseImWin = cw;
             }
-
             if (firstImWin == baseImWin) {
                 // The windows haven't moved...  but are they still contiguous?
                 // First find the top IM window.
@@ -1651,7 +1447,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     return false;
                 }
             }
-
             if (imWin != null) {
                 if (DEBUG_INPUT_METHOD) {
                     Slog.v(TAG, "Moving IM from " + imPos);
@@ -1672,11 +1467,9 @@ public class WindowManagerService extends IWindowManager.Stub
             } else {
                 moveInputMethodDialogsLocked(imPos);
             }
-
         } else {
             // In this case, the input method windows go in a fixed layer,
             // because they aren't currently associated with a focus window.
-
             if (imWin != null) {
                 if (DEBUG_INPUT_METHOD) Slog.v(TAG, "Moving IM from " + imPos);
                 tmpRemoveWindowLocked(0, imWin);
@@ -1690,16 +1483,12 @@ public class WindowManagerService extends IWindowManager.Stub
             } else {
                 moveInputMethodDialogsLocked(-1);
             }
-
         }
-
         if (needAssignLayers) {
             assignLayersLocked(windows);
         }
-
         return true;
     }
-
     final boolean isWallpaperVisible(WindowState wallpaperTarget) {
         if (DEBUG_WALLPAPER) Slog.v(TAG, "Wallpaper vis: target " + wallpaperTarget + ", obscured="
                 + (wallpaperTarget != null ? Boolean.toString(wallpaperTarget.mObscured) : "??")
@@ -1713,19 +1502,15 @@ public class WindowManagerService extends IWindowManager.Stub
                 || mUpperWallpaperTarget != null
                 || mLowerWallpaperTarget != null;
     }
-
     static final int ADJUST_WALLPAPER_LAYERS_CHANGED = 1<<1;
     static final int ADJUST_WALLPAPER_VISIBILITY_CHANGED = 1<<2;
-
     int adjustWallpaperWindowsLocked() {
         mInnerFields.mWallpaperMayChange = false;
         boolean targetChanged = false;
-
         // TODO(multidisplay): Wallpapers on main screen only.
         final DisplayInfo displayInfo = getDefaultDisplayContentLocked().getDisplayInfo();
         final int dw = displayInfo.logicalWidth;
         final int dh = displayInfo.logicalHeight;
-
         // First find top-most window that has asked to be on top of the
         // wallpaper; all wallpapers go behind it.
         final WindowList windows = getDefaultWindowListLocked();
@@ -1759,7 +1544,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             if (DEBUG_WALLPAPER) Slog.v(TAG, "Win #" + i + " " + w + ": isOnScreen="
                     + w.isOnScreen() + " mDrawState=" + w.mWinAnimator.mDrawState);
-
             // If the app is executing an animation because the keyguard is going away, keep the
             // wallpaper during the animation so it doesn't flicker out.
             final boolean hasWallpaper = (w.mAttrs.flags&FLAG_SHOW_WALLPAPER) != 0
@@ -1784,28 +1568,23 @@ public class WindowManagerService extends IWindowManager.Stub
                 windowDetachedI = i;
             }
         }
-
         if (foundW == null && windowDetachedI >= 0) {
             if (DEBUG_WALLPAPER_LIGHT) Slog.v(TAG,
                     "Found animating detached wallpaper activity: #" + i + "=" + w);
             foundW = w;
             foundI = windowDetachedI;
         }
-
         if (mWallpaperTarget != foundW
                 && (mLowerWallpaperTarget == null || mLowerWallpaperTarget != foundW)) {
             if (DEBUG_WALLPAPER_LIGHT) {
                 Slog.v(TAG, "New wallpaper target: " + foundW
                         + " oldTarget: " + mWallpaperTarget);
             }
-
             mLowerWallpaperTarget = null;
             mUpperWallpaperTarget = null;
-
             WindowState oldW = mWallpaperTarget;
             mWallpaperTarget = foundW;
             targetChanged = true;
-
             // Now what is happening...  if the current and new targets are
             // animating, then we are in our super special mode!
             if (foundW != null && oldW != null) {
@@ -1826,7 +1605,6 @@ public class WindowManagerService extends IWindowManager.Stub
                                     + "=" + oldW + "; new#" + foundI
                                     + "=" + foundW);
                         }
-
                         // Set the new target correctly.
                         if (foundW.mAppToken != null && foundW.mAppToken.hiddenRequested) {
                             if (DEBUG_WALLPAPER_LIGHT) {
@@ -1859,7 +1637,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
         } else if (mLowerWallpaperTarget != null) {
             // Is it time to stop animating?
             if (!mLowerWallpaperTarget.isAnimatingLw() || !mUpperWallpaperTarget.isAnimatingLw()) {
@@ -1872,25 +1649,21 @@ public class WindowManagerService extends IWindowManager.Stub
                 targetChanged = true;
             }
         }
-
         boolean visible = foundW != null;
         if (visible) {
             // The window is visible to the compositor...  but is it visible
             // to the user?  That is what the wallpaper cares about.
             visible = isWallpaperVisible(foundW);
             if (DEBUG_WALLPAPER) Slog.v(TAG, "Wallpaper visibility: " + visible);
-
             // If the wallpaper target is animating, we may need to copy
             // its layer adjustment.  Only do this if we are not transfering
             // between two wallpaper targets.
             mWallpaperAnimLayerAdjustment =
                     (mLowerWallpaperTarget == null && foundW.mAppToken != null)
                     ? foundW.mAppToken.mAppAnimator.animLayerAdjustment : 0;
-
             final int maxLayer = mPolicy.getMaxWallpaperLayer()
                     * TYPE_LAYER_MULTIPLIER
                     + TYPE_LAYER_OFFSET;
-
             // Now w is the window we are supposed to be behind...  but we
             // need to be sure to also be behind any of its attached windows,
             // AND any starting window associated with it, AND below the
@@ -1913,7 +1686,6 @@ public class WindowManagerService extends IWindowManager.Stub
         } else {
             if (DEBUG_WALLPAPER) Slog.v(TAG, "No wallpaper target");
         }
-
         if (foundW == null && topCurW != null) {
             // There is no wallpaper target, so it goes at the bottom.
             // We will assume it is the same place as last time, if known.
@@ -1924,7 +1696,6 @@ public class WindowManagerService extends IWindowManager.Stub
             // what is below it for later.
             foundW = foundI > 0 ? windows.get(foundI-1) : null;
         }
-
         if (visible) {
             if (mWallpaperTarget.mWallpaperX >= 0) {
                 mLastWallpaperX = mWallpaperTarget.mWallpaperX;
@@ -1941,7 +1712,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 mLastWallpaperDisplayOffsetY = mWallpaperTarget.mWallpaperDisplayOffsetY;
             }
         }
-
         // Start stepping backwards from here, ensuring that our wallpaper windows
         // are correctly placed.
         int changed = 0;
@@ -1958,24 +1728,19 @@ public class WindowManagerService extends IWindowManager.Stub
                 // correct size.
                 getDefaultDisplayContentLocked().layoutNeeded = true;
             }
-
             int curWallpaperIndex = token.windows.size();
             while (curWallpaperIndex > 0) {
                 curWallpaperIndex--;
                 WindowState wallpaper = token.windows.get(curWallpaperIndex);
-
                 if (visible) {
                     updateWallpaperOffsetLocked(wallpaper, dw, dh, false);
                 }
-
                 // First, make sure the client has the current visibility
                 // state.
                 dispatchWallpaperVisibility(wallpaper, visible);
-
                 wallpaper.mWinAnimator.mAnimLayer = wallpaper.mLayer + mWallpaperAnimLayerAdjustment;
                 if (DEBUG_LAYERS || DEBUG_WALLPAPER_LIGHT) Slog.v(TAG, "adjustWallpaper win "
                         + wallpaper + " anim layer: " + wallpaper.mWinAnimator.mAnimLayer);
-
                 // First, if this window is at the current index, then all
                 // is well.
                 if (wallpaper == foundW) {
@@ -1984,7 +1749,6 @@ public class WindowManagerService extends IWindowManager.Stub
                             ? windows.get(foundI-1) : null;
                     continue;
                 }
-
                 // The window didn't match...  the current wallpaper window,
                 // wherever it is, is in the wrong place, so make sure it is
                 // not in the list.
@@ -1998,7 +1762,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         foundI--;
                     }
                 }
-
                 // Now stick it in. For apps over wallpaper keep the wallpaper at the bottommost
                 // layer. For keyguard over wallpaper put the wallpaper under the keyguard.
                 int insertionIndex = 0;
@@ -2014,13 +1777,11 @@ public class WindowManagerService extends IWindowManager.Stub
                     Slog.v(TAG, "Moving wallpaper " + wallpaper
                             + " from " + oldIndex + " to " + insertionIndex);
                 }
-
                 windows.add(insertionIndex, wallpaper);
                 mWindowsChanged = true;
                 changed |= ADJUST_WALLPAPER_LAYERS_CHANGED;
             }
         }
-
         /*
         final TaskStack targetStack =
                 mWallpaperTarget == null ? null : mWallpaperTarget.getStack();
@@ -2041,16 +1802,13 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
         */
-
         if (targetChanged && DEBUG_WALLPAPER_LIGHT) {
             Slog.d(TAG, "New wallpaper: target=" + mWallpaperTarget
                     + " lower=" + mLowerWallpaperTarget + " upper="
                     + mUpperWallpaperTarget);
         }
-
         return changed;
     }
-
     void setWallpaperAnimLayerAdjustmentLocked(int adj) {
         if (DEBUG_LAYERS || DEBUG_WALLPAPER) Slog.v(TAG,
                 "Setting wallpaper layer adj to " + adj);
@@ -2069,7 +1827,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     boolean updateWallpaperOffsetLocked(WindowState wallpaperWin, int dw, int dh,
             boolean sync) {
         boolean changed = false;
@@ -2092,7 +1849,6 @@ public class WindowManagerService extends IWindowManager.Stub
             wallpaperWin.mWallpaperXStep = wpxs;
             rawChanged = true;
         }
-
         float wpy = mLastWallpaperY >= 0 ? mLastWallpaperY : 0.5f;
         float wpys = mLastWallpaperYStep >= 0 ? mLastWallpaperYStep : -1.0f;
         int availh = wallpaperWin.mFrame.bottom-wallpaperWin.mFrame.top-dh;
@@ -2111,7 +1867,6 @@ public class WindowManagerService extends IWindowManager.Stub
             wallpaperWin.mWallpaperYStep = wpys;
             rawChanged = true;
         }
-
         if (rawChanged && (wallpaperWin.mAttrs.privateFlags &
                     WindowManager.LayoutParams.PRIVATE_FLAG_WANTS_OFFSET_NOTIFICATIONS) != 0) {
             try {
@@ -2149,10 +1904,8 @@ public class WindowManagerService extends IWindowManager.Stub
             } catch (RemoteException e) {
             }
         }
-
         return changed;
     }
-
     void wallpaperOffsetsComplete(IBinder window) {
         synchronized (mWindowMap) {
             if (mWaitingOnWallpaper != null &&
@@ -2162,7 +1915,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     void updateWallpaperOffsetLocked(WindowState changingTarget, boolean sync) {
         final DisplayContent displayContent = changingTarget.getDisplayContent();
         if (displayContent == null) {
@@ -2171,7 +1923,6 @@ public class WindowManagerService extends IWindowManager.Stub
         final DisplayInfo displayInfo = displayContent.getDisplayInfo();
         final int dw = displayInfo.logicalWidth;
         final int dh = displayInfo.logicalHeight;
-
         WindowState target = mWallpaperTarget;
         if (target != null) {
             if (target.mWallpaperX >= 0) {
@@ -2195,7 +1946,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 mLastWallpaperDisplayOffsetY = changingTarget.mWallpaperDisplayOffsetY;
             }
         }
-
         int curTokenIndex = mWallpaperTokens.size();
         while (curTokenIndex > 0) {
             curTokenIndex--;
@@ -2216,7 +1966,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     /**
      * Check wallpaper for visiblity change and notify window if so.
      * @param wallpaper The wallpaper to test and notify.
@@ -2234,7 +1983,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     void updateWallpaperVisibilityLocked() {
         final boolean visible = isWallpaperVisible(mWallpaperTarget);
         final DisplayContent displayContent = mWallpaperTarget.getDisplayContent();
@@ -2244,7 +1992,6 @@ public class WindowManagerService extends IWindowManager.Stub
         final DisplayInfo displayInfo = displayContent.getDisplayInfo();
         final int dw = displayInfo.logicalWidth;
         final int dh = displayInfo.logicalHeight;
-
         int curTokenIndex = mWallpaperTokens.size();
         while (curTokenIndex > 0) {
             curTokenIndex--;
@@ -2255,7 +2002,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 // correct size.
                 getDefaultDisplayContentLocked().layoutNeeded = true;
             }
-
             int curWallpaperIndex = token.windows.size();
             while (curWallpaperIndex > 0) {
                 curWallpaperIndex--;
@@ -2263,12 +2009,10 @@ public class WindowManagerService extends IWindowManager.Stub
                 if (visible) {
                     updateWallpaperOffsetLocked(wallpaper, dw, dh, false);
                 }
-
                 dispatchWallpaperVisibility(wallpaper, visible);
             }
         }
     }
-
     public int addWindow(Session session, IWindow client, int seq,
             WindowManager.LayoutParams attrs, int viewVisibility, int displayId,
             Rect outContentInsets, Rect outStableInsets, InputChannel outInputChannel) {
@@ -2277,18 +2021,15 @@ public class WindowManagerService extends IWindowManager.Stub
         if (res != WindowManagerGlobal.ADD_OKAY) {
             return res;
         }
-
         boolean reportNewConfig = false;
         WindowState attachedWindow = null;
         WindowState win = null;
         long origId;
         final int type = attrs.type;
-
         synchronized(mWindowMap) {
             if (!mDisplayReady) {
                 throw new IllegalStateException("Display has not been initialialized");
             }
-
             final DisplayContent displayContent = getDisplayContentLocked(displayId);
             if (displayContent == null) {
                 Slog.w(TAG, "Attempted to add window to a display that does not exist: "
@@ -2300,12 +2041,10 @@ public class WindowManagerService extends IWindowManager.Stub
                         + "does not have access: " + displayId + ".  Aborting.");
                 return WindowManagerGlobal.ADD_INVALID_DISPLAY;
             }
-
             if (mWindowMap.containsKey(client.asBinder())) {
                 Slog.w(TAG, "Window " + client + " is already added");
                 return WindowManagerGlobal.ADD_DUPLICATE_ADD;
             }
-
             if (type >= FIRST_SUB_WINDOW && type <= LAST_SUB_WINDOW) {
                 attachedWindow = windowForClientLocked(null, attrs.token, false);
                 if (attachedWindow == null) {
@@ -2320,12 +2059,10 @@ public class WindowManagerService extends IWindowManager.Stub
                     return WindowManagerGlobal.ADD_BAD_SUBWINDOW_TOKEN;
                 }
             }
-
             if (type == TYPE_PRIVATE_PRESENTATION && !displayContent.isPrivate()) {
                 Slog.w(TAG, "Attempted to add private presentation window to a non-private display.  Aborting.");
                 return WindowManagerGlobal.ADD_PERMISSION_DENIED;
             }
-
             boolean addToken = false;
             WindowToken token = mTokenMap.get(attrs.token);
             if (token == null) {
@@ -2416,7 +2153,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 token = new WindowToken(this, null, -1, false);
                 addToken = true;
             }
-
             win = new WindowState(this, session, client, token,
                     attachedWindow, appOp[0], seq, attrs, viewVisibility, displayContent);
             if (win.mDeathRecipient == null) {
@@ -2426,36 +2162,27 @@ public class WindowManagerService extends IWindowManager.Stub
                         + " that is dead, aborting.");
                 return WindowManagerGlobal.ADD_APP_EXITING;
             }
-
             if (win.getDisplayContent() == null) {
                 Slog.w(TAG, "Adding window to Display that has been removed.");
                 return WindowManagerGlobal.ADD_INVALID_DISPLAY;
             }
-
             mPolicy.adjustWindowParamsLw(win.mAttrs);
             win.setShowToOwnerOnlyLocked(mPolicy.checkShowToOwnerOnly(attrs));
-
             res = mPolicy.prepareAddWindowLw(win, attrs);
             if (res != WindowManagerGlobal.ADD_OKAY) {
                 return res;
             }
-
             if (outInputChannel != null && (attrs.inputFeatures
                     & WindowManager.LayoutParams.INPUT_FEATURE_NO_INPUT_CHANNEL) == 0) {
                 String name = win.makeInputChannelName();
                 InputChannel[] inputChannels = InputChannel.openInputChannelPair(name);
                 win.setInputChannel(inputChannels[0]);
                 inputChannels[1].transferTo(outInputChannel);
-
                 mInputManager.registerInputChannel(win.mInputChannel, win.mInputWindowHandle);
             }
-
             // From now on, no exceptions or errors allowed!
-
             res = WindowManagerGlobal.ADD_OKAY;
-
             origId = Binder.clearCallingIdentity();
-
             if (addToken) {
                 mTokenMap.put(attrs.token, token);
             }
@@ -2467,15 +2194,12 @@ public class WindowManagerService extends IWindowManager.Stub
                     win.setAppOpVisibilityLw(false);
                 }
             }
-
             if (type == TYPE_APPLICATION_STARTING && token.appWindowToken != null) {
                 token.appWindowToken.startingWindow = win;
                 if (DEBUG_STARTING_WINDOW) Slog.v (TAG, "addWindow: " + token.appWindowToken
                         + " startingWindow=" + win);
             }
-
             boolean imMayMove = true;
-
             if (type == TYPE_INPUT_METHOD) {
                 win.mGivenInsetsPending = true;
                 mInputMethodWindow = win;
@@ -2503,27 +2227,22 @@ public class WindowManagerService extends IWindowManager.Stub
                     displayContent.pendingLayoutChanges |= FINISH_LAYOUT_REDO_WALLPAPER;
                 }
             }
-
             final WindowStateAnimator winAnimator = win.mWinAnimator;
             winAnimator.mEnterAnimationPending = true;
             winAnimator.mEnteringAnimation = true;
-
             if (displayContent.isDefaultDisplay) {
                 mPolicy.getInsetHintLw(win.mAttrs, outContentInsets, outStableInsets);
             } else {
                 outContentInsets.setEmpty();
                 outStableInsets.setEmpty();
             }
-
             if (mInTouchMode) {
                 res |= WindowManagerGlobal.ADD_FLAG_IN_TOUCH_MODE;
             }
             if (win.mAppToken == null || !win.mAppToken.clientHidden) {
                 res |= WindowManagerGlobal.ADD_FLAG_APP_VISIBLE;
             }
-
             mInputMonitor.setUpdateInputWindowsNeededLw();
-
             boolean focusChanged = false;
             if (win.canReceiveKeys()) {
                 focusChanged = updateFocusedWindowLocked(UPDATE_FOCUS_WILL_ASSIGN_LAYERS,
@@ -2532,37 +2251,28 @@ public class WindowManagerService extends IWindowManager.Stub
                     imMayMove = false;
                 }
             }
-
             if (imMayMove) {
                 moveInputMethodWindowsIfNeededLocked(false);
             }
-
             assignLayersLocked(displayContent.getWindowList());
             // Don't do layout here, the window must call
             // relayout to be displayed, so we'll do it there.
-
             if (focusChanged) {
                 mInputMonitor.setInputFocusLw(mCurrentFocus, false /*updateInputWindows*/);
             }
             mInputMonitor.updateInputWindowsLw(false /*force*/);
-
             if (localLOGV || DEBUG_ADD_REMOVE) Slog.v(TAG, "addWindow: New client "
                     + client.asBinder() + ": window=" + win + " Callers=" + Debug.getCallers(5));
-
             if (win.isVisibleOrAdding() && updateOrientationFromAppTokensLocked(false)) {
                 reportNewConfig = true;
             }
         }
-
         if (reportNewConfig) {
             sendNewConfiguration();
         }
-
         Binder.restoreCallingIdentity(origId);
-
         return res;
     }
-
     /**
      * Returns whether screen capture is disabled for all windows of a specific user.
      */
@@ -2573,7 +2283,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return disabled;
     }
-
     /**
      * Set mScreenCaptureDisabled for specific user
      */
@@ -2583,12 +2292,10 @@ public class WindowManagerService extends IWindowManager.Stub
         if (callingUid != Process.SYSTEM_UID) {
             throw new SecurityException("Only system can call setScreenCaptureDisabled.");
         }
-
         synchronized(mWindowMap) {
             mScreenCaptureDisabled.put(userId, disabled);
         }
     }
-
     public void removeWindow(Session session, IWindow client) {
         synchronized(mWindowMap) {
             WindowState win = windowForClientLocked(session, client, false);
@@ -2598,22 +2305,17 @@ public class WindowManagerService extends IWindowManager.Stub
             removeWindowLocked(session, win);
         }
     }
-
     public void removeWindowLocked(Session session, WindowState win) {
         if (win.mAttrs.type == TYPE_APPLICATION_STARTING) {
             if (DEBUG_STARTING_WINDOW) Slog.d(TAG, "Starting window removed " + win);
         }
-
         if (localLOGV || DEBUG_FOCUS || DEBUG_FOCUS_LIGHT && win==mCurrentFocus) Slog.v(
                 TAG, "Remove " + win + " client="
                 + Integer.toHexString(System.identityHashCode(win.mClient.asBinder()))
                 + ", surface=" + win.mWinAnimator.mSurfaceControl + " Callers="
                 + Debug.getCallers(4));
-
         final long origId = Binder.clearCallingIdentity();
-
         win.disposeInputChannel();
-
         if (DEBUG_APP_TRANSITIONS) Slog.v(
                 TAG, "Remove " + win + ": mSurface=" + win.mWinAnimator.mSurfaceControl
                 + " mExiting=" + win.mExiting
@@ -2634,7 +2336,6 @@ public class WindowManagerService extends IWindowManager.Stub
             // need to see about starting one.
             wasVisible = win.isWinVisibleLw();
             if (wasVisible) {
-
                 int transit = WindowManagerPolicy.TRANSIT_EXIT;
                 if (win.mAttrs.type == TYPE_APPLICATION_STARTING) {
                     transit = WindowManagerPolicy.TRANSIT_PREVIEW_DONE;
@@ -2672,7 +2373,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 return;
             }
         }
-
         removeWindowInnerLocked(session, win);
         // Removing a visible window will effect the computed orientation
         // So just update orientation if needed.
@@ -2682,52 +2382,42 @@ public class WindowManagerService extends IWindowManager.Stub
         updateFocusedWindowLocked(UPDATE_FOCUS_NORMAL, true /*updateInputWindows*/);
         Binder.restoreCallingIdentity(origId);
     }
-
     void removeWindowInnerLocked(Session session, WindowState win) {
         if (win.mRemoved) {
             // Nothing to do.
             return;
         }
-
         for (int i=win.mChildWindows.size()-1; i>=0; i--) {
             WindowState cwin = win.mChildWindows.get(i);
             Slog.w(TAG, "Force-removing child win " + cwin + " from container "
                     + win);
             removeWindowInnerLocked(cwin.mSession, cwin);
         }
-
         win.mRemoved = true;
-
         if (mInputMethodTarget == win) {
             moveInputMethodWindowsIfNeededLocked(false);
         }
-
         if (false) {
             RuntimeException e = new RuntimeException("here");
             e.fillInStackTrace();
             Slog.w(TAG, "Removing window " + win, e);
         }
-
         mPolicy.removeWindowLw(win);
         win.removeLocked();
-
         if (DEBUG_ADD_REMOVE) Slog.v(TAG, "removeWindowInnerLocked: " + win);
         mWindowMap.remove(win.mClient.asBinder());
         if (win.mAppOp != AppOpsManager.OP_NONE) {
             mAppOps.finishOp(win.mAppOp, win.getOwningUid(), win.getOwningPackage());
         }
-
         mPendingRemove.remove(win);
         mResizingWindows.remove(win);
         mWindowsChanged = true;
         if (DEBUG_WINDOW_MOVEMENT) Slog.v(TAG, "Final remove of window: " + win);
-
         if (mInputMethodWindow == win) {
             mInputMethodWindow = null;
         } else if (win.mAttrs.type == TYPE_INPUT_METHOD_DIALOG) {
             mInputMethodDialogs.remove(win);
         }
-
         final WindowToken token = win.mToken;
         final AppWindowToken atoken = win.mAppToken;
         if (DEBUG_ADD_REMOVE) Slog.v(TAG, "Removing " + win + " from " + token);
@@ -2745,7 +2435,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 atoken.firstWindowDrawn = false;
             }
         }
-
         if (atoken != null) {
             if (atoken.startingWindow == win) {
                 if (DEBUG_STARTING_WINDOW) Slog.v(TAG, "Notify removed startingWindow " + win);
@@ -2762,7 +2451,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 scheduleRemoveStartingWindowLocked(atoken);
             }
         }
-
         if (win.mAttrs.type == TYPE_WALLPAPER) {
             mLastWallpaperTimeoutTime = 0;
             getDefaultDisplayContentLocked().pendingLayoutChanges |=
@@ -2771,7 +2459,6 @@ public class WindowManagerService extends IWindowManager.Stub
             getDefaultDisplayContentLocked().pendingLayoutChanges |=
                     WindowManagerPolicy.FINISH_LAYOUT_REDO_WALLPAPER;
         }
-
         final WindowList windows = win.getWindowList();
         if (windows != null) {
             windows.remove(win);
@@ -2787,10 +2474,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         mInputMonitor.updateInputWindowsLw(true /*force*/);
     }
-
     public void updateAppOpsState() {
         synchronized(mWindowMap) {
             final int numDisplays = mDisplayContents.size();
@@ -2808,7 +2493,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     static void logSurface(WindowState w, String msg, RuntimeException where) {
         String str = "  SURFACE " + msg + ": " + w;
         if (where != null) {
@@ -2817,7 +2501,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Slog.i(TAG, str);
         }
     }
-
     static void logSurface(SurfaceControl s, String title, String msg, RuntimeException where) {
         String str = "  SURFACE " + s + ": " + msg + " / " + title;
         if (where != null) {
@@ -2826,7 +2509,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Slog.i(TAG, str);
         }
     }
-
     void setTransparentRegionWindow(Session session, IWindow client, Region region) {
         long origId = Binder.clearCallingIdentity();
         try {
@@ -2840,7 +2522,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     void setInsetsWindow(Session session, IWindow client,
             int touchableInsets, Rect contentInsets,
             Rect visibleInsets, Region touchableRegion) {
@@ -2870,7 +2551,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     public void getWindowDisplayFrame(Session session, IWindow client,
             Rect outDisplayFrame) {
         synchronized(mWindowMap) {
@@ -2882,7 +2562,6 @@ public class WindowManagerService extends IWindowManager.Stub
             outDisplayFrame.set(win.mDisplayFrame);
         }
     }
-
     public void setWindowWallpaperPositionLocked(WindowState window, float x, float y,
             float xStep, float yStep) {
         if (window.mWallpaperX != x || window.mWallpaperY != y)  {
@@ -2893,7 +2572,6 @@ public class WindowManagerService extends IWindowManager.Stub
             updateWallpaperOffsetLocked(window, true);
         }
     }
-
     void wallpaperCommandComplete(IBinder window, Bundle result) {
         synchronized (mWindowMap) {
             if (mWaitingOnWallpaper != null &&
@@ -2903,7 +2581,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void setWindowWallpaperDisplayOffsetLocked(WindowState window, int x, int y) {
         if (window.mWallpaperDisplayOffsetX != x || window.mWallpaperDisplayOffsetY != y)  {
             window.mWallpaperDisplayOffsetX = x;
@@ -2911,7 +2588,6 @@ public class WindowManagerService extends IWindowManager.Stub
             updateWallpaperOffsetLocked(window, true);
         }
     }
-
     public Bundle sendWindowWallpaperCommandLocked(WindowState window,
             String action, int x, int y, int z, Bundle extras, boolean sync) {
         if (window == mWallpaperTarget || window == mLowerWallpaperTarget
@@ -2934,15 +2610,12 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             if (doWait) {
                 // XXX Need to wait for result.
             }
         }
-
         return null;
     }
-
     public void setUniverseTransformLocked(WindowState window, float alpha,
             float offx, float offy, float dsdx, float dtdx, float dsdy, float dtdy) {
         Transformation transform = window.mWinAnimator.mUniverseTransform;
@@ -2960,7 +2633,6 @@ public class WindowManagerService extends IWindowManager.Stub
         if (displayContent == null) {
             return;
         }
-
         final DisplayInfo displayInfo = displayContent.getDisplayInfo();
         final RectF dispRect = new RectF(0, 0,
                 displayInfo.logicalWidth, displayInfo.logicalHeight);
@@ -2973,7 +2645,6 @@ public class WindowManagerService extends IWindowManager.Stub
         displayContent.layoutNeeded = true;
         performLayoutAndPlaceSurfacesLocked();
     }
-
     public void onRectangleOnScreenRequested(IBinder token, Rect rectangle) {
         synchronized (mWindowMap) {
             if (mAccessibilityController != null) {
@@ -2985,14 +2656,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public IWindowId getWindowId(IBinder token) {
         synchronized (mWindowMap) {
             WindowState window = mWindowMap.get(token);
             return window != null ? window.mWindowId : null;
         }
     }
-
     public int relayoutWindow(Session session, IWindow client, int seq,
             WindowManager.LayoutParams attrs, int requestedWidth,
             int requestedHeight, int viewVisibility, int flags,
@@ -3007,9 +2676,7 @@ public class WindowManagerService extends IWindowManager.Stub
         boolean hasStatusBarPermission =
                 mContext.checkCallingOrSelfPermission(android.Manifest.permission.STATUS_BAR)
                         == PackageManager.PERMISSION_GRANTED;
-
         long origId = Binder.clearCallingIdentity();
-
         synchronized(mWindowMap) {
             WindowState win = windowForClientLocked(session, client, false);
             if (win == null) {
@@ -3022,11 +2689,9 @@ public class WindowManagerService extends IWindowManager.Stub
                 win.mRequestedWidth = requestedWidth;
                 win.mRequestedHeight = requestedHeight;
             }
-
             if (attrs != null) {
                 mPolicy.adjustWindowParamsLw(attrs);
             }
-
             // if they don't have the permission, mask out the status bar bits
             int systemUiVisibility = 0;
             if (attrs != null) {
@@ -3037,14 +2702,11 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             if (attrs != null && seq == win.mSeq) {
                 win.mSystemUiVisibility = systemUiVisibility;
             }
-
             winAnimator.mSurfaceDestroyDeferred =
                     (flags&WindowManagerGlobal.RELAYOUT_DEFER_SURFACE_DESTROY) != 0;
-
             int attrChanges = 0;
             int flagChanges = 0;
             if (attrs != null) {
@@ -3059,32 +2721,17 @@ public class WindowManagerService extends IWindowManager.Stub
                     win.mLayoutNeeded = true;
                 }
             }
-
             if (DEBUG_LAYOUT) Slog.v(TAG, "Relayout " + win + ": viewVisibility=" + viewVisibility
                     + " req=" + requestedWidth + "x" + requestedHeight + " " + win.mAttrs);
-
-			/**
-			 * Date: Feb 25, 2016
-			 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-			 * 
-			 * Comments
-			 */
-			/*
-            Log.d(TAG, "Relayout " + win + ": viewVisibility=" + viewVisibility
+            Log.d("RUBIS", "Relayout " + win + ": viewVisibility=" + viewVisibility
 					+ " req=" + requestedWidth + "x" + requestedHeight + " " + win.mAttrs);
-			*/
-			// END
-
             win.mEnforceSizeCompat =
                     (win.mAttrs.privateFlags & PRIVATE_FLAG_COMPATIBLE_WINDOW) != 0;
-
             if ((attrChanges & WindowManager.LayoutParams.ALPHA_CHANGED) != 0) {
                 winAnimator.mAlpha = attrs.alpha;
             }
-
             final boolean scaledWindow =
                 ((win.mAttrs.flags & WindowManager.LayoutParams.FLAG_SCALED) != 0);
-
             if (scaledWindow) {
                 // requested{Width|Height} Surface's physical size
                 // attrs.{width|height} Size on screen
@@ -3095,18 +2742,14 @@ public class WindowManagerService extends IWindowManager.Stub
             } else {
                 win.mHScale = win.mVScale = 1;
             }
-
             boolean imMayMove = (flagChanges & (FLAG_ALT_FOCUSABLE_IM | FLAG_NOT_FOCUSABLE)) != 0;
-
             final boolean isDefaultDisplay = win.isDefaultDisplay();
             boolean focusMayChange = isDefaultDisplay && (win.mViewVisibility != viewVisibility
                     || ((flagChanges & FLAG_NOT_FOCUSABLE) != 0)
                     || (!win.mRelayoutCalled));
-
             boolean wallpaperMayMove = win.mViewVisibility != viewVisibility
                     && (win.mAttrs.flags & FLAG_SHOW_WALLPAPER) != 0;
             wallpaperMayMove |= (flagChanges & FLAG_SHOW_WALLPAPER) != 0;
-
             win.mRelayoutCalled = true;
             final int oldVisibility = win.mViewVisibility;
             win.mViewVisibility = viewVisibility;
@@ -3169,7 +2812,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 } catch (Exception e) {
                     mInputMonitor.updateInputWindowsLw(true /*force*/);
-
                     Slog.w(TAG, "Exception thrown when creating surface for client "
                              + client + " (" + win.mAttrs.getTitle() + ")",
                              e);
@@ -3240,11 +2882,9 @@ public class WindowManagerService extends IWindowManager.Stub
                         }
                     }
                 }
-
                 outSurface.release();
                 if (DEBUG_VISIBILITY) Slog.i(TAG, "Releasing surface in: " + win);
             }
-
             if (focusMayChange) {
                 //System.out.println("Focus may change: " + win.mAttrs.getTitle());
                 if (updateFocusedWindowLocked(UPDATE_FOCUS_WILL_PLACE_SURFACES,
@@ -3253,7 +2893,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
                 //System.out.println("Relayout " + win + ": focus=" + mCurrentFocus);
             }
-
             // updateFocusedWindowLocked() already assigned layers so we only need to
             // reassign them at this point if the IM window state gets shuffled
             if (imMayMove && (moveInputMethodWindowsIfNeededLocked(false) || toBeDisplayed)) {
@@ -3264,12 +2903,10 @@ public class WindowManagerService extends IWindowManager.Stub
                 // out of data so we make sure to recompute it.
                 assignLayersLocked(win.getWindowList());
             }
-
             if (wallpaperMayMove) {
                 getDefaultDisplayContentLocked().pendingLayoutChanges |=
                         WindowManagerPolicy.FINISH_LAYOUT_REDO_WALLPAPER;
             }
-
             final DisplayContent displayContent = win.getDisplayContent();
             if (displayContent != null) {
                 displayContent.layoutNeeded = true;
@@ -3297,38 +2934,29 @@ public class WindowManagerService extends IWindowManager.Stub
                 + ", viewVisibility=" + viewVisibility
                 + "\nRelayout returning frame=" + outFrame
                 + ", surface=" + outSurface);
-
             if (localLOGV || DEBUG_FOCUS) Slog.v(
                 TAG, "Relayout of " + win + ": focusMayChange=" + focusMayChange);
-
             inTouchMode = mInTouchMode;
             animating = mAnimator.mAnimating && win.mWinAnimator.isAnimating();
             if (animating && !mRelayoutWhileAnimating.contains(win)) {
                 mRelayoutWhileAnimating.add(win);
             }
-
             mInputMonitor.updateInputWindowsLw(true /*force*/);
-
             if (DEBUG_LAYOUT) {
                 Slog.v(TAG, "Relayout complete " + win + ": outFrame=" + outFrame.toShortString());
             }
         }
-
         if (configChanged) {
             sendNewConfiguration();
         }
-
         Binder.restoreCallingIdentity(origId);
-
         return (inTouchMode ? WindowManagerGlobal.RELAYOUT_RES_IN_TOUCH_MODE : 0)
                 | (toBeDisplayed ? WindowManagerGlobal.RELAYOUT_RES_FIRST_TIME : 0)
                 | (surfaceChanged ? WindowManagerGlobal.RELAYOUT_RES_SURFACE_CHANGED : 0)
                 | (animating ? WindowManagerGlobal.RELAYOUT_RES_ANIMATING : 0);
     }
-
     public void performDeferredDestroyWindow(Session session, IWindow client) {
         long origId = Binder.clearCallingIdentity();
-
         try {
             synchronized (mWindowMap) {
                 WindowState win = windowForClientLocked(session, client, false);
@@ -3341,10 +2969,8 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     public boolean outOfMemoryWindow(Session session, IWindow client) {
         long origId = Binder.clearCallingIdentity();
-
         try {
             synchronized (mWindowMap) {
                 WindowState win = windowForClientLocked(session, client, false);
@@ -3357,7 +2983,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     public void finishDrawingWindow(Session session, IWindow client) {
         final long origId = Binder.clearCallingIdentity();
         try {
@@ -3379,7 +3004,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     private boolean applyAnimationLocked(AppWindowToken atoken,
             WindowManager.LayoutParams lp, int transit, boolean enter, boolean isVoiceInteraction) {
         // Only apply an animation if the display isn't frozen.  If it is
@@ -3392,7 +3016,6 @@ public class WindowManagerService extends IWindowManager.Stub
             final int height = displayInfo.appHeight;
             if (DEBUG_APP_TRANSITIONS || DEBUG_ANIM) Slog.v(TAG, "applyAnimation: atoken="
                     + atoken);
-
             // Determine the visible rect to calculate the thumbnail clip
             WindowState win = atoken.findMainWindow();
             Rect containingFrame = new Rect(0, 0, width, height);
@@ -3410,7 +3033,6 @@ public class WindowManagerService extends IWindowManager.Stub
                                 SYSTEM_UI_FLAGS_LAYOUT_STABLE_FULLSCREEN) ||
                                 ((win.mAttrs.flags & FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) != 0);
             }
-
             if (atoken.mLaunchTaskBehind) {
                 // Differentiate the two animations. This one which is briefly on the screen
                 // gets the !enter animation, and the other activity which remains on the
@@ -3434,14 +3056,11 @@ public class WindowManagerService extends IWindowManager.Stub
         } else {
             atoken.mAppAnimator.clearAnimation();
         }
-
         return atoken.mAppAnimator.animation != null;
     }
-
     // -------------------------------------------------------------
     // Application Window Tokens
     // -------------------------------------------------------------
-
     public void validateAppTokens(int stackId, List<TaskGroup> tasks) {
         synchronized (mWindowMap) {
             int t = tasks.size() - 1;
@@ -3449,7 +3068,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 Slog.w(TAG, "validateAppTokens: empty task list");
                 return;
             }
-
             TaskGroup task = tasks.get(0);
             int taskId = task.taskId;
             Task targetTask = mTaskIdToTask.get(taskId);
@@ -3458,21 +3076,18 @@ public class WindowManagerService extends IWindowManager.Stub
                 Slog.w(TAG, "validateAppTokens: no Display for taskId=" + taskId);
                 return;
             }
-
             final ArrayList<Task> localTasks = mStackIdToStack.get(stackId).getTasks();
             int taskNdx;
             for (taskNdx = localTasks.size() - 1; taskNdx >= 0 && t >= 0; --taskNdx, --t) {
                 AppTokenList localTokens = localTasks.get(taskNdx).mAppTokens;
                 task = tasks.get(t);
                 List<IApplicationToken> tokens = task.tokens;
-
                 DisplayContent lastDisplayContent = displayContent;
                 displayContent = mTaskIdToTask.get(taskId).getDisplayContent();
                 if (displayContent != lastDisplayContent) {
                     Slog.w(TAG, "validateAppTokens: displayContent changed in TaskGroup list!");
                     return;
                 }
-
                 int tokenNdx;
                 int v;
                 for (tokenNdx = localTokens.size() - 1, v = task.tokens.size() - 1;
@@ -3488,12 +3103,10 @@ public class WindowManagerService extends IWindowManager.Stub
                     --tokenNdx;
                     v--;
                 }
-
                 if (tokenNdx >= 0 || v >= 0) {
                     break;
                 }
             }
-
             if (taskNdx >= 0 || t >= 0) {
                 Slog.w(TAG, "validateAppTokens: Mismatch! ActivityManager=" + tasks);
                 Slog.w(TAG, "validateAppTokens: Mismatch! WindowManager=" + localTasks);
@@ -3501,17 +3114,14 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void validateStackOrder(Integer[] remoteStackIds) {
         // TODO:
     }
-
     boolean checkCallingPermission(String permission, String func) {
         // Quick check: if the calling permission is me, it's all okay.
         if (Binder.getCallingPid() == Process.myPid()) {
             return true;
         }
-
         if (mContext.checkCallingPermission(permission)
                 == PackageManager.PERMISSION_GRANTED) {
             return true;
@@ -3523,11 +3133,9 @@ public class WindowManagerService extends IWindowManager.Stub
         Slog.w(TAG, msg);
         return false;
     }
-
     boolean okToDisplay() {
         return !mDisplayFrozen && mDisplayEnabled && mPolicy.isScreenOn();
     }
-
     AppWindowToken findAppWindowToken(IBinder token) {
         WindowToken wtoken = mTokenMap.get(token);
         if (wtoken == null) {
@@ -3535,14 +3143,12 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return wtoken.appWindowToken;
     }
-
     @Override
     public void addWindowToken(IBinder token, int type) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "addWindowToken()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             WindowToken wtoken = mTokenMap.get(token);
             if (wtoken != null) {
@@ -3556,14 +3162,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void removeWindowToken(IBinder token) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "removeWindowToken()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         final long origId = Binder.clearCallingIdentity();
         synchronized(mWindowMap) {
             DisplayContent displayContent = null;
@@ -3573,15 +3177,12 @@ public class WindowManagerService extends IWindowManager.Stub
                 if (!wtoken.hidden) {
                     final int N = wtoken.windows.size();
                     boolean changed = false;
-
                     for (int i=0; i<N; i++) {
                         WindowState win = wtoken.windows.get(i);
                         displayContent = win.getDisplayContent();
-
                         if (win.mWinAnimator.isAnimating()) {
                             delayed = true;
                         }
-
                         if (win.isVisibleNow()) {
                             win.mWinAnimator.applyAnimationLocked(WindowManagerPolicy.TRANSIT_EXIT,
                                     false);
@@ -3596,15 +3197,12 @@ public class WindowManagerService extends IWindowManager.Stub
                             }
                         }
                     }
-
                     wtoken.hidden = true;
-
                     if (changed) {
                         performLayoutAndPlaceSurfacesLocked();
                         updateFocusedWindowLocked(UPDATE_FOCUS_NORMAL,
                                 false /*updateInputWindows*/);
                     }
-
                     if (delayed) {
                         if (displayContent != null) {
                             displayContent.mExitingTokens.add(wtoken);
@@ -3613,7 +3211,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         mWallpaperTokens.remove(wtoken);
                     }
                 }
-
                 mInputMonitor.updateInputWindowsLw(true /*force*/);
             } else {
                 Slog.w(TAG, "Attempted to remove non-existing token: " + token);
@@ -3621,7 +3218,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         Binder.restoreCallingIdentity(origId);
     }
-
     private Task createTask(int taskId, int stackId, int userId, AppWindowToken atoken) {
         if (DEBUG_STACK) Slog.i(TAG, "createTask: taskId=" + taskId + " stackId=" + stackId
                 + " atoken=" + atoken);
@@ -3635,7 +3231,6 @@ public class WindowManagerService extends IWindowManager.Stub
         stack.addTask(task, !atoken.mLaunchTaskBehind /* toTop */);
         return task;
     }
-
     @Override
     public void addAppToken(int addPos, IApplicationToken token, int taskId, int stackId,
             int requestedOrientation, boolean fullscreen, boolean showWhenLocked, int userId,
@@ -3644,7 +3239,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 "addAppToken()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         // Get the dispatching timeout here while we are not holding any locks so that it
         // can be cached by the AppWindowToken.  The timeout value is used later by the
         // input dispatcher in code that does hold locks.  If we did not cache the value
@@ -3658,7 +3252,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Slog.w(TAG, "Could not get dispatching timeout.", ex);
             inputDispatchingTimeoutNanos = DEFAULT_INPUT_DISPATCHING_TIMEOUT_NANOS;
         }
-
         synchronized(mWindowMap) {
             AppWindowToken atoken = findAppWindowToken(token.asBinder());
             if (atoken != null) {
@@ -3676,31 +3269,25 @@ public class WindowManagerService extends IWindowManager.Stub
             atoken.mLaunchTaskBehind = launchTaskBehind;
             if (true || DEBUG_TOKEN_MOVEMENT || DEBUG_ADD_REMOVE) Slog.v(TAG, "addAppToken: " + atoken
                     + " to stack=" + stackId + " task=" + taskId + " at " + addPos);
-
             Task task = mTaskIdToTask.get(taskId);
             if (task == null) {
                 createTask(taskId, stackId, userId, atoken);
             } else {
                 task.addAppToken(addPos, atoken);
             }
-
             mTokenMap.put(token.asBinder(), atoken);
-
             // Application tokens start out hidden.
             atoken.hidden = true;
             atoken.hiddenRequested = true;
-
             //dump();
         }
     }
-
     @Override
     public void setAppGroupId(IBinder token, int groupId) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setAppGroupId()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             final AppWindowToken atoken = findAppWindowToken(token);
             if (atoken == null) {
@@ -3709,7 +3296,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             final Task oldTask = mTaskIdToTask.get(atoken.groupId);
             oldTask.removeAppToken(atoken);
-
             atoken.groupId = groupId;
             Task newTask = mTaskIdToTask.get(groupId);
             if (newTask == null) {
@@ -3719,7 +3305,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public int getOrientationFromWindowsLocked() {
         if (mDisplayFrozen || mOpeningApps.size() > 0 || mClosingApps.size() > 0) {
             // If the display is frozen, some activities may be in the middle
@@ -3729,7 +3314,6 @@ public class WindowManagerService extends IWindowManager.Stub
             // orientation stable until this all settles down.
             return mLastWindowForcedOrientation;
         }
-
         // TODO(multidisplay): Change to the correct display.
         final WindowList windows = getDefaultWindowListLocked();
         int pos = windows.size() - 1;
@@ -3749,13 +3333,11 @@ public class WindowManagerService extends IWindowManager.Stub
                     (req == ActivityInfo.SCREEN_ORIENTATION_BEHIND)){
                 continue;
             }
-
             if (DEBUG_ORIENTATION) Slog.v(TAG, win + " forcing orientation to " + req);
             return (mLastWindowForcedOrientation=req);
         }
         return (mLastWindowForcedOrientation=ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
-
     public int getOrientationFromAppTokensLocked() {
         int lastOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
         boolean findingBehind = false;
@@ -3768,9 +3350,7 @@ public class WindowManagerService extends IWindowManager.Stub
             final int firstToken = tokens.size() - 1;
             for (int tokenNdx = firstToken; tokenNdx >= 0; --tokenNdx) {
                 final AppWindowToken atoken = tokens.get(tokenNdx);
-
                 if (DEBUG_APP_ORIENTATION) Slog.v(TAG, "Checking app orientation: " + atoken);
-
                 // if we're about to tear down this window and not seek for
                 // the behind activity, don't use it for orientation
                 if (!findingBehind
@@ -3779,7 +3359,6 @@ public class WindowManagerService extends IWindowManager.Stub
                             + " -- going to hide");
                     continue;
                 }
-
                 if (tokenNdx == firstToken) {
                     // If we have hit a new Task, and the bottom
                     // of the previous group didn't explicitly say to use
@@ -3793,19 +3372,16 @@ public class WindowManagerService extends IWindowManager.Stub
                         return lastOrientation;
                     }
                 }
-
                 // We ignore any hidden applications on the top.
                 if (atoken.hiddenRequested || atoken.willBeHidden) {
                     if (DEBUG_ORIENTATION) Slog.v(TAG, "Skipping " + atoken
                             + " -- hidden on top");
                     continue;
                 }
-
                 if (tokenNdx == 0) {
                     // Last token in this task.
                     lastOrientation = atoken.requestedOrientation;
                 }
-
                 int or = atoken.requestedOrientation;
                 // If this application is fullscreen, and didn't explicitly say
                 // to use the orientation behind it, then just take whatever
@@ -3831,7 +3407,6 @@ public class WindowManagerService extends IWindowManager.Stub
         if (DEBUG_ORIENTATION) Slog.v(TAG, "No app is requesting an orientation");
         return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
     }
-
     @Override
     public Configuration updateOrientationFromAppTokens(
             Configuration currentConfig, IBinder freezeThisOneIfNeeded) {
@@ -3839,23 +3414,18 @@ public class WindowManagerService extends IWindowManager.Stub
                 "updateOrientationFromAppTokens()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         Configuration config = null;
         long ident = Binder.clearCallingIdentity();
-
         synchronized(mWindowMap) {
             config = updateOrientationFromAppTokensLocked(currentConfig,
                     freezeThisOneIfNeeded);
         }
-
         Binder.restoreCallingIdentity(ident);
         return config;
     }
-
     private Configuration updateOrientationFromAppTokensLocked(
             Configuration currentConfig, IBinder freezeThisOneIfNeeded) {
         Configuration config = null;
-
         if (updateOrientationFromAppTokensLocked(false)) {
             if (freezeThisOneIfNeeded != null) {
                 AppWindowToken atoken = findAppWindowToken(freezeThisOneIfNeeded);
@@ -3864,7 +3434,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
             config = computeNewConfigurationLocked();
-
         } else if (currentConfig != null) {
             // No obvious action we need to take, but if our current
             // state mismatches the activity manager's, update it,
@@ -3888,10 +3457,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         return config;
     }
-
     /*
      * Determine the new desired orientation of the display, returning
      * a non-null new Configuration if it has changed from the current
@@ -3913,7 +3480,6 @@ public class WindowManagerService extends IWindowManager.Stub
             if (req == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED) {
                 req = getOrientationFromAppTokensLocked();
             }
-
             if (req != mForcedAppOrientation) {
                 mForcedAppOrientation = req;
                 //send a message to Policy indicating orientation change to take
@@ -3924,20 +3490,17 @@ public class WindowManagerService extends IWindowManager.Stub
                     return true;
                 }
             }
-
             return false;
         } finally {
             Binder.restoreCallingIdentity(ident);
         }
     }
-
     @Override
     public void setNewConfiguration(Configuration config) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setNewConfiguration()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             mCurConfiguration = new Configuration(config);
             if (mWaitingForConfig) {
@@ -3947,25 +3510,21 @@ public class WindowManagerService extends IWindowManager.Stub
             performLayoutAndPlaceSurfacesLocked();
         }
     }
-
     @Override
     public void setAppOrientation(IApplicationToken token, int requestedOrientation) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setAppOrientation()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             AppWindowToken atoken = findAppWindowToken(token.asBinder());
             if (atoken == null) {
                 Slog.w(TAG, "Attempted to set orientation of non-existing app token: " + token);
                 return;
             }
-
             atoken.requestedOrientation = requestedOrientation;
         }
     }
-
     @Override
     public int getAppOrientation(IApplicationToken token) {
         synchronized(mWindowMap) {
@@ -3973,11 +3532,9 @@ public class WindowManagerService extends IWindowManager.Stub
             if (wtoken == null) {
                 return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
             }
-
             return wtoken.requestedOrientation;
         }
     }
-
     /** Call while in a Surface transaction. */
     void setFocusedStackLayer() {
         mFocusedStackLayer = 0;
@@ -3996,7 +3553,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 mFocusedStackLayer);
         mFocusedStackFrame.setLayer(mFocusedStackLayer);
     }
-
     void setFocusedStackFrame() {
         final TaskStack stack;
         if (mFocusedApp != null) {
@@ -4024,14 +3580,12 @@ public class WindowManagerService extends IWindowManager.Stub
             if (SHOW_LIGHT_TRANSACTIONS) Slog.i(TAG, ">>> CLOSE TRANSACTION setFocusedStackFrame");
         }
     }
-
     @Override
     public void setFocusedApp(IBinder token, boolean moveFocusNow) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setFocusedApp()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             final AppWindowToken newFocus;
             if (token == null) {
@@ -4045,13 +3599,11 @@ public class WindowManagerService extends IWindowManager.Stub
                 if (DEBUG_FOCUS_LIGHT) Slog.v(TAG, "Set focused app to: " + newFocus
                         + " old focus=" + mFocusedApp + " moveFocusNow=" + moveFocusNow);
             }
-
             final boolean changed = mFocusedApp != newFocus;
             if (changed) {
                 mFocusedApp = newFocus;
                 mInputMonitor.setFocusedAppLw(newFocus);
             }
-
             if (moveFocusNow && changed) {
                 final long origId = Binder.clearCallingIdentity();
                 updateFocusedWindowLocked(UPDATE_FOCUS_NORMAL, true /*updateInputWindows*/);
@@ -4059,14 +3611,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void prepareAppTransition(int transit, boolean alwaysKeepCurrent) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "prepareAppTransition()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             if (DEBUG_APP_TRANSITIONS) Slog.v(
                     TAG, "Prepare app transition: transit=" + transit
@@ -4097,12 +3647,10 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public int getPendingAppTransition() {
         return mAppTransition.getAppTransition();
     }
-
     @Override
     public void overridePendingAppTransition(String packageName,
             int enterAnim, int exitAnim, IRemoteCallback startedCallback) {
@@ -4111,7 +3659,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     startedCallback);
         }
     }
-
     @Override
     public void overridePendingAppTransitionScaleUp(int startX, int startY, int startWidth,
             int startHeight) {
@@ -4120,7 +3667,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     startHeight);
         }
     }
-
     @Override
     public void overridePendingAppTransitionThumb(Bitmap srcThumb, int startX,
             int startY, IRemoteCallback startedCallback, boolean scaleUp) {
@@ -4129,7 +3675,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     startedCallback, scaleUp);
         }
     }
-
     @Override
     public void overridePendingAppTransitionAspectScaledThumb(Bitmap srcThumb, int startX,
             int startY, int targetWidth, int targetHeight, IRemoteCallback startedCallback,
@@ -4139,21 +3684,18 @@ public class WindowManagerService extends IWindowManager.Stub
                     startY, targetWidth, targetHeight, startedCallback, scaleUp);
         }
     }
-
     @Override
     public void overridePendingAppTransitionInPlace(String packageName, int anim) {
         synchronized(mWindowMap) {
             mAppTransition.overrideInPlaceAppTransition(packageName, anim);
         }
     }
-
     @Override
     public void executeAppTransition() {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "executeAppTransition()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             if (DEBUG_APP_TRANSITIONS) Slog.w(TAG, "Execute app transition: " + mAppTransition,
                     new RuntimeException("here").fillInStackTrace());
@@ -4168,7 +3710,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void setAppStartingWindow(IBinder token, String pkg,
             int theme, CompatibilityInfo compatInfo,
@@ -4178,29 +3719,24 @@ public class WindowManagerService extends IWindowManager.Stub
                 "setAppStartingWindow()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             if (DEBUG_STARTING_WINDOW) Slog.v(
                     TAG, "setAppStartingWindow: token=" + token + " pkg=" + pkg
                     + " transferFrom=" + transferFrom);
-
             AppWindowToken wtoken = findAppWindowToken(token);
             if (wtoken == null) {
                 Slog.w(TAG, "Attempted to set icon of non-existing app token: " + token);
                 return;
             }
-
             // If the display is frozen, we won't do anything until the
             // actual window is displayed so there is no reason to put in
             // the starting window.
             if (!okToDisplay()) {
                 return;
             }
-
             if (wtoken.startingData != null) {
                 return;
             }
-
             if (transferFrom != null) {
                 AppWindowToken ttoken = findAppWindowToken(transferFrom);
                 if (ttoken != null) {
@@ -4216,7 +3752,6 @@ public class WindowManagerService extends IWindowManager.Stub
                                 "Moving existing starting " + startingWindow + " from " + ttoken
                                 + " to " + wtoken);
                         final long origId = Binder.clearCallingIdentity();
-
                         // Transfer the starting window over to the new
                         // token.
                         wtoken.startingData = ttoken.startingData;
@@ -4233,7 +3768,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         startingWindow.mRootToken = wtoken;
                         startingWindow.mAppToken = wtoken;
                         startingWindow.mWinAnimator.mAppAnimator = wtoken.mAppAnimator;
-
                         if (DEBUG_WINDOW_MOVEMENT || DEBUG_ADD_REMOVE || DEBUG_STARTING_WINDOW) {
                             Slog.v(TAG, "Removing starting window: " + startingWindow);
                         }
@@ -4244,7 +3778,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         ttoken.windows.remove(startingWindow);
                         ttoken.allAppWindows.remove(startingWindow);
                         addWindowToListInOrderLocked(startingWindow, true);
-
                         // Propagate other interesting state between the
                         // tokens.  If the old token is displayed, we should
                         // immediately force the new one to be displayed.  If
@@ -4277,7 +3810,6 @@ public class WindowManagerService extends IWindowManager.Stub
                             wAppAnimator.updateLayers();
                             tAppAnimator.updateLayers();
                         }
-
                         updateFocusedWindowLocked(UPDATE_FOCUS_WILL_PLACE_SURFACES,
                                 true /*updateInputWindows*/);
                         getDefaultDisplayContentLocked().layoutNeeded = true;
@@ -4317,13 +3849,11 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             // There is no existing starting window, and the caller doesn't
             // want us to create one, so that's it!
             if (!createIfNeeded) {
                 return;
             }
-
             // If this is a translucent window, then don't
             // show a starting window -- the current effect (a full-screen
             // opaque starting window that fades away to the real contents
@@ -4369,7 +3899,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             if (DEBUG_STARTING_WINDOW) Slog.v(TAG, "Creating StartingData");
             mStartingIconInTransition = true;
             wtoken.startingData = new StartingData(pkg, theme, compatInfo, nonLocalizedLabel,
@@ -4382,7 +3911,6 @@ public class WindowManagerService extends IWindowManager.Stub
             mH.sendMessageAtFrontOfQueue(m);
         }
     }
-
     public void removeAppStartingWindow(IBinder token) {
         synchronized (mWindowMap) {
             AppWindowToken wtoken = mTokenMap.get(token).appWindowToken;
@@ -4391,16 +3919,13 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void setAppWillBeHidden(IBinder token) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setAppWillBeHidden()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         AppWindowToken wtoken;
-
         synchronized(mWindowMap) {
             wtoken = findAppWindowToken(token);
             if (wtoken == null) {
@@ -4410,7 +3935,6 @@ public class WindowManagerService extends IWindowManager.Stub
             wtoken.willBeHidden = true;
         }
     }
-
     public void setAppFullscreen(IBinder token, boolean toOpaque) {
         synchronized (mWindowMap) {
             AppWindowToken atoken = findAppWindowToken(token);
@@ -4421,13 +3945,11 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void setWindowOpaque(IBinder token, boolean isOpaque) {
         synchronized (mWindowMap) {
             setWindowOpaqueLocked(token, isOpaque);
         }
     }
-
     public void setWindowOpaqueLocked(IBinder token, boolean isOpaque) {
         AppWindowToken wtoken = findAppWindowToken(token);
         if (wtoken != null) {
@@ -4437,25 +3959,20 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     boolean setTokenVisibilityLocked(AppWindowToken wtoken, WindowManager.LayoutParams lp,
             boolean visible, int transit, boolean performLayout, boolean isVoiceInteraction) {
         boolean delayed = false;
-
         if (wtoken.clientHidden == visible) {
             wtoken.clientHidden = !visible;
             wtoken.sendAppVisibilityToClients();
         }
-
         wtoken.willBeHidden = false;
         if (wtoken.hidden == visible) {
             boolean changed = false;
             if (DEBUG_APP_TRANSITIONS) Slog.v(
                 TAG, "Changing app " + wtoken + " hidden=" + wtoken.hidden
                 + " performLayout=" + performLayout);
-
             boolean runningAppAnimation = false;
-
             if (transit != AppTransition.TRANSIT_UNSET) {
                 if (wtoken.mAppAnimator.animation == AppWindowAnimator.sDummyAnimation) {
                     wtoken.mAppAnimator.animation = null;
@@ -4471,14 +3988,12 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
                 changed = true;
             }
-
             final int N = wtoken.allAppWindows.size();
             for (int i=0; i<N; i++) {
                 WindowState win = wtoken.allAppWindows.get(i);
                 if (win == wtoken.startingWindow) {
                     continue;
                 }
-
                 //Slog.i(TAG, "Window " + win + ": vis=" + win.isVisible());
                 //win.dump("  ");
                 if (visible) {
@@ -4517,7 +4032,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             wtoken.hidden = wtoken.hiddenRequested = !visible;
             if (!visible) {
                 unsetAppFreezingScreenLocked(wtoken, true, true);
@@ -4530,11 +4044,9 @@ public class WindowManagerService extends IWindowManager.Stub
                     swin.mPolicyVisibilityAfterAnim = false;
                  }
             }
-
             if (DEBUG_APP_TRANSITIONS) Slog.v(TAG, "setTokenVisibilityLocked: " + wtoken
                       + ": hidden=" + wtoken.hidden + " hiddenRequested="
                       + wtoken.hiddenRequested);
-
             if (changed) {
                 mInputMonitor.setUpdateInputWindowsNeededLw();
                 if (performLayout) {
@@ -4545,20 +4057,16 @@ public class WindowManagerService extends IWindowManager.Stub
                 mInputMonitor.updateInputWindowsLw(false /*force*/);
             }
         }
-
         if (wtoken.mAppAnimator.animation != null) {
             delayed = true;
         }
-
         for (int i = wtoken.allAppWindows.size() - 1; i >= 0 && !delayed; i--) {
             if (wtoken.allAppWindows.get(i).mWinAnimator.isWindowAnimating()) {
                 delayed = true;
             }
         }
-
         return delayed;
     }
-
     void updateTokenInPlaceLocked(AppWindowToken wtoken, int transit) {
         if (transit != AppTransition.TRANSIT_UNSET) {
             if (wtoken.mAppAnimator.animation == AppWindowAnimator.sDummyAnimation) {
@@ -4567,34 +4075,28 @@ public class WindowManagerService extends IWindowManager.Stub
             applyAnimationLocked(wtoken, null, transit, false, false);
         }
     }
-
     @Override
     public void setAppVisibility(IBinder token, boolean visible) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setAppVisibility()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         AppWindowToken wtoken;
-
         synchronized(mWindowMap) {
             wtoken = findAppWindowToken(token);
             if (wtoken == null) {
                 Slog.w(TAG, "Attempted to set visibility of non-existing app token: " + token);
                 return;
             }
-
             if (DEBUG_APP_TRANSITIONS || DEBUG_ORIENTATION) Slog.v(TAG, "setAppVisibility(" +
                     token + ", visible=" + visible + "): " + mAppTransition +
                     " hidden=" + wtoken.hidden + " hiddenRequested=" +
                     wtoken.hiddenRequested, HIDE_STACK_CRAWLS ?
                             null : new RuntimeException("here").fillInStackTrace());
-
             // If we are preparing an app transition, then delay changing
             // the visibility of this token until we execute that transition.
             if (okToDisplay() && mAppTransition.isTransitionSet()) {
                 wtoken.hiddenRequested = !visible;
-
                 if (!wtoken.startingDisplayed) {
                     if (DEBUG_APP_TRANSITIONS) Slog.v(
                             TAG, "Setting dummy animation on: " + wtoken);
@@ -4608,7 +4110,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     mOpeningApps.add(wtoken);
                     wtoken.startingMoved = false;
                     wtoken.mEnteringAnimation = true;
-
                     // If the token is currently hidden (should be the
                     // common case), then we need to set up to wait for
                     // its windows to be ready.
@@ -4616,7 +4117,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         wtoken.allDrawn = false;
                         wtoken.deferClearAllDrawn = false;
                         wtoken.waitingToShow = true;
-
                         if (wtoken.clientHidden) {
                             // In the case where we are making an app visible
                             // but holding off for a transition, we still need
@@ -4631,7 +4131,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 } else {
                     mClosingApps.add(wtoken);
                     wtoken.mEnteringAnimation = false;
-
                     // If the token is currently visible (should be the
                     // common case), then set up to wait for it to be hidden.
                     if (!wtoken.hidden) {
@@ -4655,7 +4154,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
                 return;
             }
-
             final long origId = Binder.clearCallingIdentity();
             setTokenVisibilityLocked(wtoken, null, visible, AppTransition.TRANSIT_UNSET,
                     true, wtoken.voiceInteraction);
@@ -4663,7 +4161,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     void unsetAppFreezingScreenLocked(AppWindowToken wtoken,
             boolean unfreezeSurfaceNow, boolean force) {
         if (wtoken.mAppAnimator.freezingScreen) {
@@ -4704,7 +4201,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     private void startAppFreezingScreenLocked(AppWindowToken wtoken) {
         if (DEBUG_ORIENTATION) {
             RuntimeException e = null;
@@ -4734,20 +4230,17 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void startAppFreezingScreen(IBinder token, int configChanges) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setAppFreezingScreen()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             if (configChanges == 0 && okToDisplay()) {
                 if (DEBUG_ORIENTATION) Slog.v(TAG, "Skipping set freeze of " + token);
                 return;
             }
-
             AppWindowToken wtoken = findAppWindowToken(token);
             if (wtoken == null || wtoken.appToken == null) {
                 Slog.w(TAG, "Attempted to freeze screen with non-existing app token: " + wtoken);
@@ -4758,14 +4251,12 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     @Override
     public void stopAppFreezingScreen(IBinder token, boolean force) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setAppFreezingScreen()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized(mWindowMap) {
             AppWindowToken wtoken = findAppWindowToken(token);
             if (wtoken == null || wtoken.appToken == null) {
@@ -4778,10 +4269,8 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     void removeAppFromTaskLocked(AppWindowToken wtoken) {
         wtoken.removeAllWindows();
-
         final Task task = mTaskIdToTask.get(wtoken.groupId);
         if (task != null) {
             if (!task.removeAppToken(wtoken)) {
@@ -4789,18 +4278,15 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void removeAppToken(IBinder token) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "removeAppToken()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         AppWindowToken wtoken = null;
         AppWindowToken startingToken = null;
         boolean delayed = false;
-
         final long origId = Binder.clearCallingIdentity();
         synchronized(mWindowMap) {
             WindowToken basewtoken = mTokenMap.remove(token);
@@ -4839,7 +4325,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     wtoken.mAppAnimator.animating = false;
                     removeAppFromTaskLocked(wtoken);
                 }
-
                 wtoken.removed = true;
                 if (wtoken.startingData != null) {
                     startingToken = wtoken;
@@ -4854,18 +4339,14 @@ public class WindowManagerService extends IWindowManager.Stub
             } else {
                 Slog.w(TAG, "Attempted to remove non-existing app token: " + token);
             }
-
             if (!delayed && wtoken != null) {
                 wtoken.updateReportedVisibilityLocked();
             }
-
             // Will only remove if startingToken non null.
             scheduleRemoveStartingWindowLocked(startingToken);
         }
         Binder.restoreCallingIdentity(origId);
-
     }
-
     void scheduleRemoveStartingWindowLocked(AppWindowToken wtoken) {
         if (mH.hasMessages(H.REMOVE_STARTING, wtoken)) {
             // Already scheduled.
@@ -4879,7 +4360,6 @@ public class WindowManagerService extends IWindowManager.Stub
             mH.sendMessage(m);
         }
     }
-
     private boolean tmpRemoveAppWindowsLocked(WindowToken token) {
         WindowList windows = token.windows;
         final int NW = windows.size();
@@ -4901,7 +4381,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return NW > 0;
     }
-
     void dumpAppTokensLocked() {
         final int numStacks = mStackIdToStack.size();
         for (int stackNdx = 0; stackNdx < numStacks; ++stackNdx) {
@@ -4921,31 +4400,42 @@ public class WindowManagerService extends IWindowManager.Stub
         }
     }
 
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *   
+	 * Dump all windows.
+	 */
     void dumpWindowsLocked() {
         final int numDisplays = mDisplayContents.size();
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
             final DisplayContent displayContent = mDisplayContents.valueAt(displayNdx);
             Slog.v(TAG, " Display #" + displayContent.getDisplayId());
             final WindowList windows = displayContent.getWindowList();
+			WindowState win = null;
             for (int winNdx = windows.size() - 1; winNdx >= 0; --winNdx) {
-                Slog.v(TAG, "  #" + winNdx + ": " + windows.get(winNdx));
+				win = windows.get(winNdx);
+                Slog.v(TAG, win.layerStack + "  #" + winNdx + ": " + win + " ("+win.isVisibleNow()+")");
             }
         }
     }
+	// END
 
 	/**
-	 * Date: Feb 25, 2016
+	 * Date: Apr 7, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Dump windows for given window list.
 	 *
 	 * @param windows
 	 * @return void
 	 */
-	void dumpWindowList(WindowList windows) {
+	public void dumpWindowList(WindowList windows) {
 		Slog.d(TAG, "dumpWindowList(), windows.size()="+windows.size());
+		WindowState win = null;
 		for (int winNdx = windows.size()-1; winNdx >= 0; --winNdx) {
-            Slog.v(TAG, "  #" + winNdx + ": " + windows.get(winNdx));
+    		win = windows.get(winNdx);
+            Slog.v(TAG, "  #" + winNdx + ": " + win + " ("+win.isVisibleNow()+")");
         }
 	}
 	// END
@@ -4965,7 +4455,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         final WindowList windows = displayContent.getWindowList();
         final int NW = windows.size();
-
         boolean found = false;
         final ArrayList<Task> tasks = displayContent.getTasks();
         for (int taskNdx = tasks.size() - 1; taskNdx >= 0; --taskNdx) {
@@ -5020,7 +4509,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return 0;
     }
-
     private final int reAddWindowLocked(int index, WindowState win) {
         final WindowList windows = win.getWindowList();
         final int NCW = win.mChildWindows.size();
@@ -5051,7 +4539,6 @@ public class WindowManagerService extends IWindowManager.Stub
         mWindowsChanged = true;
         return index;
     }
-
     private final int reAddAppWindowsLocked(final DisplayContent displayContent, int index,
                                             WindowToken token) {
         final int NW = token.windows.size();
@@ -5065,14 +4552,12 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return index;
     }
-
     void tmpRemoveTaskWindowsLocked(Task task) {
         AppTokenList tokens = task.mAppTokens;
         for (int tokenNdx = tokens.size() - 1; tokenNdx >= 0; --tokenNdx) {
             tmpRemoveAppWindowsLocked(tokens.get(tokenNdx));
         }
     }
-
     void moveStackWindowsLocked(DisplayContent displayContent) {
         // First remove all of the windows from the list.
         final ArrayList<Task> tasks = displayContent.getTasks();
@@ -5080,7 +4565,6 @@ public class WindowManagerService extends IWindowManager.Stub
         for (int taskNdx = 0; taskNdx < numTasks; ++taskNdx) {
             tmpRemoveTaskWindowsLocked(tasks.get(taskNdx));
         }
-
         // And now add them back at the correct place.
         // Where to start adding?
         for (int taskNdx = 0; taskNdx < numTasks; ++taskNdx) {
@@ -5101,19 +4585,15 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         if (!updateFocusedWindowLocked(UPDATE_FOCUS_WILL_PLACE_SURFACES,
                 false /*updateInputWindows*/)) {
             assignLayersLocked(displayContent.getWindowList());
         }
-
         mInputMonitor.setUpdateInputWindowsNeededLw();
         performLayoutAndPlaceSurfacesLocked();
         mInputMonitor.updateInputWindowsLw(false /*force*/);
-
         //dump();
     }
-
     public void moveTaskToTop(int taskId) {
         final long origId = Binder.clearCallingIdentity();
         try {
@@ -5144,7 +4624,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     public void moveTaskToBottom(int taskId) {
         final long origId = Binder.clearCallingIdentity();
         try {
@@ -5166,7 +4645,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     /**
      * Create a new TaskStack and place it on a DisplayContent.
      * @param stackId The unique identifier of the new stack.
@@ -5197,12 +4675,10 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     void detachStackLocked(DisplayContent displayContent, TaskStack stack) {
         displayContent.detachStack(stack);
         stack.detachDisplay();
     }
-
     public void detachStack(int stackId) {
         synchronized (mWindowMap) {
             TaskStack stack = mStackIdToStack.get(stackId);
@@ -5218,11 +4694,9 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void removeStack(int stackId) {
         mStackIdToStack.remove(stackId);
     }
-
     void removeTaskLocked(Task task) {
         final int taskId = task.taskId;
         final TaskStack stack = task.mStack;
@@ -5236,7 +4710,6 @@ public class WindowManagerService extends IWindowManager.Stub
         task.mDeferRemoval = false;
         stack.removeTask(task);
         mTaskIdToTask.delete(task.taskId);
-
         final ArrayList<AppWindowToken> exitingApps = stack.mExitingAppTokens;
         for (int appNdx = exitingApps.size() - 1; appNdx >= 0; --appNdx) {
             final AppWindowToken wtoken = exitingApps.get(appNdx);
@@ -5246,7 +4719,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void removeTask(int taskId) {
         synchronized (mWindowMap) {
             Task task = mTaskIdToTask.get(taskId);
@@ -5257,7 +4729,6 @@ public class WindowManagerService extends IWindowManager.Stub
             removeTaskLocked(task);
         }
     }
-
     public void addTask(int taskId, int stackId, boolean toTop) {
         synchronized (mWindowMap) {
             if (DEBUG_STACK) Slog.i(TAG, "addTask: adding taskId=" + taskId
@@ -5273,7 +4744,6 @@ public class WindowManagerService extends IWindowManager.Stub
             performLayoutAndPlaceSurfacesLocked();
         }
     }
-
     public void resizeStack(int stackId, Rect bounds) {
         synchronized (mWindowMap) {
             final TaskStack stack = mStackIdToStack.get(stackId);
@@ -5288,7 +4758,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void getStackBounds(int stackId, Rect bounds) {
         final TaskStack stack = mStackIdToStack.get(stackId);
         if (stack != null) {
@@ -5297,18 +4766,15 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         bounds.setEmpty();
     }
-
     // -------------------------------------------------------------
     // Misc IWindowSession methods
     // -------------------------------------------------------------
-
     @Override
     public void startFreezingScreen(int exitAnim, int enterAnim) {
         if (!checkCallingPermission(android.Manifest.permission.FREEZE_SCREEN,
                 "startFreezingScreen()")) {
             throw new SecurityException("Requires FREEZE_SCREEN permission");
         }
-
         synchronized(mWindowMap) {
             if (!mClientFreezingScreen) {
                 mClientFreezingScreen = true;
@@ -5323,14 +4789,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void stopFreezingScreen() {
         if (!checkCallingPermission(android.Manifest.permission.FREEZE_SCREEN,
                 "stopFreezingScreen()")) {
             throw new SecurityException("Requires FREEZE_SCREEN permission");
         }
-
         synchronized(mWindowMap) {
             if (mClientFreezingScreen) {
                 mClientFreezingScreen = false;
@@ -5344,37 +4808,30 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void disableKeyguard(IBinder token, String tag) {
         if (mContext.checkCallingOrSelfPermission(android.Manifest.permission.DISABLE_KEYGUARD)
             != PackageManager.PERMISSION_GRANTED) {
             throw new SecurityException("Requires DISABLE_KEYGUARD permission");
         }
-
         if (token == null) {
             throw new IllegalArgumentException("token == null");
         }
-
         mKeyguardDisableHandler.sendMessage(mKeyguardDisableHandler.obtainMessage(
                 KeyguardDisableHandler.KEYGUARD_DISABLE, new Pair<IBinder, String>(token, tag)));
     }
-
     @Override
     public void reenableKeyguard(IBinder token) {
         if (mContext.checkCallingOrSelfPermission(android.Manifest.permission.DISABLE_KEYGUARD)
             != PackageManager.PERMISSION_GRANTED) {
             throw new SecurityException("Requires DISABLE_KEYGUARD permission");
         }
-
         if (token == null) {
             throw new IllegalArgumentException("token == null");
         }
-
         mKeyguardDisableHandler.sendMessage(mKeyguardDisableHandler.obtainMessage(
                 KeyguardDisableHandler.KEYGUARD_REENABLE, token));
     }
-
     /**
      * @see android.app.KeyguardManager#exitKeyguardSecurely
      */
@@ -5384,11 +4841,9 @@ public class WindowManagerService extends IWindowManager.Stub
             != PackageManager.PERMISSION_GRANTED) {
             throw new SecurityException("Requires DISABLE_KEYGUARD permission");
         }
-
         if (callback == null) {
             throw new IllegalArgumentException("callback == null");
         }
-
         mPolicy.exitKeyguardSecurely(new WindowManagerPolicy.OnKeyguardExitResult() {
             @Override
             public void onKeyguardExitResult(boolean success) {
@@ -5400,17 +4855,14 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         });
     }
-
     @Override
     public boolean inKeyguardRestrictedInputMode() {
         return mPolicy.inKeyguardRestrictedKeyInputMode();
     }
-
     @Override
     public boolean isKeyguardLocked() {
         return mPolicy.isKeyguardLocked();
     }
-
     @Override
     public boolean isKeyguardSecure() {
         long origId = Binder.clearCallingIdentity();
@@ -5420,7 +4872,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(origId);
         }
     }
-
     @Override
     public void dismissKeyguard() {
         if (mContext.checkCallingOrSelfPermission(android.Manifest.permission.DISABLE_KEYGUARD)
@@ -5431,7 +4882,6 @@ public class WindowManagerService extends IWindowManager.Stub
             mPolicy.dismissKeyguardLw();
         }
     }
-
     @Override
     public void keyguardGoingAway(boolean disableWindowAnimations,
             boolean keyguardGoingToNotificationShade) {
@@ -5448,14 +4898,12 @@ public class WindowManagerService extends IWindowManager.Stub
             requestTraversalLocked();
         }
     }
-
     public void keyguardWaitingForActivityDrawn() {
         if (DEBUG_KEYGUARD) Slog.d(TAG, "keyguardWaitingForActivityDrawn");
         synchronized (mWindowMap) {
             mKeyguardWaitingForActivityDrawn = true;
         }
     }
-
     public void notifyActivityDrawnForKeyguard() {
         if (DEBUG_KEYGUARD) Slog.d(TAG, "notifyActivityDrawnForKeyguard: waiting="
                 + mKeyguardWaitingForActivityDrawn + " Callers=" + Debug.getCallers(5));
@@ -5466,11 +4914,9 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     void showGlobalActions() {
         mPolicy.showGlobalActions();
     }
-
     @Override
     public void closeSystemDialogs(String reason) {
         synchronized(mWindowMap) {
@@ -5490,38 +4936,32 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     static float fixScale(float scale) {
         if (scale < 0) scale = 0;
         else if (scale > 20) scale = 20;
         return Math.abs(scale);
     }
-
     @Override
     public void setAnimationScale(int which, float scale) {
         if (!checkCallingPermission(android.Manifest.permission.SET_ANIMATION_SCALE,
                 "setAnimationScale()")) {
             throw new SecurityException("Requires SET_ANIMATION_SCALE permission");
         }
-
         scale = fixScale(scale);
         switch (which) {
             case 0: mWindowAnimationScaleSetting = scale; break;
             case 1: mTransitionAnimationScaleSetting = scale; break;
             case 2: mAnimatorDurationScaleSetting = scale; break;
         }
-
         // Persist setting
         mH.sendEmptyMessage(H.PERSIST_ANIMATION_SCALE);
     }
-
     @Override
     public void setAnimationScales(float[] scales) {
         if (!checkCallingPermission(android.Manifest.permission.SET_ANIMATION_SCALE,
                 "setAnimationScale()")) {
             throw new SecurityException("Requires SET_ANIMATION_SCALE permission");
         }
-
         if (scales != null) {
             if (scales.length >= 1) {
                 mWindowAnimationScaleSetting = fixScale(scales[0]);
@@ -5534,24 +4974,19 @@ public class WindowManagerService extends IWindowManager.Stub
                 dispatchNewAnimatorScaleLocked(null);
             }
         }
-
         // Persist setting
         mH.sendEmptyMessage(H.PERSIST_ANIMATION_SCALE);
     }
-
     private void setAnimatorDurationScale(float scale) {
         mAnimatorDurationScaleSetting = scale;
         ValueAnimator.setDurationScale(scale);
     }
-
     public float getWindowAnimationScaleLocked() {
         return mAnimationsDisabled ? 0 : mWindowAnimationScaleSetting;
     }
-
     public float getTransitionAnimationScaleLocked() {
         return mAnimationsDisabled ? 0 : mTransitionAnimationScaleSetting;
     }
-
     @Override
     public float getAnimationScale(int which) {
         switch (which) {
@@ -5561,39 +4996,33 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return 0;
     }
-
     @Override
     public float[] getAnimationScales() {
         return new float[] { mWindowAnimationScaleSetting, mTransitionAnimationScaleSetting,
                 mAnimatorDurationScaleSetting };
     }
-
     @Override
     public float getCurrentAnimatorScale() {
         synchronized(mWindowMap) {
             return mAnimationsDisabled ? 0 : mAnimatorDurationScaleSetting;
         }
     }
-
     void dispatchNewAnimatorScaleLocked(Session session) {
         mH.obtainMessage(H.NEW_ANIMATOR_SCALE, session).sendToTarget();
     }
-
     @Override
     public void registerPointerEventListener(PointerEventListener listener) {
         mPointerEventDispatcher.registerInputEventListener(listener);
     }
-
     @Override
     public void unregisterPointerEventListener(PointerEventListener listener) {
         mPointerEventDispatcher.unregisterInputEventListener(listener);
     }
-
 	/**
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Set forced rotation configuration.
 	 *
 	 * @param rotation
 	 * @return void
@@ -5602,7 +5031,6 @@ public class WindowManagerService extends IWindowManager.Stub
         mPolicy.setForcedRotation(rotation);
     }
     // END
-
     // Called by window manager policy. Not exposed externally.
     @Override
     public int getLidState() {
@@ -5619,7 +5047,6 @@ public class WindowManagerService extends IWindowManager.Stub
             return LID_ABSENT;
         }
     }
-
     // Called by window manager policy. Not exposed externally.
     @Override
     public int getCameraLensCoverState() {
@@ -5636,38 +5063,32 @@ public class WindowManagerService extends IWindowManager.Stub
             return CAMERA_LENS_COVER_ABSENT;
         }
     }
-
     // Called by window manager policy.  Not exposed externally.
     @Override
     public void switchKeyboardLayout(int deviceId, int direction) {
         mInputManager.switchKeyboardLayout(deviceId, direction);
     }
-
     // Called by window manager policy.  Not exposed externally.
     @Override
     public void shutdown(boolean confirm) {
         ShutdownThread.shutdown(mContext, confirm);
     }
-
     // Called by window manager policy.  Not exposed externally.
     @Override
     public void rebootSafeMode(boolean confirm) {
         ShutdownThread.rebootSafeMode(mContext, confirm);
     }
-
     public void setCurrentProfileIds(final int[] currentProfileIds) {
         synchronized (mWindowMap) {
             mCurrentProfileIds = currentProfileIds;
         }
     }
-
     public void setCurrentUser(final int newUserId, final int[] currentProfileIds) {
         synchronized (mWindowMap) {
             mCurrentUserId = newUserId;
             mCurrentProfileIds = currentProfileIds;
             mAppTransition.setCurrentUser(newUserId);
             mPolicy.setCurrentUserLw(newUserId);
-
             // Hide windows that should not be seen by the new user.
             final int numDisplays = mDisplayContents.size();
             for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
@@ -5678,7 +5099,6 @@ public class WindowManagerService extends IWindowManager.Stub
             performLayoutAndPlaceSurfacesLocked();
         }
     }
-
     /* Called by WindowState */
     boolean isCurrentProfileLocked(int userId) {
         if (userId == mCurrentUserId) return true;
@@ -5687,7 +5107,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return false;
     }
-
     public void enableScreenAfterBoot() {
         synchronized(mWindowMap) {
             if (DEBUG_BOOT) {
@@ -5707,19 +5126,15 @@ public class WindowManagerService extends IWindowManager.Stub
             // up and turn it on.
             mH.sendEmptyMessageDelayed(H.BOOT_TIMEOUT, 30*1000);
         }
-
         mPolicy.systemBooted();
-
         performEnableScreen();
     }
-
     @Override
     public void enableScreenIfNeeded() {
         synchronized (mWindowMap) {
             enableScreenIfNeededLocked();
         }
     }
-
     void enableScreenIfNeededLocked() {
         if (DEBUG_BOOT) {
             RuntimeException here = new RuntimeException("here");
@@ -5737,7 +5152,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         mH.sendEmptyMessage(H.ENABLE_SCREEN);
     }
-
     public void performBootTimeout() {
         synchronized(mWindowMap) {
             if (mDisplayEnabled) {
@@ -5748,9 +5162,7 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         performEnableScreen();
     }
-
     private boolean checkWaitingForWindowsLocked() {
-
         boolean haveBootMsg = false;
         boolean haveApp = false;
         // if the wallpaper service is disabled on the device, we're never going to have
@@ -5780,20 +5192,17 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         if (DEBUG_SCREEN_ON || DEBUG_BOOT) {
             Slog.i(TAG, "******** booted=" + mSystemBooted + " msg=" + mShowingBootMessages
                     + " haveBoot=" + haveBootMsg + " haveApp=" + haveApp
                     + " haveWall=" + haveWallpaper + " wallEnabled=" + wallpaperEnabled
                     + " haveKeyguard=" + haveKeyguard);
         }
-
         // If we are turning on the screen to show the boot message,
         // don't do it until the boot message is actually displayed.
         if (!mSystemBooted && !haveBootMsg) {
             return true;
         }
-
         // If we are turning on the screen after the boot is completed
         // normally, don't do so until we have the application and
         // wallpaper.
@@ -5801,10 +5210,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 (wallpaperEnabled && !haveWallpaper))) {
             return true;
         }
-
         return false;
     }
-
     public void performEnableScreen() {
         synchronized(mWindowMap) {
             if (DEBUG_BOOT) Slog.i(TAG, "performEnableScreen: mDisplayEnabled=" + mDisplayEnabled
@@ -5819,12 +5226,10 @@ public class WindowManagerService extends IWindowManager.Stub
             if (!mSystemBooted && !mShowingBootMessages) {
                 return;
             }
-
             // Don't enable the screen until all existing windows have been drawn.
             if (!mForceDisplayEnabled && checkWaitingForWindowsLocked()) {
                 return;
             }
-
             if (!mBootAnimationStopped) {
                 // Do this one time.
                 try {
@@ -5842,30 +5247,23 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
                 mBootAnimationStopped = true;
             }
-
             if (!mForceDisplayEnabled && !checkBootAnimationCompleteLocked()) {
                 if (DEBUG_BOOT) Slog.i(TAG, "performEnableScreen: Waiting for anim complete");
                 return;
             }
-
             mDisplayEnabled = true;
             if (DEBUG_SCREEN_ON || DEBUG_BOOT) Slog.i(TAG, "******************** ENABLING SCREEN!");
-
             // Enable input dispatch.
             mInputMonitor.setEventDispatchingLw(mEventDispatchingEnabled);
         }
-
         try {
             mActivityManager.bootAnimationComplete();
         } catch (RemoteException e) {
         }
-
         mPolicy.enableScreenAfterBoot();
-
         // Make sure the last requested orientation has been applied.
         updateRotationUnchecked(false, false);
     }
-
     private boolean checkBootAnimationCompleteLocked() {
         if (SystemService.isRunning(BOOT_ANIMATION_SERVICE)) {
             mH.removeMessages(H.CHECK_IF_BOOT_ANIMATION_FINISHED);
@@ -5877,7 +5275,6 @@ public class WindowManagerService extends IWindowManager.Stub
         if (DEBUG_BOOT) Slog.i(TAG, "checkBootAnimationComplete: Animation complete!");
         return true;
     }
-
     public void showBootMessage(final CharSequence msg, final boolean always) {
         boolean first = false;
         synchronized(mWindowMap) {
@@ -5908,7 +5305,6 @@ public class WindowManagerService extends IWindowManager.Stub
             performEnableScreen();
         }
     }
-
     public void hideBootMessagesLocked() {
         if (DEBUG_BOOT) {
             RuntimeException here = new RuntimeException("here");
@@ -5923,14 +5319,12 @@ public class WindowManagerService extends IWindowManager.Stub
             mPolicy.hideBootMessages();
         }
     }
-
     @Override
     public void setInTouchMode(boolean mode) {
         synchronized(mWindowMap) {
             mInTouchMode = mode;
         }
     }
-
     public void updateCircularDisplayMaskIfNeeded() {
         // we're fullscreen and not hosted in an ActivityView
         if (mContext.getResources().getBoolean(
@@ -5948,7 +5342,6 @@ public class WindowManagerService extends IWindowManager.Stub
             mH.sendMessage(m);
         }
     }
-
     public void showEmulatorDisplayOverlayIfNeeded() {
         if (mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_windowEnableCircularEmulatorDisplayOverlay)
@@ -5957,10 +5350,8 @@ public class WindowManagerService extends IWindowManager.Stub
             mH.sendMessage(mH.obtainMessage(H.SHOW_EMULATOR_DISPLAY_OVERLAY));
         }
     }
-
     public void showCircularMask(boolean visible) {
         synchronized(mWindowMap) {
-
             if (SHOW_LIGHT_TRANSACTIONS) Slog.i(TAG,
                     ">>> OPEN TRANSACTION showCircularMask(visible=" + visible + ")");
             SurfaceControl.openTransaction();
@@ -5970,7 +5361,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     if (mCircularDisplayMask == null) {
                         int screenOffset = mContext.getResources().getDimensionPixelSize(
                                 com.android.internal.R.dimen.circular_display_mask_offset);
-
                         mCircularDisplayMask = new CircularDisplayMask(
                                 getDefaultDisplayContentLocked().getDisplay(),
                                 mFxSession,
@@ -5990,10 +5380,8 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void showEmulatorDisplayOverlay() {
         synchronized(mWindowMap) {
-
             if (SHOW_LIGHT_TRANSACTIONS) Slog.i(TAG,
                     ">>> OPEN TRANSACTION showEmulatorDisplayOverlay");
             SurfaceControl.openTransaction();
@@ -6015,7 +5403,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     // TODO: more accounting of which pid(s) turned it on, keep count,
     // only allow disables from pids which have count on, etc.
     @Override
@@ -6023,7 +5410,6 @@ public class WindowManagerService extends IWindowManager.Stub
         int pid = Binder.getCallingPid();
         mH.sendMessage(mH.obtainMessage(H.SHOW_STRICT_MODE_VIOLATION, on ? 1 : 0, pid));
     }
-
     private void showStrictModeViolation(int arg, int pid) {
         final boolean on = arg != 0;
         synchronized(mWindowMap) {
@@ -6048,7 +5434,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     return;
                 }
             }
-
             if (SHOW_LIGHT_TRANSACTIONS) Slog.i(TAG,
                     ">>> OPEN TRANSACTION showStrictModeViolation");
             SurfaceControl.openTransaction();
@@ -6066,12 +5451,10 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void setStrictModeVisualIndicatorPreference(String value) {
         SystemProperties.set(StrictMode.VISUAL_PROPERTY, value);
     }
-
     private static void convertCropForSurfaceFlinger(Rect crop, int rot, int dw, int dh) {
         if (rot == Surface.ROTATION_90) {
             final int tmp = crop.top;
@@ -6094,7 +5477,6 @@ public class WindowManagerService extends IWindowManager.Stub
             crop.right = dh - tmp;
         }
     }
-
     /**
      * Takes a snapshot of the screen.  In landscape mode this grabs the whole screen.
      * In portrait mode, it grabs the upper region of the screen based on the vertical dimension
@@ -6113,7 +5495,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 "screenshotApplications()")) {
             throw new SecurityException("Requires READ_FRAME_BUFFER permission");
         }
-
         final DisplayContent displayContent = getDisplayContentLocked(displayId);
         if (displayContent == null) {
             if (DEBUG_SCREENSHOT) Slog.i(TAG, "Screenshot of " + appToken
@@ -6128,16 +5509,12 @@ public class WindowManagerService extends IWindowManager.Stub
                     + ": returning null. logical widthxheight=" + dw + "x" + dh);
             return null;
         }
-
         Bitmap bm = null;
-
         int maxLayer = 0;
         final Rect frame = new Rect();
         final Rect stackBounds = new Rect();
-
         float scale = 0;
         int rot = Surface.ROTATION_0;
-
         boolean screenshotReady;
         int minLayer;
         if (appToken == null) {
@@ -6147,18 +5524,14 @@ public class WindowManagerService extends IWindowManager.Stub
             screenshotReady = false;
             minLayer = Integer.MAX_VALUE;
         }
-
         int retryCount = 0;
         WindowState appWin = null;
-
         final boolean appIsImTarget = mInputMethodTarget != null
                 && mInputMethodTarget.mAppToken != null
                 && mInputMethodTarget.mAppToken.appToken != null
                 && mInputMethodTarget.mAppToken.appToken.asBinder() == appToken;
-
         final int aboveAppLayer = (mPolicy.windowTypeToLayerLw(TYPE_APPLICATION) + 1)
                 * TYPE_LAYER_MULTIPLIER + TYPE_LAYER_OFFSET;
-
         while (true) {
             if (retryCount++ > 0) {
                 // Reset max/min layers on retries so we don't accidentally take a screenshot of a
@@ -6206,9 +5579,7 @@ public class WindowManagerService extends IWindowManager.Stub
                         }
                         appWin = ws;
                     }
-
                     // Include this window.
-
                     final WindowStateAnimator winAnim = ws.mWinAnimator;
                     if (maxLayer < winAnim.mSurfaceLayer) {
                         maxLayer = winAnim.mSurfaceLayer;
@@ -6216,7 +5587,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     if (minLayer > winAnim.mSurfaceLayer) {
                         minLayer = winAnim.mSurfaceLayer;
                     }
-
                     // Don't include wallpaper in bounds calculation
                     if (!ws.mIsWallpaper) {
                         final Rect wf = ws.mFrame;
@@ -6229,20 +5599,17 @@ public class WindowManagerService extends IWindowManager.Stub
                         ws.getStackBounds(stackBounds);
                         frame.intersect(stackBounds);
                     }
-
                     if (ws.mAppToken != null && ws.mAppToken.token == appToken &&
                             ws.isDisplayedLw()) {
                         screenshotReady = true;
                     }
                 }
-
                 if (appToken != null && appWin == null) {
                     // Can't find a window to snapshot.
                     if (DEBUG_SCREENSHOT) Slog.i(TAG,
                             "Screenshot: Couldn't find a surface matching " + appToken);
                     return null;
                 }
-
                 if (!screenshotReady) {
                     if (retryCount > MAX_SCREENSHOT_RETRIES) {
                         Slog.i(TAG, "Screenshot max retries " + retryCount + " of " + appToken +
@@ -6250,27 +5617,22 @@ public class WindowManagerService extends IWindowManager.Stub
                                 appWin.mWinAnimator.mDrawState)));
                         return null;
                     }
-
                     // Delay and hope that window gets drawn.
                     if (DEBUG_SCREENSHOT) Slog.i(TAG, "Screenshot: No image ready for " + appToken
                             + ", " + appWin + " drawState=" + appWin.mWinAnimator.mDrawState);
                     continue;
                 }
-
                 // Screenshot is ready to be taken. Everything from here below will continue
                 // through the bottom of the loop and return a value. We only stay in the loop
                 // because we don't want to release the mWindowMap lock until the screenshot is
                 // taken.
-
                 if (maxLayer == 0) {
                     if (DEBUG_SCREENSHOT) Slog.i(TAG, "Screenshot of " + appToken
                             + ": returning null maxLayer=" + maxLayer);
                     return null;
                 }
-
                 // Constrain frame to the screen size.
                 frame.intersect(0, 0, dw, dh);
-
                 // Tell surface flinger what part of the image to crop. Take the top
                 // right part of the application, and crop the larger dimension to fit.
                 Rect crop = new Rect(frame);
@@ -6281,18 +5643,14 @@ public class WindowManagerService extends IWindowManager.Stub
                     int cropHeight = (int)((float)height / (float)width * frame.width());
                     crop.bottom = crop.top + cropHeight;
                 }
-
                 // The screenshot API does not apply the current screen rotation.
                 rot = getDefaultDisplayContentLocked().getDisplay().getRotation();
-
                 if (rot == Surface.ROTATION_90 || rot == Surface.ROTATION_270) {
                     rot = (rot == Surface.ROTATION_90) ? Surface.ROTATION_270 : Surface.ROTATION_90;
                 }
-
                 // Surfaceflinger is not aware of orientation, so convert our logical
                 // crop to surfaceflinger's portrait orientation.
                 convertCropForSurfaceFlinger(crop, rot, dw, dh);
-
                 if (DEBUG_SCREENSHOT) {
                     Slog.i(TAG, "Screenshot: " + dw + "x" + dh + " from " + minLayer + " to "
                             + maxLayer + " appToken=" + appToken);
@@ -6303,14 +5661,12 @@ public class WindowManagerService extends IWindowManager.Stub
                                 + " surfaceLayer=" + win.mWinAnimator.mSurfaceLayer);
                     }
                 }
-
                 ScreenRotationAnimation screenRotationAnimation =
                         mAnimator.getScreenRotationAnimationLocked(Display.DEFAULT_DISPLAY);
                 final boolean inRotation = screenRotationAnimation != null &&
                         screenRotationAnimation.isAnimating();
                 if (DEBUG_SCREENSHOT && inRotation) Slog.v(TAG,
                         "Taking screenshot while rotating");
-
                 bm = SurfaceControl.screenshot(crop, width, height, minLayer, maxLayer,
                         inRotation, rot);
                 if (bm == null) {
@@ -6319,10 +5675,8 @@ public class WindowManagerService extends IWindowManager.Stub
                     return null;
                 }
             }
-
             break;
         }
-
         if (DEBUG_SCREENSHOT) {
             // TEST IF IT's ALL BLACK
             int[] buffer = new int[bm.getWidth() * bm.getHeight()];
@@ -6342,7 +5696,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         " minLayer=" + minLayer + " maxLayer=" + maxLayer);
             }
         }
-
         // Copy the screenshot bitmap to another buffer so that the gralloc backed
         // bitmap will not have a long lifetime. Gralloc memory can be pinned or
         // duplicated and might have a higher cost than a skia backed buffer.
@@ -6350,7 +5703,6 @@ public class WindowManagerService extends IWindowManager.Stub
         bm.recycle();
         return ret;
     }
-
     /**
      * Freeze rotation changes.  (Enable "rotation lock".)
      * Persists across reboots.
@@ -6367,9 +5719,7 @@ public class WindowManagerService extends IWindowManager.Stub
             throw new IllegalArgumentException("Rotation argument must be -1 or a valid "
                     + "rotation constant.");
         }
-
         if (DEBUG_ORIENTATION) Slog.v(TAG, "freezeRotation: mRotation=" + mRotation);
-
         long origId = Binder.clearCallingIdentity();
         try {
             mPolicy.setUserRotationMode(WindowManagerPolicy.USER_ROTATION_LOCKED,
@@ -6377,10 +5727,8 @@ public class WindowManagerService extends IWindowManager.Stub
         } finally {
             Binder.restoreCallingIdentity(origId);
         }
-
         updateRotationUnchecked(false, false);
     }
-
     /**
      * Thaw rotation changes.  (Disable "rotation lock".)
      * Persists across reboots.
@@ -6391,9 +5739,7 @@ public class WindowManagerService extends IWindowManager.Stub
                 "thawRotation()")) {
             throw new SecurityException("Requires SET_ORIENTATION permission");
         }
-
         if (DEBUG_ORIENTATION) Slog.v(TAG, "thawRotation: mRotation=" + mRotation);
-
         long origId = Binder.clearCallingIdentity();
         try {
             mPolicy.setUserRotationMode(WindowManagerPolicy.USER_ROTATION_FREE,
@@ -6401,10 +5747,8 @@ public class WindowManagerService extends IWindowManager.Stub
         } finally {
             Binder.restoreCallingIdentity(origId);
         }
-
         updateRotationUnchecked(false, false);
     }
-
     /**
      * Recalculate the current rotation.
      *
@@ -6416,7 +5760,6 @@ public class WindowManagerService extends IWindowManager.Stub
     public void updateRotation(boolean alwaysSendConfiguration, boolean forceRelayout) {
         updateRotationUnchecked(alwaysSendConfiguration, forceRelayout);
     }
-
     /**
      * Temporarily pauses rotation changes until resumed.
      *
@@ -6429,7 +5772,6 @@ public class WindowManagerService extends IWindowManager.Stub
     void pauseRotationLocked() {
         mDeferredRotationPauseCount += 1;
     }
-
     /**
      * Resumes normal rotation changes after being paused.
      */
@@ -6444,11 +5786,9 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void updateRotationUnchecked(boolean alwaysSendConfiguration, boolean forceRelayout) {
         if(DEBUG_ORIENTATION) Slog.v(TAG, "updateRotationUnchecked("
                    + "alwaysSendConfiguration=" + alwaysSendConfiguration + ")");
-
         long origId = Binder.clearCallingIdentity();
         boolean changed;
         synchronized(mWindowMap) {
@@ -6458,14 +5798,11 @@ public class WindowManagerService extends IWindowManager.Stub
                 performLayoutAndPlaceSurfacesLocked();
             }
         }
-
         if (changed || alwaysSendConfiguration) {
             sendNewConfiguration();
         }
-
         Binder.restoreCallingIdentity(origId);
     }
-
     // TODO(multidisplay): Rotate any display?
     /**
      * Updates the current rotation.
@@ -6480,7 +5817,6 @@ public class WindowManagerService extends IWindowManager.Stub
             if (DEBUG_ORIENTATION) Slog.v(TAG, "Deferring rotation, rotation is paused.");
             return false;
         }
-
         ScreenRotationAnimation screenRotationAnimation =
                 mAnimator.getScreenRotationAnimationLocked(Display.DEFAULT_DISPLAY);
         if (screenRotationAnimation != null && screenRotationAnimation.isAnimating()) {
@@ -6490,45 +5826,37 @@ public class WindowManagerService extends IWindowManager.Stub
             if (DEBUG_ORIENTATION) Slog.v(TAG, "Deferring rotation, animation in progress.");
             return false;
         }
-
         if (!mDisplayEnabled) {
             // No point choosing a rotation if the display is not enabled.
             if (DEBUG_ORIENTATION) Slog.v(TAG, "Deferring rotation, display is not enabled.");
             return false;
         }
-
         // TODO: Implement forced rotation changes.
         //       Set mAltOrientation to indicate that the application is receiving
         //       an orientation that has different metrics than it expected.
         //       eg. Portrait instead of Landscape.
-
         int rotation = mPolicy.rotationForOrientationLw(mForcedAppOrientation, mRotation);
         boolean altOrientation = !mPolicy.rotationHasCompatibleMetricsLw(
                 mForcedAppOrientation, rotation);
-
         if (DEBUG_ORIENTATION) {
             Slog.v(TAG, "Application requested orientation "
                     + mForcedAppOrientation + ", got rotation " + rotation
                     + " which has " + (altOrientation ? "incompatible" : "compatible")
                     + " metrics");
         }
-
         if (mRotation == rotation && mAltOrientation == altOrientation) {
             // No change.
             return false;
         }
-
         if (DEBUG_ORIENTATION) {
             Slog.v(TAG,
                 "Rotation changed to " + rotation + (altOrientation ? " (alt)" : "")
                 + " from " + mRotation + (mAltOrientation ? " (alt)" : "")
                 + ", forceApp=" + mForcedAppOrientation);
         }
-
         mRotation = rotation;
         mAltOrientation = altOrientation;
         mPolicy.setRotationLw(mRotation);
-
         mWindowsFreezingScreen = true;
         mH.removeMessages(H.WINDOW_FREEZE_TIMEOUT);
         mH.sendEmptyMessageDelayed(H.WINDOW_FREEZE_TIMEOUT, WINDOW_FREEZE_TIMEOUT_DURATION);
@@ -6545,7 +5873,6 @@ public class WindowManagerService extends IWindowManager.Stub
         // startFreezingDisplayLocked can reset the ScreenRotationAnimation.
         screenRotationAnimation =
                 mAnimator.getScreenRotationAnimationLocked(Display.DEFAULT_DISPLAY);
-
         // We need to update our screen size information to match the new
         // rotation.  Note that this is redundant with the later call to
         // sendNewConfiguration() that must be called after this function
@@ -6553,7 +5880,6 @@ public class WindowManagerService extends IWindowManager.Stub
         // before then so we have the correct size to use when initializing
         // the rotation animation for the new rotation.
         computeScreenConfigurationLocked(null);
-
         final DisplayInfo displayInfo = displayContent.getDisplayInfo();
         if (!inTransaction) {
             if (SHOW_TRANSACTIONS) {
@@ -6573,7 +5899,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     scheduleAnimationLocked();
                 }
             }
-
             mDisplayManagerInternal.performTraversalInTransactionFromWindowManager();
         } finally {
             if (!inTransaction) {
@@ -6583,7 +5908,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         final WindowList windows = displayContent.getWindowList();
         for (int i = windows.size() - 1; i >= 0; i--) {
             WindowState w = windows.get(i);
@@ -6594,14 +5918,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             w.mLastFreezeDuration = 0;
         }
-
         for (int i=mRotationWatchers.size()-1; i>=0; i--) {
             try {
                 mRotationWatchers.get(i).watcher.onRotationChanged(rotation);
             } catch (RemoteException e) {
             }
         }
-
         //TODO (multidisplay): Magnification is supported only for the default display.
         // Announce rotation only if we will not animate as we already have the
         // windows in final state. Otherwise, we make this call at the rotation end.
@@ -6610,20 +5932,16 @@ public class WindowManagerService extends IWindowManager.Stub
             mAccessibilityController.onRotationChangedLocked(getDefaultDisplayContentLocked(),
                     rotation);
         }
-
         return true;
     }
-
     @Override
     public int getRotation() {
         return mRotation;
     }
-
     @Override
     public boolean isRotationFrozen() {
         return mPolicy.getUserRotationMode() == WindowManagerPolicy.USER_ROTATION_LOCKED;
     }
-
     @Override
     public int watchRotation(IRotationWatcher watcher) {
         final IBinder watcherBinder = watcher.asBinder();
@@ -6644,7 +5962,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         };
-
         synchronized (mWindowMap) {
             try {
                 watcher.asBinder().linkToDeath(dr, 0);
@@ -6652,11 +5969,9 @@ public class WindowManagerService extends IWindowManager.Stub
             } catch (RemoteException e) {
                 // Client died, no cleanup needed.
             }
-
             return mRotation;
         }
     }
-
     @Override
     public void removeRotationWatcher(IRotationWatcher watcher) {
         final IBinder watcherBinder = watcher.asBinder();
@@ -6674,7 +5989,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     /**
      * Apps that use the compact menu panel (as controlled by the panelMenuIsCompact
      * theme attribute) on devices that feature a physical options menu key attempt to position
@@ -6696,7 +6010,6 @@ public class WindowManagerService extends IWindowManager.Stub
     public int getPreferredOptionsPanelGravity() {
         synchronized (mWindowMap) {
             final int rotation = getRotation();
-
             // TODO(multidisplay): Assume that such devices physical keys are on the main screen.
             final DisplayContent displayContent = getDefaultDisplayContentLocked();
             if (displayContent.mInitialDisplayWidth < displayContent.mInitialDisplayHeight) {
@@ -6713,7 +6026,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         return Gravity.START | Gravity.BOTTOM;
                 }
             }
-
             // On devices with a natural orientation of landscape
             switch (rotation) {
                 default:
@@ -6728,7 +6040,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     /**
      * Starts the view server on the specified port.
      *
@@ -6744,15 +6055,12 @@ public class WindowManagerService extends IWindowManager.Stub
         if (isSystemSecure()) {
             return false;
         }
-
         if (!checkCallingPermission(Manifest.permission.DUMP, "startViewServer")) {
             return false;
         }
-
         if (port < 1024) {
             return false;
         }
-
         if (mViewServer != null) {
             if (!mViewServer.isRunning()) {
                 try {
@@ -6763,7 +6071,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             return false;
         }
-
         try {
             mViewServer = new ViewServer(this, port);
             return mViewServer.start();
@@ -6772,12 +6079,10 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return false;
     }
-
     private boolean isSystemSecure() {
         return "1".equals(SystemProperties.get(SYSTEM_SECURE, "1")) &&
                 "0".equals(SystemProperties.get(SYSTEM_DEBUGGABLE, "0"));
     }
-
     /**
      * Stops the view server if it exists.
      *
@@ -6791,17 +6096,14 @@ public class WindowManagerService extends IWindowManager.Stub
         if (isSystemSecure()) {
             return false;
         }
-
         if (!checkCallingPermission(Manifest.permission.DUMP, "stopViewServer")) {
             return false;
         }
-
         if (mViewServer != null) {
             return mViewServer.stop();
         }
         return false;
     }
-
     /**
      * Indicates whether the view server is running.
      *
@@ -6814,14 +6116,11 @@ public class WindowManagerService extends IWindowManager.Stub
         if (isSystemSecure()) {
             return false;
         }
-
         if (!checkCallingPermission(Manifest.permission.DUMP, "isViewServerRunning")) {
             return false;
         }
-
         return mViewServer != null && mViewServer.isRunning();
     }
-
     /**
      * Lists all availble windows in the system. The listing is written in the
      * specified Socket's output stream with the following syntax:
@@ -6835,9 +6134,7 @@ public class WindowManagerService extends IWindowManager.Stub
         if (isSystemSecure()) {
             return false;
         }
-
         boolean result = true;
-
         WindowList windows = new WindowList();
         synchronized (mWindowMap) {
             //noinspection unchecked
@@ -6847,14 +6144,11 @@ public class WindowManagerService extends IWindowManager.Stub
                 windows.addAll(displayContent.getWindowList());
             }
         }
-
         BufferedWriter out = null;
-
         // Any uncaught exception will crash the system process
         try {
             OutputStream clientStream = client.getOutputStream();
             out = new BufferedWriter(new OutputStreamWriter(clientStream), 8 * 1024);
-
             final int count = windows.size();
             for (int i = 0; i < count; i++) {
                 final WindowState w = windows.get(i);
@@ -6863,7 +6157,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 out.append(w.mAttrs.getTitle());
                 out.write('\n');
             }
-
             out.write("DONE.\n");
             out.flush();
         } catch (Exception e) {
@@ -6877,10 +6170,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         return result;
     }
-
     // TODO(multidisplay): Extend to multiple displays.
     /**
      * Returns the focused window in the following format:
@@ -6893,18 +6184,13 @@ public class WindowManagerService extends IWindowManager.Stub
         if (isSystemSecure()) {
             return false;
         }
-
         boolean result = true;
-
         WindowState focusedWindow = getFocusedWindow();
-
         BufferedWriter out = null;
-
         // Any uncaught exception will crash the system process
         try {
             OutputStream clientStream = client.getOutputStream();
             out = new BufferedWriter(new OutputStreamWriter(clientStream), 8 * 1024);
-
             if(focusedWindow != null) {
                 out.write(Integer.toHexString(System.identityHashCode(focusedWindow)));
                 out.write(' ');
@@ -6923,10 +6209,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         return result;
     }
-
     /**
      * Sends a command to a target window. The result of the command, if any, will be
      * written in the output stream of the specified socket.
@@ -6951,13 +6235,10 @@ public class WindowManagerService extends IWindowManager.Stub
         if (isSystemSecure()) {
             return false;
         }
-
         boolean success = true;
         Parcel data = null;
         Parcel reply = null;
-
         BufferedWriter out = null;
-
         // Any uncaught exception will crash the system process
         try {
             // Find the hashcode of the window
@@ -6967,40 +6248,32 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             final String code = parameters.substring(0, index);
             int hashCode = (int) Long.parseLong(code, 16);
-
             // Extract the command's parameter after the window description
             if (index < parameters.length()) {
                 parameters = parameters.substring(index + 1);
             } else {
                 parameters = "";
             }
-
             final WindowState window = findWindow(hashCode);
             if (window == null) {
                 return false;
             }
-
             data = Parcel.obtain();
             data.writeInterfaceToken("android.view.IWindow");
             data.writeString(command);
             data.writeString(parameters);
             data.writeInt(1);
             ParcelFileDescriptor.fromSocket(client).writeToParcel(data, 0);
-
             reply = Parcel.obtain();
-
             final IBinder binder = window.mClient.asBinder();
             // TODO: GET THE TRANSACTION CODE IN A SAFER MANNER
             binder.transact(IBinder.FIRST_CALL_TRANSACTION, data, reply, 0);
-
             reply.readException();
-
             if (!client.isOutputShutdown()) {
                 out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
                 out.write("DONE\n");
                 out.flush();
             }
-
         } catch (Exception e) {
             Slog.w(TAG, "Could not send command " + command + " with parameters " + parameters, e);
             success = false;
@@ -7015,26 +6288,21 @@ public class WindowManagerService extends IWindowManager.Stub
                 try {
                     out.close();
                 } catch (IOException e) {
-
                 }
             }
         }
-
         return success;
     }
-
     public void addWindowChangeListener(WindowChangeListener listener) {
         synchronized(mWindowMap) {
             mWindowChangeListeners.add(listener);
         }
     }
-
     public void removeWindowChangeListener(WindowChangeListener listener) {
         synchronized(mWindowMap) {
             mWindowChangeListeners.remove(listener);
         }
     }
-
     private void notifyWindowsChanged() {
         WindowChangeListener[] windowChangeListeners;
         synchronized(mWindowMap) {
@@ -7049,7 +6317,6 @@ public class WindowManagerService extends IWindowManager.Stub
             windowChangeListeners[i].windowsChanged();
         }
     }
-
     private void notifyFocusChanged() {
         WindowChangeListener[] windowChangeListeners;
         synchronized(mWindowMap) {
@@ -7064,13 +6331,11 @@ public class WindowManagerService extends IWindowManager.Stub
             windowChangeListeners[i].focusChanged();
         }
     }
-
     private WindowState findWindow(int hashCode) {
         if (hashCode == -1) {
             // TODO(multidisplay): Extend to multiple displays.
             return getFocusedWindow();
         }
-
         synchronized (mWindowMap) {
             final int numDisplays = mDisplayContents.size();
             for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
@@ -7084,10 +6349,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         return null;
     }
-
     /*
      * Instruct the Activity Manager to fetch the current configuration and broadcast
      * that to config-changed listeners if appropriate.
@@ -7098,7 +6361,6 @@ public class WindowManagerService extends IWindowManager.Stub
         } catch (RemoteException e) {
         }
     }
-
     public Configuration computeNewConfiguration() {
         synchronized (mWindowMap) {
             Configuration config = computeNewConfigurationLocked();
@@ -7111,7 +6373,6 @@ public class WindowManagerService extends IWindowManager.Stub
             return config;
         }
     }
-
     Configuration computeNewConfigurationLocked() {
         Configuration config = new Configuration();
         config.fontScale = 0;
@@ -7120,7 +6381,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return config;
     }
-
     private void adjustDisplaySizeRanges(DisplayInfo displayInfo, int rotation, int dw, int dh) {
         // TODO: Multidisplay: for now only use with default display.
         final int width = mPolicy.getConfigDisplayWidth(dw, dh, rotation);
@@ -7138,14 +6398,12 @@ public class WindowManagerService extends IWindowManager.Stub
             displayInfo.largestNominalAppHeight = height;
         }
     }
-
     private int reduceConfigLayout(int curLayout, int rotation, float density,
             int dw, int dh) {
         // TODO: Multidisplay: for now only use with default display.
         // Get the app screen size at this rotation.
         int w = mPolicy.getNonDecorDisplayWidth(dw, dh, rotation);
         int h = mPolicy.getNonDecorDisplayHeight(dw, dh, rotation);
-
         // Compute the screen layout size class for this rotation.
         int longSize = w;
         int shortSize = h;
@@ -7158,11 +6416,9 @@ public class WindowManagerService extends IWindowManager.Stub
         shortSize = (int)(shortSize/density);
         return Configuration.reduceScreenLayout(curLayout, longSize, shortSize);
     }
-
     private void computeSizeRangesAndScreenLayout(DisplayInfo displayInfo, boolean rotated,
                   int dw, int dh, float density, Configuration outConfig) {
         // TODO: Multidisplay: for now only use with default display.
-
         // We need to determine the smallest width that will occur under normal
         // operation.  To this, start with the base screen size and compute the
         // width under the different possible rotations.  We need to un-rotate
@@ -7191,7 +6447,6 @@ public class WindowManagerService extends IWindowManager.Stub
         outConfig.smallestScreenWidthDp = (int)(displayInfo.smallestNominalAppWidth / density);
         outConfig.screenLayout = sl;
     }
-
     private int reduceCompatConfigWidthSize(int curSize, int rotation, DisplayMetrics dm,
             int dw, int dh) {
         // TODO: Multidisplay: for now only use with default display.
@@ -7204,7 +6459,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return curSize;
     }
-
     private int computeCompatSmallestWidth(boolean rotated, DisplayMetrics dm, int dw, int dh) {
         // TODO: Multidisplay: for now only use with default display.
         mTmpDisplayMetrics.setTo(dm);
@@ -7223,15 +6477,12 @@ public class WindowManagerService extends IWindowManager.Stub
         sw = reduceCompatConfigWidthSize(sw, Surface.ROTATION_270, tmpDm, unrotDh, unrotDw);
         return sw;
     }
-
     boolean computeScreenConfigurationLocked(Configuration config) {
         if (!mDisplayReady) {
             return false;
         }
-
         // TODO(multidisplay): For now, apply Configuration to main screen only.
         final DisplayContent displayContent = getDefaultDisplayContentLocked();
-
         // Use the effective "visual" dimensions based on current rotation
         final boolean rotated = (mRotation == Surface.ROTATION_90
                 || mRotation == Surface.ROTATION_270);
@@ -7241,7 +6492,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 displayContent.mBaseDisplayWidth : displayContent.mBaseDisplayHeight;
         int dw = realdw;
         int dh = realdh;
-
         if (mAltOrientation) {
             if (realdw > realdh) {
                 // Turn landscape into portrait.
@@ -7257,12 +6507,10 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         if (config != null) {
             config.orientation = (dw <= dh) ? Configuration.ORIENTATION_PORTRAIT :
                     Configuration.ORIENTATION_LANDSCAPE;
         }
-
         // Update application display metrics.
         final int appWidth = mPolicy.getNonDecorDisplayWidth(dw, dh, mRotation);
         final int appHeight = mPolicy.getNonDecorDisplayHeight(dw, dh, mRotation);
@@ -7283,29 +6531,24 @@ public class WindowManagerService extends IWindowManager.Stub
         if (false) {
             Slog.i(TAG, "Set app display size: " + appWidth + " x " + appHeight);
         }
-
         final DisplayMetrics dm = mDisplayMetrics;
         mCompatibleScreenScale = CompatibilityInfo.computeCompatibleScaling(dm,
                 mCompatDisplayMetrics);
-
         if (config != null) {
             config.screenWidthDp = (int)(mPolicy.getConfigDisplayWidth(dw, dh, mRotation)
                     / dm.density);
             config.screenHeightDp = (int)(mPolicy.getConfigDisplayHeight(dw, dh, mRotation)
                     / dm.density);
             computeSizeRangesAndScreenLayout(displayInfo, rotated, dw, dh, dm.density, config);
-
             config.compatScreenWidthDp = (int)(config.screenWidthDp / mCompatibleScreenScale);
             config.compatScreenHeightDp = (int)(config.screenHeightDp / mCompatibleScreenScale);
             config.compatSmallestScreenWidthDp = computeCompatSmallestWidth(rotated, dm, dw, dh);
             config.densityDpi = displayContent.mBaseDisplayDensity;
-
             // Update the configuration based on available input devices, lid switch,
             // and platform configuration.
             config.touchscreen = Configuration.TOUCHSCREEN_NOTOUCH;
             config.keyboard = Configuration.KEYBOARD_NOKEYS;
             config.navigation = Configuration.NAVIGATION_NONAV;
-
             int keyboardPresence = 0;
             int navigationPresence = 0;
             final InputDevice[] devices = mInputManager.getInputDevices();
@@ -7317,7 +6560,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     final int presenceFlag = device.isExternal() ?
                             WindowManagerPolicy.PRESENCE_EXTERNAL :
                                     WindowManagerPolicy.PRESENCE_INTERNAL;
-
                     if (mIsTouchDevice) {
                         if ((sources & InputDevice.SOURCE_TOUCHSCREEN) ==
                                 InputDevice.SOURCE_TOUCHSCREEN) {
@@ -7326,7 +6568,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     } else {
                         config.touchscreen = Configuration.TOUCHSCREEN_NOTOUCH;
                     }
-
                     if ((sources & InputDevice.SOURCE_TRACKBALL) == InputDevice.SOURCE_TRACKBALL) {
                         config.navigation = Configuration.NAVIGATION_TRACKBALL;
                         navigationPresence |= presenceFlag;
@@ -7335,19 +6576,16 @@ public class WindowManagerService extends IWindowManager.Stub
                         config.navigation = Configuration.NAVIGATION_DPAD;
                         navigationPresence |= presenceFlag;
                     }
-
                     if (device.getKeyboardType() == InputDevice.KEYBOARD_TYPE_ALPHABETIC) {
                         config.keyboard = Configuration.KEYBOARD_QWERTY;
                         keyboardPresence |= presenceFlag;
                     }
                 }
             }
-
             if (config.navigation == Configuration.NAVIGATION_NONAV && mHasPermanentDpad) {
                 config.navigation = Configuration.NAVIGATION_DPAD;
                 navigationPresence |= WindowManagerPolicy.PRESENCE_INTERNAL;
             }
-
             // Determine whether a hard keyboard is available and enabled.
             boolean hardKeyboardAvailable = config.keyboard != Configuration.KEYBOARD_NOKEYS;
             if (hardKeyboardAvailable != mHardKeyboardAvailable) {
@@ -7358,23 +6596,19 @@ public class WindowManagerService extends IWindowManager.Stub
             if (mShowImeWithHardKeyboard) {
                 config.keyboard = Configuration.KEYBOARD_NOKEYS;
             }
-
             // Let the policy update hidden states.
             config.keyboardHidden = Configuration.KEYBOARDHIDDEN_NO;
             config.hardKeyboardHidden = Configuration.HARDKEYBOARDHIDDEN_NO;
             config.navigationHidden = Configuration.NAVIGATIONHIDDEN_NO;
             mPolicy.adjustConfigurationLw(config, keyboardPresence, navigationPresence);
         }
-
         return true;
     }
-
     public boolean isHardKeyboardAvailable() {
         synchronized (mWindowMap) {
             return mHardKeyboardAvailable;
         }
     }
-
     public void updateShowImeWithHardKeyboard() {
         final boolean showImeWithHardKeyboard = Settings.Secure.getIntForUser(
                 mContext.getContentResolver(), Settings.Secure.SHOW_IME_WITH_HARD_KEYBOARD, 0,
@@ -7386,14 +6620,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void setOnHardKeyboardStatusChangeListener(
             OnHardKeyboardStatusChangeListener listener) {
         synchronized (mWindowMap) {
             mHardKeyboardStatusChangeListener = listener;
         }
     }
-
     void notifyHardKeyboardStatusChange() {
         final boolean available;
         final OnHardKeyboardStatusChangeListener listener;
@@ -7405,11 +6637,9 @@ public class WindowManagerService extends IWindowManager.Stub
             listener.onHardKeyboardStatusChange(available);
         }
     }
-
     // -------------------------------------------------------------
     // Drag and drop
     // -------------------------------------------------------------
-
     IBinder prepareDragSurface(IWindow window, SurfaceSession session,
             int flags, int width, int height, Surface outSurface) {
         if (DEBUG_DRAG) {
@@ -7417,11 +6647,9 @@ public class WindowManagerService extends IWindowManager.Stub
                     + " flags=" + Integer.toHexString(flags) + " win=" + window
                     + " asbinder=" + window.asBinder());
         }
-
         final int callerPid = Binder.getCallingPid();
         final long origId = Binder.clearCallingIdentity();
         IBinder token = null;
-
         try {
             synchronized (mWindowMap) {
                 try {
@@ -7439,7 +6667,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         token = new Binder();
                         mDragState = new DragState(this, token, surface, /*flags*/ 0, winBinder);
                         token = mDragState.mToken = new Binder();
-
                         // 5 second timeout for this window to actually begin the drag
                         mH.removeMessages(H.DRAG_START_TIMEOUT, winBinder);
                         Message msg = mH.obtainMessage(H.DRAG_START_TIMEOUT, winBinder);
@@ -7458,24 +6685,19 @@ public class WindowManagerService extends IWindowManager.Stub
         } finally {
             Binder.restoreCallingIdentity(origId);
         }
-
         return token;
     }
-
     // -------------------------------------------------------------
     // Input Events and Focus Management
     // -------------------------------------------------------------
-
     final InputMonitor mInputMonitor = new InputMonitor(this);
     private boolean mEventDispatchingEnabled;
-
     @Override
     public void pauseKeyDispatching(IBinder _token) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "pauseKeyDispatching()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized (mWindowMap) {
             WindowToken token = mTokenMap.get(_token);
             if (token != null) {
@@ -7483,14 +6705,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void resumeKeyDispatching(IBinder _token) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "resumeKeyDispatching()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized (mWindowMap) {
             WindowToken token = mTokenMap.get(_token);
             if (token != null) {
@@ -7498,14 +6718,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void setEventDispatching(boolean enabled) {
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setEventDispatching()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
         }
-
         synchronized (mWindowMap) {
             mEventDispatchingEnabled = enabled;
             if (mDisplayEnabled) {
@@ -7513,17 +6731,14 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     private WindowState getFocusedWindow() {
         synchronized (mWindowMap) {
             return getFocusedWindowLocked();
         }
     }
-
     private WindowState getFocusedWindowLocked() {
         return mCurrentFocus;
     }
-
     public boolean detectSafeMode() {
         if (!mInputMonitor.waitForInputDevicesReady(
                 INPUT_DEVICES_READY_FOR_SAFE_MODE_DETECTION_TIMEOUT_MILLIS)) {
@@ -7531,7 +6746,6 @@ public class WindowManagerService extends IWindowManager.Stub
                    + INPUT_DEVICES_READY_FOR_SAFE_MODE_DETECTION_TIMEOUT_MILLIS
                    + " milliseconds before attempting to detect safe mode.");
         }
-
         int menuState = mInputManager.getKeyCodeState(-1, InputDevice.SOURCE_ANY,
                 KeyEvent.KEYCODE_MENU);
         int sState = mInputManager.getKeyCodeState(-1, InputDevice.SOURCE_ANY, KeyEvent.KEYCODE_S);
@@ -7559,33 +6773,27 @@ public class WindowManagerService extends IWindowManager.Stub
         mPolicy.setSafeMode(mSafeMode);
         return mSafeMode;
     }
-
     public void displayReady() {
         displayReady(Display.DEFAULT_DISPLAY);
-
         synchronized(mWindowMap) {
             final DisplayContent displayContent = getDefaultDisplayContentLocked();
             readForcedDisplaySizeAndDensityLocked(displayContent);
             mDisplayReady = true;
         }
-
         try {
             mActivityManager.updateConfiguration(null);
         } catch (RemoteException e) {
         }
-
         synchronized(mWindowMap) {
             mIsTouchDevice = mContext.getPackageManager().hasSystemFeature(
                     PackageManager.FEATURE_TOUCHSCREEN);
             configureDisplayPolicyLocked(getDefaultDisplayContentLocked());
         }
-
         try {
             mActivityManager.updateConfiguration(null);
         } catch (RemoteException e) {
         }
     }
-
     private void displayReady(int displayId) {
         synchronized(mWindowMap) {
             final DisplayContent displayContent = getDisplayContentLocked(displayId);
@@ -7610,15 +6818,12 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public void systemReady() {
         mPolicy.systemReady();
     }
-
     // -------------------------------------------------------------
     // Async Handler
     // -------------------------------------------------------------
-
     final class H extends Handler {
         public static final int REPORT_FOCUS_CHANGE = 2;
         public static final int REPORT_LOSING_FOCUS = 3;
@@ -7629,7 +6834,6 @@ public class WindowManagerService extends IWindowManager.Stub
         public static final int REPORT_APPLICATION_TOKEN_WINDOWS = 8;
         public static final int REPORT_APPLICATION_TOKEN_DRAWN = 9;
         public static final int WINDOW_FREEZE_TIMEOUT = 11;
-
         public static final int APP_TRANSITION_TIMEOUT = 13;
         public static final int PERSIST_ANIMATION_SCALE = 14;
         public static final int FORCE_GC = 15;
@@ -7644,25 +6848,18 @@ public class WindowManagerService extends IWindowManager.Stub
         public static final int WAITING_FOR_DRAWN_TIMEOUT = 24;
         public static final int SHOW_STRICT_MODE_VIOLATION = 25;
         public static final int DO_ANIMATION_CALLBACK = 26;
-
         public static final int DO_DISPLAY_ADDED = 27;
         public static final int DO_DISPLAY_REMOVED = 28;
         public static final int DO_DISPLAY_CHANGED = 29;
-
         public static final int CLIENT_FREEZE_TIMEOUT = 30;
         public static final int TAP_OUTSIDE_STACK = 31;
         public static final int NOTIFY_ACTIVITY_DRAWN = 32;
-
         public static final int ALL_WINDOWS_DRAWN = 33;
-
         public static final int NEW_ANIMATOR_SCALE = 34;
-
         public static final int SHOW_CIRCULAR_DISPLAY_MASK = 35;
         public static final int SHOW_EMULATOR_DISPLAY_OVERLAY = 36;
-
         public static final int CHECK_IF_BOOT_ANIMATION_FINISHED = 37;
         public static final int RESET_ANR_MESSAGE = 38;
-
         @Override
         public void handleMessage(Message msg) {
             if (DEBUG_WINDOW_TRACE) {
@@ -7672,16 +6869,13 @@ public class WindowManagerService extends IWindowManager.Stub
                 case REPORT_FOCUS_CHANGE: {
                     WindowState lastFocus;
                     WindowState newFocus;
-
                     AccessibilityController accessibilityController = null;
-
                     synchronized(mWindowMap) {
                         // TODO(multidisplay): Accessibility supported only of default desiplay.
                         if (mAccessibilityController != null && getDefaultDisplayContentLocked()
                                 .getDisplayId() == Display.DEFAULT_DISPLAY) {
                             accessibilityController = mAccessibilityController;
                         }
-
                         lastFocus = mLastFocus;
                         newFocus = mCurrentFocus;
                         if (lastFocus == newFocus) {
@@ -7698,13 +6892,11 @@ public class WindowManagerService extends IWindowManager.Stub
                             lastFocus = null;
                         }
                     }
-
                     // First notify the accessibility manager for the change so it has
                     // the windows before the newly focused one starts firing eventgs.
                     if (accessibilityController != null) {
                         accessibilityController.onWindowFocusChangedNotLocked();
                     }
-
                     //System.out.println("Changing focus from " + lastFocus
                     //                   + " to " + newFocus);
                     if (newFocus != null) {
@@ -7712,21 +6904,17 @@ public class WindowManagerService extends IWindowManager.Stub
                         newFocus.reportFocusChangedSerialized(true, mInTouchMode);
                         notifyFocusChanged();
                     }
-
                     if (lastFocus != null) {
                         if (DEBUG_FOCUS_LIGHT) Slog.i(TAG, "Losing focus: " + lastFocus);
                         lastFocus.reportFocusChangedSerialized(false, mInTouchMode);
                     }
                 } break;
-
                 case REPORT_LOSING_FOCUS: {
                     ArrayList<WindowState> losers;
-
                     synchronized(mWindowMap) {
                         losers = mLosingFocus;
                         mLosingFocus = new ArrayList<WindowState>();
                     }
-
                     final int N = losers.size();
                     for (int i=0; i<N; i++) {
                         if (DEBUG_FOCUS_LIGHT) Slog.i(TAG, "Losing delayed focus: " +
@@ -7734,26 +6922,21 @@ public class WindowManagerService extends IWindowManager.Stub
                         losers.get(i).reportFocusChangedSerialized(false, mInTouchMode);
                     }
                 } break;
-
                 case DO_TRAVERSAL: {
                     synchronized(mWindowMap) {
                         mTraversalScheduled = false;
                         performLayoutAndPlaceSurfacesLocked();
                     }
                 } break;
-
                 case ADD_STARTING: {
                     final AppWindowToken wtoken = (AppWindowToken)msg.obj;
                     final StartingData sd = wtoken.startingData;
-
                     if (sd == null) {
                         // Animation has been canceled... do nothing.
                         return;
                     }
-
                     if (DEBUG_STARTING_WINDOW) Slog.v(TAG, "Add starting "
                             + wtoken + ": pkg=" + sd.pkg);
-
                     View view = null;
                     try {
                         view = mPolicy.addStartingWindow(
@@ -7762,10 +6945,8 @@ public class WindowManagerService extends IWindowManager.Stub
                     } catch (Exception e) {
                         Slog.w(TAG, "Exception when adding starting window", e);
                     }
-
                     if (view != null) {
                         boolean abort = false;
-
                         synchronized(mWindowMap) {
                             if (wtoken.removed || wtoken.startingData == null) {
                                 // If the window was successfully added, then
@@ -7788,7 +6969,6 @@ public class WindowManagerService extends IWindowManager.Stub
                                     + wtoken.startingWindow + " startingView="
                                     + wtoken.startingView);
                         }
-
                         if (abort) {
                             try {
                                 mPolicy.removeStartingWindow(wtoken.token, view);
@@ -7798,7 +6978,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         }
                     }
                 } break;
-
                 case REMOVE_STARTING: {
                     final AppWindowToken wtoken = (AppWindowToken)msg.obj;
                     IBinder token = null;
@@ -7825,7 +7004,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         }
                     }
                 } break;
-
                 case FINISHED_STARTING: {
                     IBinder token = null;
                     View view = null;
@@ -7836,16 +7014,13 @@ public class WindowManagerService extends IWindowManager.Stub
                                 break;
                             }
                             AppWindowToken wtoken = mFinishedStarting.remove(N-1);
-
                             if (DEBUG_STARTING_WINDOW) Slog.v(TAG,
                                     "Finished starting " + wtoken
                                     + ": startingWindow=" + wtoken.startingWindow
                                     + " startingView=" + wtoken.startingView);
-
                             if (wtoken.startingWindow == null) {
                                 continue;
                             }
-
                             view = wtoken.startingView;
                             token = wtoken.token;
                             wtoken.startingData = null;
@@ -7853,7 +7028,6 @@ public class WindowManagerService extends IWindowManager.Stub
                             wtoken.startingWindow = null;
                             wtoken.startingDisplayed = false;
                         }
-
                         try {
                             mPolicy.removeStartingWindow(token, view);
                         } catch (Exception e) {
@@ -7861,10 +7035,8 @@ public class WindowManagerService extends IWindowManager.Stub
                         }
                     }
                 } break;
-
                 case REPORT_APPLICATION_TOKEN_DRAWN: {
                     final AppWindowToken wtoken = (AppWindowToken)msg.obj;
-
                     try {
                         if (DEBUG_VISIBILITY) Slog.v(
                                 TAG, "Reporting drawn in " + wtoken);
@@ -7872,13 +7044,10 @@ public class WindowManagerService extends IWindowManager.Stub
                     } catch (RemoteException ex) {
                     }
                 } break;
-
                 case REPORT_APPLICATION_TOKEN_WINDOWS: {
                     final AppWindowToken wtoken = (AppWindowToken)msg.obj;
-
                     boolean nowVisible = msg.arg1 != 0;
                     boolean nowGone = msg.arg2 != 0;
-
                     try {
                         if (DEBUG_VISIBILITY) Slog.v(
                                 TAG, "Reporting visible in " + wtoken
@@ -7892,7 +7061,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     } catch (RemoteException ex) {
                     }
                 } break;
-
                 case WINDOW_FREEZE_TIMEOUT: {
                     // TODO(multidisplay): Can non-default displays rotate?
                     synchronized (mWindowMap) {
@@ -7913,7 +7081,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 case APP_TRANSITION_TIMEOUT: {
                     synchronized (mWindowMap) {
                         if (mAppTransition.isTransitionSet()) {
@@ -7924,7 +7091,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 case PERSIST_ANIMATION_SCALE: {
                     Settings.Global.putFloat(mContext.getContentResolver(),
                             Settings.Global.WINDOW_ANIMATION_SCALE, mWindowAnimationScaleSetting);
@@ -7935,7 +7101,6 @@ public class WindowManagerService extends IWindowManager.Stub
                             Settings.Global.ANIMATOR_DURATION_SCALE, mAnimatorDurationScaleSetting);
                     break;
                 }
-
                 case FORCE_GC: {
                     synchronized (mWindowMap) {
                         // Since we're holding both mWindowMap and mAnimator we don't need to
@@ -7955,12 +7120,10 @@ public class WindowManagerService extends IWindowManager.Stub
                     Runtime.getRuntime().gc();
                     break;
                 }
-
                 case ENABLE_SCREEN: {
                     performEnableScreen();
                     break;
                 }
-
                 case APP_FREEZE_TIMEOUT: {
                     synchronized (mWindowMap) {
                         Slog.w(TAG, "App freeze timeout expired.");
@@ -7982,7 +7145,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 case CLIENT_FREEZE_TIMEOUT: {
                     synchronized (mWindowMap) {
                         if (mClientFreezingScreen) {
@@ -7993,13 +7155,11 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 case SEND_NEW_CONFIGURATION: {
                     removeMessages(SEND_NEW_CONFIGURATION);
                     sendNewConfiguration();
                     break;
                 }
-
                 case REPORT_WINDOWS_CHANGE: {
                     if (mWindowsChanged) {
                         synchronized (mWindowMap) {
@@ -8009,7 +7169,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 case DRAG_START_TIMEOUT: {
                     IBinder win = (IBinder)msg.obj;
                     if (DEBUG_DRAG) {
@@ -8026,7 +7185,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 case DRAG_END_TIMEOUT: {
                     IBinder win = (IBinder)msg.obj;
                     if (DEBUG_DRAG) {
@@ -8041,17 +7199,14 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 case REPORT_HARD_KEYBOARD_STATUS_CHANGE: {
                     notifyHardKeyboardStatusChange();
                     break;
                 }
-
                 case BOOT_TIMEOUT: {
                     performBootTimeout();
                     break;
                 }
-
                 case WAITING_FOR_DRAWN_TIMEOUT: {
                     Runnable callback = null;
                     synchronized (mWindowMap) {
@@ -8065,22 +7220,18 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 case SHOW_STRICT_MODE_VIOLATION: {
                     showStrictModeViolation(msg.arg1, msg.arg2);
                     break;
                 }
-
                 case SHOW_CIRCULAR_DISPLAY_MASK: {
                     showCircularMask(msg.arg1 == 1);
                     break;
                 }
-
                 case SHOW_EMULATOR_DISPLAY_OVERLAY: {
                     showEmulatorDisplayOverlay();
                     break;
                 }
-
                 case DO_ANIMATION_CALLBACK: {
                     try {
                         ((IRemoteCallback)msg.obj).sendResult(null);
@@ -8088,23 +7239,19 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     break;
                 }
-
                 case DO_DISPLAY_ADDED:
                     handleDisplayAdded(msg.arg1);
                     break;
-
                 case DO_DISPLAY_REMOVED:
                     synchronized (mWindowMap) {
                         handleDisplayRemovedLocked(msg.arg1);
                     }
                     break;
-
                 case DO_DISPLAY_CHANGED:
                     synchronized (mWindowMap) {
                         handleDisplayChangedLocked(msg.arg1);
                     }
                     break;
-
                 case TAP_OUTSIDE_STACK: {
 //                    int stackId;
 //                    synchronized (mWindowMap) {
@@ -8150,7 +7297,6 @@ public class WindowManagerService extends IWindowManager.Stub
                             for (int i=0; i<mSessions.size(); i++) {
                                 callbacks.add(mSessions.valueAt(i).mCallback);
                             }
-
                         }
                         for (int i=0; i<callbacks.size(); i++) {
                             try {
@@ -8184,11 +7330,9 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     // -------------------------------------------------------------
     // IWindowManager API
     // -------------------------------------------------------------
-
     @Override
     public IWindowSession openSession(IWindowSessionCallback callback, IInputMethodClient client,
             IInputContext inputContext) {
@@ -8197,7 +7341,6 @@ public class WindowManagerService extends IWindowManager.Stub
         Session session = new Session(this, callback, client, inputContext);
         return session;
     }
-
     @Override
     public boolean inputMethodClientHasFocus(IInputMethodClient client) {
         synchronized (mWindowMap) {
@@ -8242,7 +7385,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             // Okay, how about this...  what is the current focus?
             // It seems in some cases we may not have moved the IM
             // target window, such as when it was in a pop-up window,
@@ -8258,7 +7400,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return false;
     }
-
     @Override
     public void getInitialDisplaySize(int displayId, Point size) {
         synchronized (mWindowMap) {
@@ -8271,7 +7412,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void getBaseDisplaySize(int displayId, Point size) {
         synchronized (mWindowMap) {
@@ -8284,7 +7424,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void setForcedDisplaySize(int displayId, int width, int height) {
         if (mContext.checkCallingOrSelfPermission(
@@ -8319,7 +7458,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(ident);
         }
     }
-
     private void readForcedDisplaySizeAndDensityLocked(final DisplayContent displayContent) {
         String sizeStr = Settings.Global.getString(mContext.getContentResolver(),
                 Settings.Global.DISPLAY_SIZE_FORCED);
@@ -8364,18 +7502,15 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     // displayContent must not be null
     private void setForcedDisplaySizeLocked(DisplayContent displayContent, int width, int height) {
         Slog.i(TAG, "Using new display size: " + width + "x" + height);
-
         synchronized(displayContent.mDisplaySizeLock) {
             displayContent.mBaseDisplayWidth = width;
             displayContent.mBaseDisplayHeight = height;
         }
         reconfigureDisplayLocked(displayContent);
     }
-
     @Override
     public void clearForcedDisplaySize(int displayId) {
         if (mContext.checkCallingOrSelfPermission(
@@ -8402,7 +7537,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(ident);
         }
     }
-
     @Override
     public int getInitialDisplayDensity(int displayId) {
         synchronized (mWindowMap) {
@@ -8415,7 +7549,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return -1;
     }
-
     @Override
     public int getBaseDisplayDensity(int displayId) {
         synchronized (mWindowMap) {
@@ -8428,7 +7561,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return -1;
     }
-
     @Override
     public void setForcedDisplayDensity(int displayId, int density) {
         if (mContext.checkCallingOrSelfPermission(
@@ -8454,17 +7586,14 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(ident);
         }
     }
-
     // displayContent must not be null
     private void setForcedDisplayDensityLocked(DisplayContent displayContent, int density) {
         Slog.i(TAG, "Using new display density: " + density);
-
         synchronized(displayContent.mDisplaySizeLock) {
             displayContent.mBaseDisplayDensity = density;
         }
         reconfigureDisplayLocked(displayContent);
     }
-
     @Override
     public void clearForcedDisplayDensity(int displayId) {
         if (mContext.checkCallingOrSelfPermission(
@@ -8491,13 +7620,11 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(ident);
         }
     }
-
     // displayContent must not be null
     private void reconfigureDisplayLocked(DisplayContent displayContent) {
         // TODO: Multidisplay: for now only use with default display.
         configureDisplayPolicyLocked(displayContent);
         displayContent.layoutNeeded = true;
-
         boolean configChanged = updateOrientationFromAppTokensLocked(false);
         mTempConfiguration.setToDefaults();
         mTempConfiguration.fontScale = mCurConfiguration.fontScale;
@@ -8506,28 +7633,23 @@ public class WindowManagerService extends IWindowManager.Stub
                 configChanged = true;
             }
         }
-
         if (configChanged) {
             mWaitingForConfig = true;
             startFreezingDisplayLocked(false, 0, 0);
             mH.sendEmptyMessage(H.SEND_NEW_CONFIGURATION);
         }
-
         performLayoutAndPlaceSurfacesLocked();
     }
-
     private void configureDisplayPolicyLocked(DisplayContent displayContent) {
         mPolicy.setInitialDisplaySize(displayContent.getDisplay(),
                 displayContent.mBaseDisplayWidth,
                 displayContent.mBaseDisplayHeight,
                 displayContent.mBaseDisplayDensity);
-
         DisplayInfo displayInfo = displayContent.getDisplayInfo();
         mPolicy.setDisplayOverscan(displayContent.getDisplay(),
                 displayInfo.overscanLeft, displayInfo.overscanTop,
                 displayInfo.overscanRight, displayInfo.overscanBottom);
     }
-
     @Override
     public void setOverscan(int displayId, int left, int top, int right, int bottom) {
         if (mContext.checkCallingOrSelfPermission(
@@ -8548,7 +7670,6 @@ public class WindowManagerService extends IWindowManager.Stub
             Binder.restoreCallingIdentity(ident);
         }
     }
-
     private void setOverscanLocked(DisplayContent displayContent,
             int left, int top, int right, int bottom) {
         final DisplayInfo displayInfo = displayContent.getDisplayInfo();
@@ -8558,22 +7679,17 @@ public class WindowManagerService extends IWindowManager.Stub
             displayInfo.overscanRight = right;
             displayInfo.overscanBottom = bottom;
         }
-
         mDisplaySettings.setOverscanLocked(displayInfo.uniqueId, left, top, right, bottom);
         mDisplaySettings.writeSettingsLocked();
-
         reconfigureDisplayLocked(displayContent);
     }
-
     // -------------------------------------------------------------
     // Internals
     // -------------------------------------------------------------
-
     final WindowState windowForClientLocked(Session session, IWindow client,
             boolean throwOnError) {
         return windowForClientLocked(session, client.asBinder(), throwOnError);
     }
-
     final WindowState windowForClientLocked(Session session, IBinder client,
             boolean throwOnError) {
         WindowState win = mWindowMap.get(client);
@@ -8598,25 +7714,20 @@ public class WindowManagerService extends IWindowManager.Stub
             Slog.w(TAG, "Failed looking up window", ex);
             return null;
         }
-
         return win;
     }
-
     final void rebuildAppWindowListLocked() {
         rebuildAppWindowListLocked(getDefaultDisplayContentLocked());
     }
-
     private void rebuildAppWindowListLocked(final DisplayContent displayContent) {
         final WindowList windows = displayContent.getWindowList();
         int NW = windows.size();
         int i;
         int lastBelow = -1;
         int numRemoved = 0;
-
         if (mRebuildTmp.length < NW) {
             mRebuildTmp = new WindowState[NW+10];
         }
-
         // First remove all existing app windows.
         i=0;
         while (i < NW) {
@@ -8637,12 +7748,10 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             i++;
         }
-
         // Keep whatever windows were below the app windows still below,
         // by skipping them.
         lastBelow++;
         i = lastBelow;
-
         // First add all of the exiting app tokens...  these are no longer
         // in the main app list, but still have windows shown.  We put them
         // in the back because now that the animation is over we no longer
@@ -8656,7 +7765,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 i = reAddAppWindowsLocked(displayContent, i, exitingAppTokens.get(j));
             }
         }
-
         // And add in the still active app tokens in Z order.
         for (int stackNdx = 0; stackNdx < numStacks; ++stackNdx) {
             final ArrayList<Task> tasks = stacks.get(stackNdx).getTasks();
@@ -8673,7 +7781,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         i -= lastBelow;
         if (i != numRemoved) {
             Slog.w(TAG, "On display=" + displayContent.getDisplayId() + " Rebuild removed " +
@@ -8697,18 +7804,14 @@ public class WindowManagerService extends IWindowManager.Stub
             dumpWindowsLocked();
         }
     }
-
     private final void assignLayersLocked(WindowList windows) {
         int N = windows.size();
         int curBaseLayer = 0;
         int curLayer = 0;
         int i;
-
         if (DEBUG_LAYERS) Slog.v(TAG, "Assigning layers based on windows=" + windows,
                 new RuntimeException("here").fillInStackTrace());
-
         boolean anyLayerChanged = false;
-
         for (i=0; i<N; i++) {
             final WindowState w = windows.get(i);
             final WindowStateAnimator winAnimator = w.mWinAnimator;
@@ -8760,7 +7863,6 @@ public class WindowManagerService extends IWindowManager.Stub
             //System.out.println(
             //    "Assigned layer " + curLayer + " to " + w.mClient.asBinder());
         }
-
         //TODO (multidisplay): Magnification is supported only for the default display.
         if (mAccessibilityController != null && anyLayerChanged
                 && windows.get(windows.size() - 1).getDisplayId() == Display.DEFAULT_DISPLAY) {
@@ -8768,7 +7870,13 @@ public class WindowManagerService extends IWindowManager.Stub
         }
     }
 
-    private final void performLayoutAndPlaceSurfacesLocked() {
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Change the private function to public function.
+	 */	
+    public final void performLayoutAndPlaceSurfacesLocked() {
         int loopCount = 6;
         do {
             mTraversalScheduled = false;
@@ -8778,6 +7886,7 @@ public class WindowManagerService extends IWindowManager.Stub
         } while (mTraversalScheduled && loopCount > 0);
         mInnerFields.mWallpaperActionPending = false;
     }
+	// END
 
     private boolean mInLayout = false;
     private final void performLayoutAndPlaceSurfacesLockedLoop() {
@@ -8789,23 +7898,19 @@ public class WindowManagerService extends IWindowManager.Stub
                     + Debug.getCallers(3));
             return;
         }
-
         if (mWaitingForConfig) {
             // Our configuration has changed (most likely rotation), but we
             // don't yet have the complete configuration to report to
             // applications.  Don't do any window layout until we have it.
             return;
         }
-
         if (!mDisplayReady) {
             // Not yet initialized, nothing to do.
             return;
         }
-
         Trace.traceBegin(Trace.TRACE_TAG_WINDOW_MANAGER, "wmLayout");
         mInLayout = true;
         boolean recoveringMemory = false;
-
         try {
             if (mForceRemoves != null) {
                 recoveringMemory = true;
@@ -8828,12 +7933,9 @@ public class WindowManagerService extends IWindowManager.Stub
         } catch (RuntimeException e) {
             Slog.wtf(TAG, "Unhandled exception while force removing for memory", e);
         }
-
         try {
             performLayoutAndPlaceSurfacesLockedInner(recoveringMemory);
-
             mInLayout = false;
-
             if (needsLayout()) {
                 if (++mLayoutRepeatCount < 6) {
                     requestTraversalLocked();
@@ -8844,7 +7946,6 @@ public class WindowManagerService extends IWindowManager.Stub
             } else {
                 mLayoutRepeatCount = 0;
             }
-
             if (mWindowsChanged && !mWindowChangeListeners.isEmpty()) {
                 mH.removeMessages(H.REPORT_WINDOWS_CHANGE);
                 mH.sendEmptyMessage(H.REPORT_WINDOWS_CHANGE);
@@ -8853,10 +7954,8 @@ public class WindowManagerService extends IWindowManager.Stub
             mInLayout = false;
             Slog.wtf(TAG, "Unhandled exception while laying out windows", e);
         }
-
         Trace.traceEnd(Trace.TRACE_TAG_WINDOW_MANAGER);
     }
-
     private final void performLayoutLockedInner(final DisplayContent displayContent,
                                     boolean initial, boolean updateInputWindows) {
         if (!displayContent.layoutNeeded) {
@@ -8865,55 +7964,43 @@ public class WindowManagerService extends IWindowManager.Stub
         displayContent.layoutNeeded = false;
         WindowList windows = displayContent.getWindowList();
         boolean isDefaultDisplay = displayContent.isDefaultDisplay;
-
         DisplayInfo displayInfo = displayContent.getDisplayInfo();
         final int dw = displayInfo.logicalWidth;
         final int dh = displayInfo.logicalHeight;
-
         final int NFW = mFakeWindows.size();
         for (int i=0; i<NFW; i++) {
             mFakeWindows.get(i).layout(dw, dh);
         }
-
         final int N = windows.size();
         int i;
-
         if (DEBUG_LAYOUT) {
             Slog.v(TAG, "-------------------------------------");
             Slog.v(TAG, "performLayout: needed="
                     + displayContent.layoutNeeded + " dw=" + dw + " dh=" + dh);
         }
-
         WindowStateAnimator universeBackground = null;
-
         mPolicy.beginLayoutLw(isDefaultDisplay, dw, dh, mRotation);
         if (isDefaultDisplay) {
             // Not needed on non-default displays.
             mSystemDecorLayer = mPolicy.getSystemDecorLayerLw();
             mScreenRect.set(0, 0, dw, dh);
         }
-
         mPolicy.getContentRectLw(mTmpContentRect);
         displayContent.resize(mTmpContentRect);
-
         int seq = mLayoutSeq+1;
         if (seq < 0) seq = 0;
         mLayoutSeq = seq;
-
         boolean behindDream = false;
-
         // First perform layout of any root windows (not attached
         // to another window).
         int topAttached = -1;
         for (i = N-1; i >= 0; i--) {
             final WindowState win = windows.get(i);
-
             // Don't do layout of a window if it is not visible, or
             // soon won't be visible, to avoid wasting time and funky
             // changes while a window is animating away.
             final boolean gone = (behindDream && mPolicy.canBeForceHidden(win, win.mAttrs))
                     || win.isGoneForLayoutLw();
-
             if (DEBUG_LAYOUT && !win.mLayoutAttached) {
                 Slog.v(TAG, "1ST PASS " + win
                         + ": gone=" + gone + " mHaveFrame=" + win.mHaveFrame
@@ -8933,7 +8020,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         + (atoken != null && atoken.hiddenRequested)
                         + " mAttachedHidden=" + win.mAttachedHidden);
             }
-
             // If this view is GONE, then skip it -- keep the current
             // frame, and let the caller know so they can ignore it
             // if they want.  (We do the normal layout for INVISIBLE
@@ -8973,21 +8059,17 @@ public class WindowManagerService extends IWindowManager.Stub
                 universeBackground = win.mWinAnimator;
             }
         }
-
         if (mAnimator.mUniverseBackground  != universeBackground) {
             mFocusMayChange = true;
             mAnimator.mUniverseBackground = universeBackground;
         }
-
         boolean attachedBehindDream = false;
-
         // Now perform layout of attached windows, which usually
         // depend on the position of the window they are attached to.
         // XXX does not deal with windows that are attached to windows
         // that are themselves attached.
         for (i = topAttached; i >= 0; i--) {
             final WindowState win = windows.get(i);
-
             if (win.mLayoutAttached) {
                 if (DEBUG_LAYOUT) Slog.v(TAG, "2ND PASS " + win
                         + " mHaveFrame=" + win.mHaveFrame
@@ -9023,16 +8105,13 @@ public class WindowManagerService extends IWindowManager.Stub
                 attachedBehindDream = behindDream;
             }
         }
-
         // Window frames may have changed.  Tell the input dispatcher about it.
         mInputMonitor.setUpdateInputWindowsNeededLw();
         if (updateInputWindows) {
             mInputMonitor.updateInputWindowsLw(false /*force*/);
         }
-
         mPolicy.finishLayoutLw();
     }
-
     void makeWindowFreezingScreenIfNeededLocked(WindowState w) {
         // If the screen is currently frozen or off, then keep
         // it frozen/off until this window draws at its new
@@ -9052,7 +8131,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     /**
      * Extracted from {@link #performLayoutAndPlaceSurfacesLockedInner} to reduce size of method.
      * @param windows List of windows on default display.
@@ -9093,32 +8171,25 @@ public class WindowManagerService extends IWindowManager.Stub
             mAppTransition.goodToGo();
             mStartingIconInTransition = false;
             mSkipAppTransitionAnimation = false;
-
             mH.removeMessages(H.APP_TRANSITION_TIMEOUT);
-
             rebuildAppWindowListLocked();
-
             // if wallpaper is animating in or out set oldWallpaper to null else to wallpaper
             WindowState oldWallpaper =
                     mWallpaperTarget != null && mWallpaperTarget.mWinAnimator.isAnimating()
                         && !mWallpaperTarget.mWinAnimator.isDummyAnimation()
                     ? null : mWallpaperTarget;
-
             mInnerFields.mWallpaperMayChange = false;
-
             // The top-most window will supply the layout params,
             // and we will determine it below.
             LayoutParams animLp = null;
             int bestAnimLayer = -1;
             boolean fullscreenAnim = false;
             boolean voiceInteraction = false;
-
             if (DEBUG_APP_TRANSITIONS) Slog.v(TAG,
                     "New wallpaper target=" + mWallpaperTarget
                     + ", oldWallpaper=" + oldWallpaper
                     + ", lower target=" + mLowerWallpaperTarget
                     + ", upper target=" + mUpperWallpaperTarget);
-
             boolean openingAppHasWallpaper = false;
             boolean closingAppHasWallpaper = false;
             final AppWindowToken lowerWallpaperAppToken;
@@ -9129,7 +8200,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 lowerWallpaperAppToken = mLowerWallpaperTarget.mAppToken;
                 upperWallpaperAppToken = mUpperWallpaperTarget.mAppToken;
             }
-
             // Do a first pass through the tokens for two
             // things:
             // (1) Determine if both the closing and opening
@@ -9155,9 +8225,7 @@ public class WindowManagerService extends IWindowManager.Stub
                         openingAppHasWallpaper = true;
                     }
                 }
-
                 voiceInteraction |= wtoken.voiceInteraction;
-
                 if (wtoken.appFullscreen) {
                     WindowState ws = wtoken.findMainWindow();
                     if (ws != null) {
@@ -9175,7 +8243,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             mAnimateWallpaperWithTarget = false;
             if (closingAppHasWallpaper && openingAppHasWallpaper) {
                 if (DEBUG_APP_TRANSITIONS) Slog.v(TAG, "Wallpaper animation!");
@@ -9208,7 +8275,6 @@ public class WindowManagerService extends IWindowManager.Stub
             } else {
                 mAnimateWallpaperWithTarget = true;
             }
-
             // If all closing windows are obscured, then there is
             // no need to do an animation.  This is the case, for
             // example, when this transition is being done behind
@@ -9218,12 +8284,10 @@ public class WindowManagerService extends IWindowManager.Stub
                         "Animations disallowed by keyguard or dream.");
                 animLp = null;
             }
-
             AppWindowToken topOpeningApp = null;
             AppWindowToken topClosingApp = null;
             int topOpeningLayer = 0;
             int topClosingLayer = 0;
-
             // Process all applications animating in place
             if (transit == AppTransition.TRANSIT_TASK_IN_PLACE) {
                 // Find the focused window
@@ -9237,7 +8301,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     appAnimator.animation = null;
                     updateTokenInPlaceLocked(wtoken, transit);
                     wtoken.updateReportedVisibilityLocked();
-
                     appAnimator.mAllAppWinAnimators.clear();
                     final int N = wtoken.allAppWindows.size();
                     for (int j = 0; j < N; j++) {
@@ -9246,7 +8309,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     mAnimator.mAnimating |= appAnimator.showAllWindowsLocked();
                 }
             }
-
             NN = mOpeningApps.size();
             for (i=0; i<NN; i++) {
                 AppWindowToken wtoken = mOpeningApps.valueAt(i);
@@ -9258,14 +8320,12 @@ public class WindowManagerService extends IWindowManager.Stub
                 setTokenVisibilityLocked(wtoken, animLp, true, transit, false, voiceInteraction);
                 wtoken.updateReportedVisibilityLocked();
                 wtoken.waitingToShow = false;
-
                 appAnimator.mAllAppWinAnimators.clear();
                 final int N = wtoken.allAppWindows.size();
                 for (int j = 0; j < N; j++) {
                     appAnimator.mAllAppWinAnimators.add(wtoken.allAppWindows.get(j).mWinAnimator);
                 }
                 mAnimator.mAnimating |= appAnimator.showAllWindowsLocked();
-
                 if (animLp != null) {
                     int layer = -1;
                     for (int j=0; j<wtoken.windows.size(); j++) {
@@ -9301,7 +8361,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 if (wtoken.startingWindow != null && !wtoken.startingWindow.mExiting) {
                     scheduleRemoveStartingWindowLocked(wtoken);
                 }
-
                 if (animLp != null) {
                     int layer = -1;
                     for (int j=0; j<wtoken.windows.size(); j++) {
@@ -9316,7 +8375,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             AppWindowAnimator openingAppAnimator = (topOpeningApp == null) ? null :
                     topOpeningApp.mAppAnimator;
             AppWindowAnimator closingAppAnimator = (topClosingApp == null) ? null :
@@ -9334,7 +8392,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     final DisplayContent displayContent = getDefaultDisplayContentLocked();
                     final Display display = displayContent.getDisplay();
                     final DisplayInfo displayInfo = displayContent.getDisplayInfo();
-
                     // Create a new surface for the thumbnail
                     SurfaceControl surfaceControl = new SurfaceControl(mFxSession,
                             "thumbnail anim", dirty.width(), dirty.height(),
@@ -9343,7 +8400,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     if (SHOW_TRANSACTIONS) {
                         Slog.i(TAG, "  THUMBNAIL " + surfaceControl + ": CREATE");
                     }
-
                     // Draw the thumbnail onto the surface
                     Surface drawSurface = new Surface();
                     drawSurface.copyFrom(surfaceControl);
@@ -9351,7 +8407,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     c.drawBitmap(nextAppTransitionThumbnail, 0, 0, null);
                     drawSurface.unlockCanvasAndPost(c);
                     drawSurface.release();
-
                     // Get the thumbnail animation
                     Animation anim;
                     if (mAppTransition.isNextThumbnailTransitionAspectScaled()) {
@@ -9372,7 +8427,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                     anim.restrictDuration(MAX_ANIMATION_DURATION);
                     anim.scaleCurrentDuration(getTransitionAnimationScaleLocked());
-
                     openingAppAnimator.thumbnail = surfaceControl;
                     openingAppAnimator.thumbnailLayer = topOpeningLayer;
                     openingAppAnimator.thumbnailAnimation = anim;
@@ -9384,19 +8438,15 @@ public class WindowManagerService extends IWindowManager.Stub
                     openingAppAnimator.clearThumbnail();
                 }
             }
-
             mAppTransition.postAnimationCallback();
             mAppTransition.clear();
-
             mOpeningApps.clear();
             mClosingApps.clear();
-
             // This has changed the visibility of windows, so perform
             // a new layout to get them all up-to-date.
             changes |= WindowManagerPolicy.FINISH_LAYOUT_REDO_LAYOUT
                     | WindowManagerPolicy.FINISH_LAYOUT_REDO_CONFIG;
             getDefaultDisplayContentLocked().layoutNeeded = true;
-
             // TODO(multidisplay): IMEs are only supported on the default display.
             if (windows == getDefaultWindowListLocked()
                     && !moveInputMethodWindowsIfNeededLocked(true)) {
@@ -9406,17 +8456,14 @@ public class WindowManagerService extends IWindowManager.Stub
             mFocusMayChange = false;
             notifyActivityDrawnForKeyguard();
         }
-
         return changes;
     }
-
     /**
      * Extracted from {@link #performLayoutAndPlaceSurfacesLockedInner} to reduce size of method.
      * @return bitmap indicating if another pass through layout must be made.
      */
     private int handleAnimatingStoppedAndTransitionLocked() {
         int changes = 0;
-
         mAppTransition.setIdle();
         // Restore window app tokens to the ActivityManager views
         ArrayList<TaskStack> stacks = getDefaultDisplayContentLocked().getStacks();
@@ -9430,7 +8477,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
         rebuildAppWindowListLocked();
-
         changes |= PhoneWindowManager.FINISH_LAYOUT_REDO_LAYOUT;
         if (DEBUG_WALLPAPER_LIGHT) Slog.v(TAG,
                 "Wallpaper layer changed: assigning layers + relayout");
@@ -9440,10 +8486,8 @@ public class WindowManagerService extends IWindowManager.Stub
         // have to be recomputed since the actual order of windows
         // might have changed again.
         mFocusMayChange = true;
-
         return changes;
     }
-
     private void updateResizingWindows(final WindowState w) {
         final WindowStateAnimator winAnimator = w.mWinAnimator;
         if (w.mHasSurface && w.mLayoutSeq == mLayoutSeq) {
@@ -9472,7 +8516,6 @@ public class WindowManagerService extends IWindowManager.Stub
                             + " surfaceResized=" + winAnimator.mSurfaceResized
                             + " configChanged=" + configChanged);
                 }
-
                 w.mLastOverscanInsets.set(w.mOverscanInsets);
                 w.mLastContentInsets.set(w.mContentInsets);
                 w.mLastVisibleInsets.set(w.mVisibleInsets);
@@ -9511,7 +8554,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     /**
      * Extracted from {@link #performLayoutAndPlaceSurfacesLockedInner} to reduce size of method.
      *
@@ -9526,14 +8568,12 @@ public class WindowManagerService extends IWindowManager.Stub
         final int attrFlags = attrs.flags;
         final boolean canBeSeen = w.isDisplayedLw();
         final boolean opaqueDrawn = canBeSeen && w.isOpaqueDrawn();
-
         if (opaqueDrawn && w.isFullscreen(innerDw, innerDh)) {
             // This window completely covers everything behind it,
             // so we want to leave all of them as undimmed (for
             // performance reasons).
             mInnerFields.mObscured = true;
         }
-
         if (w.mHasSurface) {
             if ((attrFlags&FLAG_KEEP_SCREEN_ON) != 0) {
                 mInnerFields.mHoldScreen = w.mSession;
@@ -9550,7 +8590,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     && mInnerFields.mUserActivityTimeout < 0) {
                 mInnerFields.mUserActivityTimeout = w.mAttrs.userActivityTimeout;
             }
-
             final int type = attrs.type;
             if (canBeSeen
                     && (type == TYPE_SYSTEM_DIALOG
@@ -9558,7 +8597,6 @@ public class WindowManagerService extends IWindowManager.Stub
                      || (attrs.privateFlags & PRIVATE_FLAG_KEYGUARD) != 0)) {
                 mInnerFields.mSyswin = true;
             }
-
             if (canBeSeen) {
                 // This function assumes that the contents of the default display are
                 // processed first before secondary displays.
@@ -9585,7 +8623,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     private void handleFlagDimBehind(WindowState w) {
         final WindowManager.LayoutParams attrs = w.mAttrs;
         if ((attrs.flags & FLAG_DIM_BEHIND) != 0
@@ -9603,7 +8640,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     private void updateAllDrawnLocked(DisplayContent displayContent) {
         // See if any windows have been drawn, so they (and others
         // associated with them) can now be shown.
@@ -9632,25 +8668,20 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     // "Something has changed!  Let's make it correct now."
     private final void performLayoutAndPlaceSurfacesLockedInner(boolean recoveringMemory) {
         if (DEBUG_WINDOW_TRACE) {
             Slog.v(TAG, "performLayoutAndPlaceSurfacesLockedInner: entry. Called by "
                     + Debug.getCallers(3));
         }
-
         final long currentTime = SystemClock.uptimeMillis();
-
         int i;
         boolean updateInputWindowsNeeded = false;
-
         if (mFocusMayChange) {
             mFocusMayChange = false;
             updateInputWindowsNeeded = updateFocusedWindowLocked(UPDATE_FOCUS_WILL_PLACE_SURFACES,
                     false /*updateInputWindows*/);
         }
-
         // Initialize state of exiting tokens.
         final int numDisplays = mDisplayContents.size();
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
@@ -9659,7 +8690,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 displayContent.mExitingTokens.get(i).hasVisible = false;
             }
         }
-
         for (int stackNdx = mStackIdToStack.size() - 1; stackNdx >= 0; --stackNdx) {
             // Initialize state of exiting applications.
             final AppTokenList exitingAppTokens =
@@ -9668,25 +8698,20 @@ public class WindowManagerService extends IWindowManager.Stub
                 exitingAppTokens.get(tokenNdx).hasVisible = false;
             }
         }
-
         mInnerFields.mHoldScreen = null;
         mInnerFields.mScreenBrightness = -1;
         mInnerFields.mButtonBrightness = -1;
         mInnerFields.mUserActivityTimeout = -1;
         mInnerFields.mObscureApplicationContentOnSecondaryDisplays = false;
-
         mTransactionSequence++;
-
         final DisplayContent defaultDisplay = getDefaultDisplayContentLocked();
         final DisplayInfo defaultInfo = defaultDisplay.getDisplayInfo();
         final int defaultDw = defaultInfo.logicalWidth;
         final int defaultDh = defaultInfo.logicalHeight;
-
         if (SHOW_LIGHT_TRANSACTIONS) Slog.i(TAG,
                 ">>> OPEN TRANSACTION performLayoutAndPlaceSurfaces");
         SurfaceControl.openTransaction();
         try {
-
             if (mWatermark != null) {
                 mWatermark.positionSurface(defaultDw, defaultDh);
             }
@@ -9699,9 +8724,7 @@ public class WindowManagerService extends IWindowManager.Stub
             if (mEmulatorDisplayOverlay != null) {
                 mEmulatorDisplayOverlay.positionSurface(defaultDw, defaultDh, mRotation);
             }
-
             boolean focusDisplayed = false;
-
             for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
                 final DisplayContent displayContent = mDisplayContents.valueAt(displayNdx);
                 boolean updateAllDrawn = false;
@@ -9713,11 +8736,9 @@ public class WindowManagerService extends IWindowManager.Stub
                 final int innerDw = displayInfo.appWidth;
                 final int innerDh = displayInfo.appHeight;
                 final boolean isDefaultDisplay = (displayId == Display.DEFAULT_DISPLAY);
-
                 // Reset for each display.
                 mInnerFields.mDisplayHasContent = false;
                 mInnerFields.mPreferredRefreshRate = 0;
-
                 int repeats = 0;
                 do {
                     repeats++;
@@ -9726,10 +8747,8 @@ public class WindowManagerService extends IWindowManager.Stub
                         displayContent.layoutNeeded = false;
                         break;
                     }
-
                     if (DEBUG_LAYOUT_REPEATS) debugLayoutRepeats("On entry to LockedInner",
                         displayContent.pendingLayoutChanges);
-
                     if ((displayContent.pendingLayoutChanges &
                             WindowManagerPolicy.FINISH_LAYOUT_REDO_WALLPAPER) != 0 &&
                             (adjustWallpaperWindowsLocked() &
@@ -9737,7 +8756,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         assignLayersLocked(windows);
                         displayContent.layoutNeeded = true;
                     }
-
                     if (isDefaultDisplay && (displayContent.pendingLayoutChanges
                             & WindowManagerPolicy.FINISH_LAYOUT_REDO_CONFIG) != 0) {
                         if (DEBUG_LAYOUT) Slog.v(TAG, "Computing new config from layout");
@@ -9746,12 +8764,10 @@ public class WindowManagerService extends IWindowManager.Stub
                             mH.sendEmptyMessage(H.SEND_NEW_CONFIGURATION);
                         }
                     }
-
                     if ((displayContent.pendingLayoutChanges
                             & WindowManagerPolicy.FINISH_LAYOUT_REDO_LAYOUT) != 0) {
                         displayContent.layoutNeeded = true;
                     }
-
                     // FIRST LOOP: Perform a layout, if needed.
                     if (repeats < 4) {
                         performLayoutLockedInner(displayContent, repeats == 1,
@@ -9759,14 +8775,11 @@ public class WindowManagerService extends IWindowManager.Stub
                     } else {
                         Slog.w(TAG, "Layout repeat skipped after too many iterations");
                     }
-
                     // FIRST AND ONE HALF LOOP: Make WindowManagerPolicy think
                     // it is animating.
                     displayContent.pendingLayoutChanges = 0;
-
                     if (DEBUG_LAYOUT_REPEATS) debugLayoutRepeats("loop number "
                             + mLayoutRepeatCount, displayContent.pendingLayoutChanges);
-
                     if (isDefaultDisplay) {
                         mPolicy.beginPostLayoutPolicyLw(dw, dh);
                         for (i = windows.size() - 1; i >= 0; i--) {
@@ -9780,14 +8793,11 @@ public class WindowManagerService extends IWindowManager.Stub
                             "after finishPostLayoutPolicyLw", displayContent.pendingLayoutChanges);
                     }
                 } while (displayContent.pendingLayoutChanges != 0);
-
                 mInnerFields.mObscured = false;
                 mInnerFields.mSyswin = false;
                 displayContent.resetDimming();
-
                 // Only used if default window
                 final boolean someoneLosingFocus = !mLosingFocus.isEmpty();
-
                 final int N = windows.size();
                 for (i=N-1; i>=0; i--) {
                     WindowState w = windows.get(i);
@@ -9795,19 +8805,15 @@ public class WindowManagerService extends IWindowManager.Stub
                     if (stack == null && w.getAttrs().type != TYPE_PRIVATE_PRESENTATION) {
                         continue;
                     }
-
                     final boolean obscuredChanged = w.mObscured != mInnerFields.mObscured;
-
                     // Update effect.
                     w.mObscured = mInnerFields.mObscured;
                     if (!mInnerFields.mObscured) {
                         handleNotObscuredLocked(w, currentTime, innerDw, innerDh);
                     }
-
                     if (stack != null && !stack.testDimmingTag()) {
                         handleFlagDimBehind(w);
                     }
-
                     if (isDefaultDisplay && obscuredChanged && (mWallpaperTarget == w)
                             && w.isVisibleLw()) {
                         // This is the wallpaper target and its obscured state
@@ -9815,9 +8821,7 @@ public class WindowManagerService extends IWindowManager.Stub
                         // has been updated accordingly.
                         updateWallpaperVisibilityLocked();
                     }
-
                     final WindowStateAnimator winAnimator = w.mWinAnimator;
-
                     // If the window has moved due to its containing
                     // content frame changing, then we'd like to animate
                     // it.
@@ -9830,22 +8834,18 @@ public class WindowManagerService extends IWindowManager.Stub
                         winAnimator.setAnimation(a);
                         winAnimator.mAnimDw = w.mLastFrame.left - w.mFrame.left;
                         winAnimator.mAnimDh = w.mLastFrame.top - w.mFrame.top;
-
                         //TODO (multidisplay): Accessibility supported only for the default display.
                         if (mAccessibilityController != null
                                 && displayId == Display.DEFAULT_DISPLAY) {
                             mAccessibilityController.onSomeWindowResizedOrMovedLocked();
                         }
-
                         try {
                             w.mClient.moved(w.mFrame.left, w.mFrame.top);
                         } catch (RemoteException e) {
                         }
                     }
-
                     //Slog.i(TAG, "Window " + this + " clearing mContentChanged - done placing");
                     w.mContentChanged = false;
-
                     // Moved from updateWindowsAndWallpaperLocked().
                     if (w.mHasSurface && !w.isHiddenFromUserLocked()) {
                         // Take care of the window being ready to display.
@@ -9878,9 +8878,7 @@ public class WindowManagerService extends IWindowManager.Stub
                                 }
                             }
                         }
-
                         winAnimator.setSurfaceBoundariesLocked(recoveringMemory);
-
                         final AppWindowToken atoken = w.mAppToken;
                         if (DEBUG_STARTING_WINDOW && atoken != null
                                 && w == atoken.startingWindow) {
@@ -9928,34 +8926,26 @@ public class WindowManagerService extends IWindowManager.Stub
                             }
                         }
                     }
-
                     if (isDefaultDisplay && someoneLosingFocus && (w == mCurrentFocus)
                             && w.isDisplayedLw()) {
                         focusDisplayed = true;
                     }
-
                     updateResizingWindows(w);
                 }
-
                 mDisplayManagerInternal.setDisplayProperties(displayId,
                         mInnerFields.mDisplayHasContent, mInnerFields.mPreferredRefreshRate,
                         true /* inTraversal, must call performTraversalInTrans... below */);
-
                 getDisplayContentLocked(displayId).stopDimmingIfNeeded();
-
                 if (updateAllDrawn) {
                     updateAllDrawnLocked(displayContent);
                 }
             }
-
             if (focusDisplayed) {
                 mH.sendEmptyMessage(H.REPORT_LOSING_FOCUS);
             }
-
             // Give the display manager a chance to adjust properties
             // like display rotation if it needs to.
             mDisplayManagerInternal.performTraversalInTransactionFromWindowManager();
-
         } catch (RuntimeException e) {
             Slog.wtf(TAG, "Unhandled exception in Window Manager", e);
         } finally {
@@ -9963,9 +8953,7 @@ public class WindowManagerService extends IWindowManager.Stub
             if (SHOW_LIGHT_TRANSACTIONS) Slog.i(TAG,
                     "<<< CLOSE TRANSACTION performLayoutAndPlaceSurfaces");
         }
-
         final WindowList defaultWindows = defaultDisplay.getWindowList();
-
         // If we are ready to perform an app transition, check through
         // all of the app tokens to be shown and see if they are ready
         // to go.
@@ -9974,7 +8962,6 @@ public class WindowManagerService extends IWindowManager.Stub
             if (DEBUG_LAYOUT_REPEATS) debugLayoutRepeats("after handleAppTransitionReadyLocked",
                     defaultDisplay.pendingLayoutChanges);
         }
-
         if (!mAnimator.mAnimating && mAppTransition.isRunning()) {
             // We have finished the animation of an app transition.  To do
             // this, we have delayed a lot of operations like showing and
@@ -9986,7 +8973,6 @@ public class WindowManagerService extends IWindowManager.Stub
             if (DEBUG_LAYOUT_REPEATS) debugLayoutRepeats("after handleAnimStopAndXitionLock",
                 defaultDisplay.pendingLayoutChanges);
         }
-
         if (mInnerFields.mWallpaperForceHidingChanged && defaultDisplay.pendingLayoutChanges == 0
                 && !mAppTransition.isReady()) {
             // At this point, there was a window with a wallpaper that
@@ -10000,7 +8986,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 defaultDisplay.pendingLayoutChanges);
         }
         mInnerFields.mWallpaperForceHidingChanged = false;
-
         if (mInnerFields.mWallpaperMayChange) {
             if (DEBUG_WALLPAPER_LIGHT) Slog.v(TAG, "Wallpaper may change!  Adjusting");
             defaultDisplay.pendingLayoutChanges |=
@@ -10008,7 +8993,6 @@ public class WindowManagerService extends IWindowManager.Stub
             if (DEBUG_LAYOUT_REPEATS) debugLayoutRepeats("WallpaperMayChange",
                     defaultDisplay.pendingLayoutChanges);
         }
-
         if (mFocusMayChange) {
             mFocusMayChange = false;
             if (updateFocusedWindowLocked(UPDATE_FOCUS_PLACING_SURFACES,
@@ -10017,13 +9001,11 @@ public class WindowManagerService extends IWindowManager.Stub
                 defaultDisplay.pendingLayoutChanges |= WindowManagerPolicy.FINISH_LAYOUT_REDO_ANIM;
             }
         }
-
         if (needsLayout()) {
             defaultDisplay.pendingLayoutChanges |= WindowManagerPolicy.FINISH_LAYOUT_REDO_LAYOUT;
             if (DEBUG_LAYOUT_REPEATS) debugLayoutRepeats("mLayoutNeeded",
                     defaultDisplay.pendingLayoutChanges);
         }
-
         for (i = mResizingWindows.size() - 1; i >= 0; i--) {
             WindowState win = mResizingWindows.get(i);
             if (win.mAppFreezing) {
@@ -10033,7 +9015,6 @@ public class WindowManagerService extends IWindowManager.Stub
             win.reportResized();
             mResizingWindows.remove(i);
         }
-
         if (DEBUG_ORIENTATION && mDisplayFrozen) Slog.v(TAG,
                 "With display frozen, orientationChangeComplete="
                 + mInnerFields.mOrientationChangeComplete);
@@ -10045,7 +9026,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             stopFreezingDisplayLocked();
         }
-
         // Destroy the surface of any windows that are no longer visible.
         boolean wallpaperDestroyed = false;
         i = mDestroySurface.size();
@@ -10064,7 +9044,6 @@ public class WindowManagerService extends IWindowManager.Stub
             } while (i > 0);
             mDestroySurface.clear();
         }
-
         // Time to remove any exiting tokens?
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
             final DisplayContent displayContent = mDisplayContents.valueAt(displayNdx);
@@ -10079,7 +9058,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         // Time to remove any exiting applications?
         for (int stackNdx = mStackIdToStack.size() - 1; stackNdx >= 0; --stackNdx) {
             // Initialize state of exiting applications.
@@ -10105,7 +9083,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         if (!mAnimator.mAnimating && mRelayoutWhileAnimating.size() > 0) {
             for (int j=mRelayoutWhileAnimating.size()-1; j>=0; j--) {
                 try {
@@ -10115,23 +9092,19 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             mRelayoutWhileAnimating.clear();
         }
-
         if (wallpaperDestroyed) {
             defaultDisplay.pendingLayoutChanges |=
                     WindowManagerPolicy.FINISH_LAYOUT_REDO_WALLPAPER;
             defaultDisplay.layoutNeeded = true;
         }
-
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
             final DisplayContent displayContent = mDisplayContents.valueAt(displayNdx);
             if (displayContent.pendingLayoutChanges != 0) {
                 displayContent.layoutNeeded = true;
             }
         }
-
         // Finally update all input windows now that the window changes have stabilized.
         mInputMonitor.updateInputWindowsLw(true /*force*/);
-
         setHoldScreenLocked(mInnerFields.mHoldScreen);
         if (!mDisplayFrozen) {
             if (mInnerFields.mScreenBrightness < 0 || mInnerFields.mScreenBrightness > 1.0f) {
@@ -10149,7 +9122,6 @@ public class WindowManagerService extends IWindowManager.Stub
             mPowerManagerInternal.setUserActivityTimeoutOverrideFromWindowManager(
                     mInnerFields.mUserActivityTimeout);
         }
-
         if (mTurnOnScreen) {
             if (mAllowTheaterModeWakeFromLayout
                     || Settings.Global.getInt(mContext.getContentResolver(),
@@ -10159,7 +9131,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             mTurnOnScreen = false;
         }
-
         if (mInnerFields.mUpdateRotation) {
             if (DEBUG_ORIENTATION) Slog.d(TAG, "Performing post-rotate rotation");
             if (updateRotationUncheckedLocked(false)) {
@@ -10168,13 +9139,11 @@ public class WindowManagerService extends IWindowManager.Stub
                 mInnerFields.mUpdateRotation = false;
             }
         }
-
         if (mWaitingForDrawnCallback != null ||
                 (mInnerFields.mOrientationChangeComplete && !defaultDisplay.layoutNeeded &&
                         !mInnerFields.mUpdateRotation)) {
             checkDrawnWindowsLocked();
         }
-
         final int N = mPendingRemove.size();
         if (N > 0) {
             if (mPendingRemoveTmp.length < N) {
@@ -10191,39 +9160,31 @@ public class WindowManagerService extends IWindowManager.Stub
                     displayList.add(displayContent);
                 }
             }
-
             for (DisplayContent displayContent : displayList) {
                 assignLayersLocked(displayContent.getWindowList());
                 displayContent.layoutNeeded = true;
             }
         }
-
         // Remove all deferred displays stacks, tasks, and activities.
         for (int displayNdx = mDisplayContents.size() - 1; displayNdx >= 0; --displayNdx) {
             mDisplayContents.valueAt(displayNdx).checkForDeferredActions();
         }
-
         if (updateInputWindowsNeeded) {
             mInputMonitor.updateInputWindowsLw(false /*force*/);
         }
         setFocusedStackFrame();
-
         // Check to see if we are now in a state where the screen should
         // be enabled, because the window obscured flags have changed.
         enableScreenIfNeededLocked();
-
         scheduleAnimationLocked();
-
         if (DEBUG_WINDOW_TRACE) {
             Slog.e(TAG, "performLayoutAndPlaceSurfacesLockedInner exit: animating="
                     + mAnimator.mAnimating);
         }
     }
-
     private int toBrightnessOverride(float value) {
         return (int)(value * PowerManager.BRIGHTNESS_ON);
     }
-
     void checkDrawnWindowsLocked() {
         if (mWaitingForDrawn.isEmpty() || mWaitingForDrawnCallback == null) {
             return;
@@ -10250,15 +9211,12 @@ public class WindowManagerService extends IWindowManager.Stub
             mH.sendEmptyMessage(H.ALL_WINDOWS_DRAWN);
         }
     }
-
     void setHoldScreenLocked(final Session newHoldScreen) {
         final boolean hold = newHoldScreen != null;
-
         if (hold && mHoldingScreenOn != newHoldScreen) {
             mHoldingScreenWakeLock.setWorkSource(new WorkSource(newHoldScreen.mUid));
         }
         mHoldingScreenOn = newHoldScreen;
-
         final boolean state = mHoldingScreenWakeLock.isHeld();
         if (hold != state) {
             if (hold) {
@@ -10270,20 +9228,17 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     void requestTraversal() {
         synchronized (mWindowMap) {
             requestTraversalLocked();
         }
     }
-
     void requestTraversalLocked() {
         if (!mTraversalScheduled) {
             mTraversalScheduled = true;
             mH.sendEmptyMessage(H.DO_TRAVERSAL);
         }
     }
-
     /** Note that Locked in this case is on mLayoutToAnim */
     void scheduleAnimationLocked() {
         if (!mAnimationScheduled) {
@@ -10292,7 +9247,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     Choreographer.CALLBACK_ANIMATION, mAnimator.mAnimationRunnable, null);
         }
     }
-
     private boolean needsLayout() {
         final int numDisplays = mDisplayContents.size();
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
@@ -10303,10 +9257,8 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return false;
     }
-
     boolean copyAnimToLayoutParamsLocked() {
         boolean doRequest = false;
-
         final int bulkUpdateParams = mAnimator.mBulkUpdateParams;
         if ((bulkUpdateParams & LayoutFields.SET_UPDATE_ROTATION) != 0) {
             mInnerFields.mUpdateRotation = true;
@@ -10335,10 +9287,8 @@ public class WindowManagerService extends IWindowManager.Stub
         if ((bulkUpdateParams & LayoutFields.SET_WALLPAPER_ACTION_PENDING) != 0) {
             mInnerFields.mWallpaperActionPending = true;
         }
-
         return doRequest;
     }
-
     /** If a window that has an animation specifying a colored background and the current wallpaper
      * is visible, then the color goes *below* the wallpaper so we don't cause the wallpaper to
      * suddenly disappear. */
@@ -10352,26 +9302,21 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return winAnimator.mAnimLayer;
     }
-
     boolean reclaimSomeSurfaceMemoryLocked(WindowStateAnimator winAnimator, String operation,
                                            boolean secure) {
         final SurfaceControl surface = winAnimator.mSurfaceControl;
         boolean leakedSurface = false;
         boolean killedApps = false;
-
         EventLog.writeEvent(EventLogTags.WM_NO_SURFACE_MEMORY, winAnimator.mWin.toString(),
                 winAnimator.mSession.mPid, operation);
-
         if (mForceRemoves == null) {
             mForceRemoves = new ArrayList<WindowState>();
         }
-
         long callingIdentity = Binder.clearCallingIdentity();
         try {
             // There was some problem...   first, do a sanity check of the
             // window list to make sure we haven't left any dangling surfaces
             // around.
-
             Slog.i(TAG, "Out of memory for surface!  Looking for leaks...");
             final int numDisplays = mDisplayContents.size();
             for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
@@ -10408,7 +9353,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             if (!leakedSurface) {
                 Slog.w(TAG, "No leaked surfaces; killing applicatons!");
                 SparseIntArray pidCandidates = new SparseIntArray();
@@ -10439,7 +9383,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             if (leakedSurface || killedApps) {
                 // We managed to reclaim some memory, so get rid of the trouble
                 // surface and ask the app to request another one.
@@ -10453,7 +9396,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     winAnimator.mWin.mHasSurface = false;
                     scheduleRemoveStartingWindowLocked(winAnimator.mWin.mAppToken);
                 }
-
                 try {
                     winAnimator.mWin.mClient.dispatchGetNewSurface();
                 } catch (RemoteException e) {
@@ -10462,10 +9404,8 @@ public class WindowManagerService extends IWindowManager.Stub
         } finally {
             Binder.restoreCallingIdentity(callingIdentity);
         }
-
         return leakedSurface || killedApps;
     }
-
     private boolean updateFocusedWindowLocked(int mode, boolean updateInputWindows) {
         WindowState newFocus = computeFocusedWindowLocked();
         if (mCurrentFocus != newFocus) {
@@ -10483,15 +9423,12 @@ public class WindowManagerService extends IWindowManager.Stub
                 displayContent.layoutNeeded = true;
                 newFocus = computeFocusedWindowLocked();
             }
-
             if (DEBUG_FOCUS_LIGHT || localLOGV) Slog.v(TAG, "Changing focus from " +
                     mCurrentFocus + " to " + newFocus + " Callers=" + Debug.getCallers(4));
             final WindowState oldFocus = mCurrentFocus;
             mCurrentFocus = newFocus;
             mLosingFocus.remove(newFocus);
-
             int focusChanged = mPolicy.focusChangedLw(oldFocus, newFocus);
-
             if (imWindowChanged && oldFocus != mInputMethodWindow) {
                 // Focus of the input method window changed. Perform layout if needed.
                 if (mode == UPDATE_FOCUS_PLACING_SURFACES) {
@@ -10503,7 +9440,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     assignLayersLocked(displayContent.getWindowList());
                 }
             }
-
             if ((focusChanged & WindowManagerPolicy.FINISH_LAYOUT_REDO_LAYOUT) != 0) {
                 // The change in focus caused us to need to do a layout.  Okay.
                 displayContent.layoutNeeded = true;
@@ -10511,25 +9447,21 @@ public class WindowManagerService extends IWindowManager.Stub
                     performLayoutLockedInner(displayContent, true /*initial*/, updateInputWindows);
                 }
             }
-
             if (mode != UPDATE_FOCUS_WILL_ASSIGN_LAYERS) {
                 // If we defer assigning layers, then the caller is responsible for
                 // doing this part.
                 mInputMonitor.setInputFocusLw(mCurrentFocus, updateInputWindows);
             }
-
             Trace.traceEnd(Trace.TRACE_TAG_WINDOW_MANAGER);
             return true;
         }
         return false;
     }
-
     private WindowState computeFocusedWindowLocked() {
         if (mAnimator.mUniverseBackground != null
                 && mAnimator.mUniverseBackground.mWin.canReceiveKeys()) {
             return mAnimator.mUniverseBackground.mWin;
         }
-
         final int displayCount = mDisplayContents.size();
         for (int i = 0; i < displayCount; i++) {
             final DisplayContent displayContent = mDisplayContents.valueAt(i);
@@ -10540,31 +9472,25 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return null;
     }
-
     private WindowState findFocusedWindowLocked(DisplayContent displayContent) {
         final WindowList windows = displayContent.getWindowList();
         for (int i = windows.size() - 1; i >= 0; i--) {
             final WindowState win = windows.get(i);
-
             if (localLOGV || DEBUG_FOCUS) Slog.v(
                 TAG, "Looking for focus: " + i
                 + " = " + win
                 + ", flags=" + win.mAttrs.flags
                 + ", canReceive=" + win.canReceiveKeys());
-
             AppWindowToken wtoken = win.mAppToken;
-
             // If this window's application has been removed, just skip it.
             if (wtoken != null && (wtoken.removed || wtoken.sendingToBottom)) {
                 if (DEBUG_FOCUS) Slog.v(TAG, "Skipping " + wtoken + " because "
                         + (wtoken.removed ? "removed" : "sendingToBottom"));
                 continue;
             }
-
             if (!win.canReceiveKeys()) {
                 continue;
             }
-
             // Descend through all of the app tokens and find the first that either matches
             // win.mAppToken (return win) or mFocusedApp (return null).
             if (wtoken != null && win.mAttrs.type != TYPE_APPLICATION_STARTING &&
@@ -10591,49 +9517,38 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
             }
-
             if (DEBUG_FOCUS_LIGHT) Slog.v(TAG, "findFocusedWindow: Found new focus @ " + i +
                         " = " + win);
             return win;
         }
-
         if (DEBUG_FOCUS_LIGHT) Slog.v(TAG, "findFocusedWindow: No focusable windows.");
         return null;
     }
-
     private void startFreezingDisplayLocked(boolean inTransaction, int exitAnim, int enterAnim) {
         if (mDisplayFrozen) {
             return;
         }
-
         if (!mDisplayReady || !mPolicy.isScreenOn()) {
             // No need to freeze the screen before the system is ready or if
             // the screen is off.
             return;
         }
-
         mScreenFrozenLock.acquire();
-
         mDisplayFrozen = true;
         mDisplayFreezeTime = SystemClock.elapsedRealtime();
         mLastFinishedFreezeSource = null;
-
         mInputMonitor.freezeInputDispatchingLw();
-
         // Clear the last input window -- that is just used for
         // clean transitions between IMEs, and if we are freezing
         // the screen then the whole world is changing behind the scenes.
         mPolicy.setLastInputMethodWindowLw(null, null);
-
         if (mAppTransition.isTransitionSet()) {
             mAppTransition.freeze();
         }
-
         if (PROFILE_ORIENTATION) {
             File file = new File("/data/system/frozen");
             Debug.startMethodTracing(file.toString(), 8 * 1024 * 1024);
         }
-
         if (CUSTOM_SCREEN_ROTATION) {
             mExitAnimId = exitAnim;
             mEnterAnimId = enterAnim;
@@ -10644,7 +9559,6 @@ public class WindowManagerService extends IWindowManager.Stub
             if (screenRotationAnimation != null) {
                 screenRotationAnimation.kill();
             }
-
             // Check whether the current screen contains any secure content.
             boolean isSecure = false;
             final WindowList windows = getDefaultWindowListLocked();
@@ -10656,7 +9570,6 @@ public class WindowManagerService extends IWindowManager.Stub
                     break;
                 }
             }
-
             // TODO(multidisplay): rotation on main screen only.
             displayContent.updateDisplayInfo();
             screenRotationAnimation = new ScreenRotationAnimation(mContext, displayContent,
@@ -10664,12 +9577,10 @@ public class WindowManagerService extends IWindowManager.Stub
             mAnimator.setScreenRotationAnimationLocked(displayId, screenRotationAnimation);
         }
     }
-
     private void stopFreezingDisplayLocked() {
         if (!mDisplayFrozen) {
             return;
         }
-
         if (mWaitingForConfig || mAppsFreezingScreen > 0 || mWindowsFreezingScreen
                 || mClientFreezingScreen) {
             if (DEBUG_ORIENTATION) Slog.d(TAG,
@@ -10679,7 +9590,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 + ", mClientFreezingScreen=" + mClientFreezingScreen);
             return;
         }
-
         mDisplayFrozen = false;
         mLastDisplayFreezeDuration = (int)(SystemClock.elapsedRealtime() - mDisplayFreezeTime);
         StringBuilder sb = new StringBuilder(128);
@@ -10695,9 +9605,7 @@ public class WindowManagerService extends IWindowManager.Stub
         if (PROFILE_ORIENTATION) {
             Debug.stopMethodTracing();
         }
-
         boolean updateRotation = false;
-
         final DisplayContent displayContent = getDefaultDisplayContentLocked();
         final int displayId = displayContent.getDisplayId();
         ScreenRotationAnimation screenRotationAnimation =
@@ -10730,17 +9638,13 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             updateRotation = true;
         }
-
         mInputMonitor.thawInputDispatchingLw();
-
         boolean configChanged;
-
         // While the display is frozen we don't re-compute the orientation
         // to avoid inconsistent states.  However, something interesting
         // could have actually changed during that time so re-evaluate it
         // now to catch that.
         configChanged = updateOrientationFromAppTokensLocked(false);
-
         // A little kludge: a lot could have happened while the
         // display was frozen, so now that we are coming back we
         // do a gc so that any remote references the system
@@ -10748,19 +9652,15 @@ public class WindowManagerService extends IWindowManager.Stub
         // no longer needed.
         mH.removeMessages(H.FORCE_GC);
         mH.sendEmptyMessageDelayed(H.FORCE_GC, 2000);
-
         mScreenFrozenLock.release();
-
         if (updateRotation) {
             if (DEBUG_ORIENTATION) Slog.d(TAG, "Performing post-rotate rotation");
             configChanged |= updateRotationUncheckedLocked(false);
         }
-
         if (configChanged) {
             mH.sendEmptyMessage(H.SEND_NEW_CONFIGURATION);
         }
     }
-
     static int getPropertyInt(String[] tokens, int index, int defUnits, int defDps,
             DisplayMetrics dm) {
         if (index < tokens.length) {
@@ -10779,12 +9679,10 @@ public class WindowManagerService extends IWindowManager.Stub
         int val = (int)TypedValue.applyDimension(defUnits, defDps, dm);
         return val;
     }
-
     void createWatermarkInTransaction() {
         if (mWatermark != null) {
             return;
         }
-
         File file = new File("/system/etc/setup.conf");
         FileInputStream in = null;
         DataInputStream ind = null;
@@ -10815,7 +9713,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void statusBarVisibilityChanged(int visibility) {
         if (mContext.checkCallingOrSelfPermission(android.Manifest.permission.STATUS_BAR)
@@ -10823,14 +9720,12 @@ public class WindowManagerService extends IWindowManager.Stub
             throw new SecurityException("Caller does not hold permission "
                     + android.Manifest.permission.STATUS_BAR);
         }
-
         synchronized (mWindowMap) {
             mLastStatusBarVisibility = visibility;
             visibility = mPolicy.adjustSystemUiVisibilityLw(visibility);
             updateStatusBarVisibilityLocked(visibility);
         }
     }
-
     // TOOD(multidisplay): StatusBar on multiple screens?
     void updateStatusBarVisibilityLocked(int visibility) {
         mInputManager.setSystemUiVisibility(visibility);
@@ -10860,7 +9755,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     @Override
     public void reevaluateStatusBarVisibility() {
         synchronized (mWindowMap) {
@@ -10869,7 +9763,6 @@ public class WindowManagerService extends IWindowManager.Stub
             performLayoutAndPlaceSurfacesLocked();
         }
     }
-
     @Override
     public FakeWindow addFakeWindow(Looper looper,
             InputEventReceiver.Factory inputEventReceiverFactory,
@@ -10889,7 +9782,6 @@ public class WindowManagerService extends IWindowManager.Stub
             return fw;
         }
     }
-
     boolean removeFakeWindowLocked(FakeWindow window) {
         synchronized (mWindowMap) {
             if (mFakeWindows.remove(window)) {
@@ -10899,7 +9791,6 @@ public class WindowManagerService extends IWindowManager.Stub
             return false;
         }
     }
-
     // It is assumed that this method is called only by InputMethodManagerService.
     public void saveLastInputMethodWindowForTransition() {
         synchronized (mWindowMap) {
@@ -10910,32 +9801,26 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     public int getInputMethodWindowVisibleHeight() {
         synchronized (mWindowMap) {
             return mPolicy.getInputMethodWindowVisibleHeightLw();
         }
     }
-
     @Override
     public boolean hasNavigationBar() {
         return mPolicy.hasNavigationBar();
     }
-
     @Override
     public void lockNow(Bundle options) {
         mPolicy.lockNow(options);
     }
-
     public void showRecentApps() {
         mPolicy.showRecentApps();
     }
-
     @Override
     public boolean isSafeModeEnabled() {
         return mSafeMode;
     }
-
     @Override
     public boolean clearWindowContentFrameStats(IBinder token) {
         if (!checkCallingPermission(Manifest.permission.FRAME_STATS,
@@ -10954,7 +9839,6 @@ public class WindowManagerService extends IWindowManager.Stub
             return surfaceControl.clearContentFrameStats();
         }
     }
-
     @Override
     public WindowContentFrameStats getWindowContentFrameStats(IBinder token) {
         if (!checkCallingPermission(Manifest.permission.FRAME_STATS,
@@ -10980,17 +9864,14 @@ public class WindowManagerService extends IWindowManager.Stub
             return stats;
         }
     }
-
     void dumpPolicyLocked(PrintWriter pw, String[] args, boolean dumpAll) {
         pw.println("WINDOW MANAGER POLICY STATE (dumpsys window policy)");
         mPolicy.dump("    ", pw, args);
     }
-
     void dumpAnimatorLocked(PrintWriter pw, String[] args, boolean dumpAll) {
         pw.println("WINDOW MANAGER ANIMATOR STATE (dumpsys window animator)");
         mAnimator.dumpLocked(pw, "    ", dumpAll);
     }
-
     void dumpTokensLocked(PrintWriter pw, boolean dumpAll) {
         pw.println("WINDOW MANAGER TOKENS (dumpsys window tokens)");
         if (mTokenMap.size() > 0) {
@@ -11047,7 +9928,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     }
-
     void dumpSessionsLocked(PrintWriter pw, boolean dumpAll) {
         pw.println("WINDOW MANAGER SESSIONS (dumpsys window sessions)");
         for (int i=0; i<mSessions.size(); i++) {
@@ -11056,7 +9936,6 @@ public class WindowManagerService extends IWindowManager.Stub
             s.dump(pw, "    ");
         }
     }
-
     void dumpDisplayContentsLocked(PrintWriter pw, boolean dumpAll) {
         pw.println("WINDOW MANAGER DISPLAY CONTENTS (dumpsys window displays)");
         if (mDisplayReady) {
@@ -11069,13 +9948,11 @@ public class WindowManagerService extends IWindowManager.Stub
             pw.println("  NO DISPLAY");
         }
     }
-
     void dumpWindowsLocked(PrintWriter pw, boolean dumpAll,
             ArrayList<WindowState> windows) {
         pw.println("WINDOW MANAGER WINDOWS (dumpsys window windows)");
         dumpWindowsNoHeaderLocked(pw, dumpAll, windows);
     }
-
     void dumpWindowsNoHeaderLocked(PrintWriter pw, boolean dumpAll,
             ArrayList<WindowState> windows) {
         final int numDisplays = mDisplayContents.size();
@@ -11275,7 +10152,6 @@ public class WindowManagerService extends IWindowManager.Stub
             mAppTransition.dump(pw);
         }
     }
-
     boolean dumpWindows(PrintWriter pw, String name, String[] args,
             int opti, boolean dumpAll) {
         WindowList windows = new WindowList();
@@ -11319,17 +10195,14 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         if (windows.size() <= 0) {
             return false;
         }
-
         synchronized(mWindowMap) {
             dumpWindowsLocked(pw, dumpAll, windows);
         }
         return true;
     }
-
     void dumpLastANRLocked(PrintWriter pw) {
         pw.println("WINDOW MANAGER LAST ANR (dumpsys window lastanr)");
         if (mLastANRState == null) {
@@ -11338,7 +10211,6 @@ public class WindowManagerService extends IWindowManager.Stub
             pw.println(mLastANRState);
         }
     }
-
     /**
      * Saves information about the state of the window manager at
      * the time an ANR occurred before anything else in the system changes
@@ -11369,11 +10241,9 @@ public class WindowManagerService extends IWindowManager.Stub
         dumpDisplayContentsLocked(pw, true);
         pw.close();
         mLastANRState = sw.toString();
-
         mH.removeMessages(H.RESET_ANR_MESSAGE);
         mH.sendEmptyMessageDelayed(H.RESET_ANR_MESSAGE, LAST_ANR_LIFETIME_DURATION_MSECS);
     }
-
     @Override
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         if (mContext.checkCallingOrSelfPermission("android.permission.DUMP")
@@ -11383,9 +10253,7 @@ public class WindowManagerService extends IWindowManager.Stub
                     + ", uid=" + Binder.getCallingUid());
             return;
         }
-
         boolean dumpAll = false;
-
         int opti = 0;
         while (opti < args.length) {
             String opt = args[opti];
@@ -11418,7 +10286,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 pw.println("Unknown argument: " + opt + "; use -h for help");
             }
         }
-
         // Is the caller requesting to dump a particular piece of data?
         if (opti < args.length) {
             String cmd = args[opti];
@@ -11477,7 +10344,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 return;
             }
         }
-
         synchronized(mWindowMap) {
             pw.println();
             if (dumpAll) {
@@ -11523,30 +10389,25 @@ public class WindowManagerService extends IWindowManager.Stub
             dumpWindowsLocked(pw, dumpAll, null);
         }
     }
-
     // Called by the heartbeat to ensure locks are not held indefnitely (for deadlock detection).
     @Override
     public void monitor() {
         synchronized (mWindowMap) { }
     }
-
     public interface OnHardKeyboardStatusChangeListener {
         public void onHardKeyboardStatusChange(boolean available);
     }
-
     void debugLayoutRepeats(final String msg, int pendingLayoutChanges) {
         if (mLayoutRepeatCount >= LAYOUT_REPEAT_THRESHOLD) {
             Slog.v(TAG, "Layouts looping: " + msg + ", mPendingLayoutChanges = 0x" +
                     Integer.toHexString(pendingLayoutChanges));
         }
     }
-
     private DisplayContent newDisplayContentLocked(final Display display) {
         DisplayContent displayContent = new DisplayContent(display, this);
         final int displayId = display.getDisplayId();
         if (DEBUG_DISPLAY) Slog.v(TAG, "Adding display=" + display);
         mDisplayContents.put(displayId, displayContent);
-
         DisplayInfo displayInfo = displayContent.getDisplayInfo();
         final Rect rect = new Rect();
         mDisplaySettings.getOverscanLocked(displayInfo.name, displayInfo.uniqueId, rect);
@@ -11559,13 +10420,12 @@ public class WindowManagerService extends IWindowManager.Stub
                     displayId, displayInfo);
         }
         configureDisplayPolicyLocked(displayContent);
-
         // TODO: Create an input channel for each display with touch capability.
 		/**
-		 * Date: Feb 25, 2016
+		 * Date: Apr 7, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * All display has same event listener.
 		 */
 		/*
         if (displayId == Display.DEFAULT_DISPLAY) {
@@ -11576,17 +10436,14 @@ public class WindowManagerService extends IWindowManager.Stub
         displayContent.mTapDetector = new StackTapPointerEventListener(this, displayContent);
         registerPointerEventListener(displayContent.mTapDetector);
 		// END
-
         return displayContent;
     }
-
     public void createDisplayContentLocked(final Display display) {
         if (display == null) {
             throw new IllegalArgumentException("getDisplayContent: display must not be null");
         }
         getDisplayContentLocked(display.getDisplayId());
     }
-
     /**
      * Retrieve the DisplayContent for the specified displayId. Will create a new DisplayContent if
      * there is a Display for the displayId.
@@ -11603,20 +10460,16 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return displayContent;
     }
-
     // There is an inherent assumption that this will never return null.
     public DisplayContent getDefaultDisplayContentLocked() {
         return getDisplayContentLocked(Display.DEFAULT_DISPLAY);
     }
-
     public WindowList getDefaultWindowListLocked() {
         return getDefaultDisplayContentLocked().getWindowList();
     }
-
     public DisplayInfo getDefaultDisplayInfoLocked() {
         return getDefaultDisplayContentLocked().getDisplayInfo();
     }
-
     /**
      * Return the list of WindowStates associated on the passed display.
      * @param display The screen to return windows from.
@@ -11625,7 +10478,6 @@ public class WindowManagerService extends IWindowManager.Stub
     public WindowList getWindowListLocked(final Display display) {
         return getWindowListLocked(display.getDisplayId());
     }
-
     /**
      * Return the list of WindowStates associated on the passed display.
      * @param displayId The screen to return windows from.
@@ -11635,22 +10487,19 @@ public class WindowManagerService extends IWindowManager.Stub
         final DisplayContent displayContent = getDisplayContentLocked(displayId);
         return displayContent != null ? displayContent.getWindowList() : null;
     }
-
     public void onDisplayAdded(int displayId) {
         mH.sendMessage(mH.obtainMessage(H.DO_DISPLAY_ADDED, displayId, 0));
     }
-
     public void handleDisplayAdded(int displayId) {
         synchronized (mWindowMap) {
             final Display display = mDisplayManager.getDisplay(displayId);
             if (display != null) {
                 createDisplayContentLocked(display);
-
 				/**
 				 * Date: Feb 25, 2016
 				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 				 * 
-				 * Comments
+				 * Create a stack for this display.
 				 */
 				try {
 					mActivityManager.createStackOnDisplay(displayId);
@@ -11658,17 +10507,14 @@ public class WindowManagerService extends IWindowManager.Stub
 
 				}
 				// END
-
                 displayReady(displayId);
             }
             requestTraversalLocked();
         }
     }
-
     public void onDisplayRemoved(int displayId) {
         mH.sendMessage(mH.obtainMessage(H.DO_DISPLAY_REMOVED, displayId, 0));
     }
-
     private void handleDisplayRemovedLocked(int displayId) {
         final DisplayContent displayContent = getDisplayContentLocked(displayId);
         if (displayContent != null) {
@@ -11686,11 +10532,9 @@ public class WindowManagerService extends IWindowManager.Stub
         mAnimator.removeDisplayLocked(displayId);
         requestTraversalLocked();
     }
-
     public void onDisplayChanged(int displayId) {
         mH.sendMessage(mH.obtainMessage(H.DO_DISPLAY_CHANGED, displayId, 0));
     }
-
     private void handleDisplayChangedLocked(int displayId) {
         final DisplayContent displayContent = getDisplayContentLocked(displayId);
         if (displayContent != null) {
@@ -11698,7 +10542,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         requestTraversalLocked();
     }
-
     @Override
     public Object getWindowManagerLock() {
         return mWindowMap;
@@ -11708,7 +10551,7 @@ public class WindowManagerService extends IWindowManager.Stub
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Set the layer stack for the given token.
 	 *
 	 * @param token, layerStack
 	 * @return void
@@ -11723,7 +10566,7 @@ public class WindowManagerService extends IWindowManager.Stub
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Set the layer stack for the given AppWindowToken.
 	 *
 	 * @param wtoken, layerStack
 	 * @return void
@@ -11773,7 +10616,7 @@ public class WindowManagerService extends IWindowManager.Stub
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Move the task to the target stack.
 	 *
 	 * @param taskId, stackId
 	 * @return void
@@ -11795,7 +10638,7 @@ public class WindowManagerService extends IWindowManager.Stub
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Dump taskIds of all tasks.
 	 *
 	 * @param
 	 * @return void
@@ -11814,7 +10657,7 @@ public class WindowManagerService extends IWindowManager.Stub
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Dump stackIds of all stacks.
 	 *
 	 * @param
 	 * @return void
@@ -11834,7 +10677,6 @@ public class WindowManagerService extends IWindowManager.Stub
         public void requestTraversalFromDisplayManager() {
             requestTraversal();
         }
-
         @Override
         public void setMagnificationSpec(MagnificationSpec spec) {
             synchronized (mWindowMap) {
@@ -11848,7 +10690,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 spec.recycle();
             }
         }
-
         @Override
         public MagnificationSpec getCompatibleMagnificationSpecForWindow(IBinder windowToken) {
             synchronized (mWindowMap) {
@@ -11868,7 +10709,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 return spec;
             }
         }
-
         @Override
         public void setMagnificationCallbacks(MagnificationCallbacks callbacks) {
             synchronized (mWindowMap) {
@@ -11882,7 +10722,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         @Override
         public void setWindowsForAccessibilityCallback(WindowsForAccessibilityCallback callback) {
             synchronized (mWindowMap) {
@@ -11896,12 +10735,10 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         @Override
         public void setInputFilter(IInputFilter filter) {
             mInputManager.setInputFilter(filter);
         }
-
         @Override
         public IBinder getFocusedWindowToken() {
             synchronized (mWindowMap) {
@@ -11912,17 +10749,14 @@ public class WindowManagerService extends IWindowManager.Stub
                 return null;
             }
         }
-
         @Override
         public boolean isKeyguardLocked() {
             return WindowManagerService.this.isKeyguardLocked();
         }
-
         @Override
         public void showGlobalActions() {
             WindowManagerService.this.showGlobalActions();
         }
-
         @Override
         public void getWindowFrame(IBinder token, Rect outBounds) {
             synchronized (mWindowMap) {
@@ -11934,7 +10768,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
             }
         }
-
         @Override
         public void waitForAllWindowsDrawn(Runnable callback, long timeout) {
             synchronized (mWindowMap) {
@@ -11960,12 +10793,10 @@ public class WindowManagerService extends IWindowManager.Stub
                 checkDrawnWindowsLocked();
             }
         }
-
         @Override
         public void addWindowToken(IBinder token, int type) {
             WindowManagerService.this.addWindowToken(token, type);
         }
-
         @Override
         public void removeWindowToken(IBinder token, boolean removeWindows) {
             synchronized(mWindowMap) {
@@ -11978,12 +10809,11 @@ public class WindowManagerService extends IWindowManager.Stub
                 WindowManagerService.this.removeWindowToken(token);
             }
         }
-
 		/**
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 *
-		 * Comments
+		 * Set the forced rotation configuration.
 		 *
 		 * @param rotation
 		 * @return void

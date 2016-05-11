@@ -40,13 +40,12 @@ public abstract class InputManagerInternal {
      * watching for wake events.
      */
     public abstract void setInteractive(boolean interactive);
-
-	
+    
 	/**
-	 * Date: Feb 25, 2016
+	 * Date: Apr 7, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Add a interface function of InputManager for NANS framework.
+	 * Add an interface function of setInputDisplay.
 	 */
 	public abstract void setInputDisplay(int layerStack);
 	// END

@@ -2338,7 +2338,6 @@ public final class ActivityThread {
         appContext.setOuterContext(activity);
         Context baseContext = appContext;
 
-		
 		/**
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University

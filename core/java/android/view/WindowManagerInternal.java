@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,30 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package android.view;
-
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.hardware.display.DisplayManagerInternal;
 import android.os.IBinder;
 import android.os.IRemoteCallback;
-
 import java.util.List;
-
 /**
  * Window manager local system service interface.
  *
  * @hide Only for use within the system server.
  */
 public abstract class WindowManagerInternal {
-
     /**
      * Interface to receive a callback when the windows reported for
      * accessibility changed.
      */
     public interface WindowsForAccessibilityCallback {
-
         /**
          * Called when the windows for accessibility changed.
          *
@@ -45,13 +38,11 @@ public abstract class WindowManagerInternal {
          */
         public void onWindowsForAccessibilityChanged(List<WindowInfo> windows);
     }
-
     /**
      * Callbacks for contextual changes that affect the screen magnification
      * feature.
      */
     public interface MagnificationCallbacks {
-
         /**
          * Called when the bounds of the screen content that is magnified changed.
          * Note that not the entire screen is magnified.
@@ -59,7 +50,6 @@ public abstract class WindowManagerInternal {
          * @param bounds The bounds.
          */
         public void onMagnifedBoundsChanged(Region bounds);
-
         /**
          * Called when an application requests a rectangle on the screen to allow
          * the client to apply the appropriate pan and scale.
@@ -70,28 +60,24 @@ public abstract class WindowManagerInternal {
          * @param bottom The rectangle bottom.
          */
         public void onRectangleOnScreenRequested(int left, int top, int right, int bottom);
-
         /**
          * Notifies that the rotation changed.
          *
          * @param rotation The current rotation.
          */
         public void onRotationChanged(int rotation);
-
         /**
          * Notifies that the context of the user changed. For example, an application
          * was started.
          */
         public void onUserContextChanged();
     }
-
     /**
      * Request that the window manager call
      * {@link DisplayManagerInternal#performTraversalInTransactionFromWindowManager}
      * within a surface transaction at a later time.
      */
     public abstract void requestTraversalFromDisplayManager();
-
     /**
      * Set by the accessibility layer to observe changes in the magnified region,
      * rotation, and other window transformations related to display magnification
@@ -102,7 +88,6 @@ public abstract class WindowManagerInternal {
      * @param callbacks The callbacks to invoke.
      */
     public abstract void setMagnificationCallbacks(MagnificationCallbacks callbacks);
-
     /**
      * Set by the accessibility layer to specify the magnification and panning to
      * be applied to all windows that should be magnified.
@@ -112,7 +97,6 @@ public abstract class WindowManagerInternal {
      * @see #setMagnificationCallbacks(MagnificationCallbacks)
      */
     public abstract void setMagnificationSpec(MagnificationSpec spec);
-
     /**
      * Gets the magnification and translation applied to a window given its token.
      * Not all windows are magnified and the window manager policy determines which
@@ -127,7 +111,6 @@ public abstract class WindowManagerInternal {
      */
     public abstract MagnificationSpec getCompatibleMagnificationSpecForWindow(
             IBinder windowToken);
-
     /**
      * Sets a callback for observing which windows are touchable for the purposes
      * of accessibility.
@@ -136,26 +119,22 @@ public abstract class WindowManagerInternal {
      */
     public abstract void setWindowsForAccessibilityCallback(
             WindowsForAccessibilityCallback callback);
-
     /**
      * Sets a filter for manipulating the input event stream.
      *
      * @param filter The filter implementation.
      */
     public abstract void setInputFilter(IInputFilter filter);
-
     /**
      * Gets the token of the window that has input focus.
      *
      * @return The token.
      */
     public abstract IBinder getFocusedWindowToken();
-
     /**
      * @return Whether the keyguard is engaged.
      */
     public abstract boolean isKeyguardLocked();
-
     /**
      * Gets the frame of a window given its token.
      *
@@ -163,18 +142,15 @@ public abstract class WindowManagerInternal {
      * @param outBounds The frame to populate.
      */
     public abstract void getWindowFrame(IBinder token, Rect outBounds);
-
     /**
      * Opens the global actions dialog.
      */
     public abstract void showGlobalActions();
-
     /**
      * Invalidate all visible windows. Then report back on the callback once all windows have
      * redrawn.
      */
     public abstract void waitForAllWindowsDrawn(Runnable callback, long timeout);
-
     /**
      * Adds a window token for a given window type.
      *
@@ -182,7 +158,6 @@ public abstract class WindowManagerInternal {
      * @param type The window type.
      */
     public abstract void addWindowToken(android.os.IBinder token, int type);
-
     /**
      * Removes a window token.
      *
@@ -190,13 +165,13 @@ public abstract class WindowManagerInternal {
      * @param removeWindows Whether to also remove the windows associated with the token.
      */
     public abstract void removeWindowToken(android.os.IBinder token, boolean removeWindows);
-
-	
 	/**
-	 * Date: Feb 25, 2016
+	 * Date: Apr 7, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Add a interface function of WindowManager for NANS framework.
+	 * Add an interface function of setForcedRotation. 
 	 */
 	public abstract void setForcedRotation(int rotation);
+	// END
+
 }

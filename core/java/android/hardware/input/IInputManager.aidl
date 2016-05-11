@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package android.hardware.input;
-
 import android.hardware.input.InputDeviceIdentifier;
 import android.hardware.input.KeyboardLayout;
 import android.hardware.input.IInputDevicesChangedListener;
@@ -24,38 +22,32 @@ import android.hardware.input.TouchCalibration;
 import android.os.IBinder;
 import android.view.InputDevice;
 import android.view.InputEvent;
-
 /** @hide */
 interface IInputManager {
     // Gets input device information.
     InputDevice getInputDevice(int deviceId);
     int[] getInputDeviceIds();
-
     // Reports whether the hardware supports the given keys; returns true if successful
     boolean hasKeys(int deviceId, int sourceMask, in int[] keyCodes, out boolean[] keyExists);
-
     // Temporarily changes the pointer speed.
     void tryPointerSpeed(int speed);
-
     // Injects an input event into the system.  To inject into windows owned by other
     // applications, the caller must have the INJECT_EVENTS permission.
     boolean injectInputEvent(in InputEvent ev, int mode);
 
-    
 	/**
-	 * Date: Feb 25, 2016
+	 * Date: Apr 7, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-	 *
-	 * Add an AIDL function of InputManager for NANS framework.
+     *	
+	 * Add the interface function of injectInputEventToDisplay.
 	 */
     boolean injectInputEventToDisplay(in InputEvent ev, int displayId, int mode);
-    // END
+	// END
 
     // Calibrate input device position
     TouchCalibration getTouchCalibrationForInputDevice(String inputDeviceDescriptor, int rotation);
     void setTouchCalibrationForInputDevice(String inputDeviceDescriptor, int rotation,
             in TouchCalibration calibration);
-
     // Keyboard layouts configuration.
     KeyboardLayout[] getKeyboardLayouts();
     KeyboardLayout getKeyboardLayout(String keyboardLayoutDescriptor);
@@ -67,10 +59,8 @@ interface IInputManager {
             String keyboardLayoutDescriptor);
     void removeKeyboardLayoutForInputDevice(in InputDeviceIdentifier identifier,
             String keyboardLayoutDescriptor);
-
     // Registers an input devices changed listener.
     void registerInputDevicesChangedListener(IInputDevicesChangedListener listener);
-
     // Input device vibrator control.
     void vibrate(int deviceId, in long[] pattern, int repeat, IBinder token);
     void cancelVibrate(int deviceId, IBinder token);

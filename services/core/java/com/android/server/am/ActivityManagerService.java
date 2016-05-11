@@ -2361,6 +2361,9 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     final void setFocusedActivityLocked(ActivityRecord r, String reason) {
+		Slog.d("RUBIS", "setFocusedActivityLocked()");
+		Slog.d("RUBIS", "  L r="+r);
+		Slog.d("RUBIS", "  L mFocusedActivity="+mFocusedActivity);
         if (mFocusedActivity != r) {
             if (DEBUG_FOCUS) Slog.d(TAG, "setFocusedActivityLocked: r=" + r);
             mFocusedActivity = r;
@@ -8522,6 +8525,7 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     void moveTaskToFrontLocked(int taskId, int flags, Bundle options) {
+		Slog.d("RUBIS", "moveTaskToFrontLocked(), taskId=" + taskId);
         if (!checkAppSwitchAllowedLocked(Binder.getCallingPid(),
                 Binder.getCallingUid(), -1, -1, "Task to front")) {
             ActivityOptions.abort(options);
@@ -19613,9 +19617,9 @@ public final class ActivityManagerService extends ActivityManagerNative
 	 * Add a function to call the same function of ActivityStackSupervisor.
 	 */
     @Override
-    public boolean setExternalDisplay(String packageName, int displayId) {
+    public boolean setExternalDisplay(String packageName, int displayId, int flag) {
         synchronized (this) {
-            return mStackSupervisor.setExternalDisplayLocked(packageName, displayId);
+            return mStackSupervisor.setExternalDisplayLocked(packageName, displayId, flag);
         }
     }
 	// END
@@ -19627,9 +19631,9 @@ public final class ActivityManagerService extends ActivityManagerNative
 	 * Add a function to call the same function of ActivityStackSupervisor.
 	 */
 	@Override
-    public boolean setExternalDisplay(int taskId, int displayId) {
+    public boolean setExternalDisplay(int taskId, int displayId, int flag) {
         synchronized (this) {
-            return mStackSupervisor.setExternalDisplayLocked(taskId, displayId);
+            return mStackSupervisor.setExternalDisplayLocked(taskId, displayId, flag);
         }
     }
 	// END

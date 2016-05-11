@@ -3610,11 +3610,15 @@ package android.app {
     method public deprecated void restartPackage(java.lang.String);
     method public boolean setExternalDisplay(java.lang.String, android.view.Display);
     method public boolean setExternalDisplay(int, android.view.Display);
+    method public boolean setExternalDisplay(int, android.view.Display, int);
+    method public boolean setExternalDisplay(java.lang.String, android.view.Display, int);
     field public static final java.lang.String META_HOME_ALTERNATE = "android.app.home.alternate";
     field public static final int MOVE_TASK_NO_USER_ACTION = 2; // 0x2
     field public static final int MOVE_TASK_WITH_HOME = 1; // 0x1
     field public static final int RECENT_IGNORE_UNAVAILABLE = 2; // 0x2
     field public static final int RECENT_WITH_EXCLUDED = 1; // 0x1
+    field public static final int SET_EXTERNAL_DISPLAY_AND_GO_HOME = 2; // 0x2
+    field public static final int SET_EXTERNAL_DISPLAY_AND_STAY = 1; // 0x1
   }
 
   public static class ActivityManager.AppTask {
@@ -15061,6 +15065,7 @@ package android.media {
     method public void adjustVolume(int, int);
     method public void dispatchMediaKeyEvent(android.view.KeyEvent);
     method public int generateAudioSessionId();
+    method public int getForceUse(int);
     method public int getMode();
     method public java.lang.String getParameters(java.lang.String);
     method public java.lang.String getProperty(java.lang.String);
@@ -26868,6 +26873,7 @@ package android.provider {
     field public static final java.lang.String HTTP_PROXY = "http_proxy";
     field public static final deprecated java.lang.String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
     field public static final java.lang.String MODE_RINGER = "mode_ringer";
+    field public static final java.lang.String NANS_ENABLED = "nans";
     field public static final java.lang.String NETWORK_PREFERENCE = "network_preference";
     field public static final java.lang.String RADIO_BLUETOOTH = "bluetooth";
     field public static final java.lang.String RADIO_CELL = "cell";
@@ -35129,6 +35135,7 @@ package android.view {
     method public final int getAction();
     method public final int getActionIndex();
     method public final int getActionMasked();
+    method public java.lang.String getActionString();
     method public final float getAxisValue(int);
     method public final float getAxisValue(int, int);
     method public final int getButtonState();

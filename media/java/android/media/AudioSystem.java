@@ -14,17 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package android.media;
-
 import android.media.audiopolicy.AudioMix;
 import java.util.ArrayList;
-
 /* IF YOU CHANGE ANY OF THE CONSTANTS IN THIS FILE, DO NOT FORGET
  * TO UPDATE THE CORRESPONDING NATIVE GLUE AND AudioManager.java.
  * THANK YOU FOR YOUR COOPERATION.
  */
-
 /**
  * @hide
  */
@@ -61,11 +57,9 @@ public class AudioSystem
      * @deprecated Use {@link #numStreamTypes() instead}
      */
     public static final int NUM_STREAMS = 5;
-
     // Expose only the getter method publicly so we can change it in the future
     private static final int NUM_STREAM_TYPES = 10;
     public static final int getNumStreamTypes() { return NUM_STREAM_TYPES; }
-
     /*
      * Sets the microphone mute on or off.
      *
@@ -74,14 +68,12 @@ public class AudioSystem
      * @return command completion status see AUDIO_STATUS_OK, see AUDIO_STATUS_ERROR
      */
     public static native int muteMicrophone(boolean on);
-
     /*
      * Checks whether the microphone mute is on or off.
      *
      * @return true if microphone is muted, false if it's not
      */
     public static native boolean isMicrophoneMuted();
-
     /* modes for setPhoneState, must match AudioSystem.h audio_mode */
     public static final int MODE_INVALID            = -2;
     public static final int MODE_CURRENT            = -1;
@@ -90,8 +82,6 @@ public class AudioSystem
     public static final int MODE_IN_CALL            = 2;
     public static final int MODE_IN_COMMUNICATION   = 3;
     public static final int NUM_MODES               = 4;
-
-
     /* Routing bits for the former setRouting/getRouting API */
     /** @deprecated */
     @Deprecated public static final int ROUTE_EARPIECE          = (1 << 0);
@@ -107,17 +97,14 @@ public class AudioSystem
     @Deprecated public static final int ROUTE_BLUETOOTH_A2DP    = (1 << 4);
     /** @deprecated */
     @Deprecated public static final int ROUTE_ALL               = 0xFFFFFFFF;
-
     // Keep in sync with system/core/include/system/audio.h
     public static final int AUDIO_SESSION_ALLOCATE = 0;
-
     /*
      * Checks whether the specified stream type is active.
      *
      * return true if any track playing on this stream is active.
      */
     public static native boolean isStreamActive(int stream, int inPastMs);
-
     /*
      * Checks whether the specified stream type is active on a remotely connected device. The notion
      * of what constitutes a remote device is enforced by the audio policy manager of the platform.
@@ -125,19 +112,16 @@ public class AudioSystem
      * return true if any track playing on this stream is active on a remote device.
      */
     public static native boolean isStreamActiveRemotely(int stream, int inPastMs);
-
     /*
      * Checks whether the specified audio source is active.
      *
      * return true if any recorder using this source is currently recording
      */
     public static native boolean isSourceActive(int source);
-
     /*
      * Returns a new unused audio session ID
      */
     public static native int newAudioSessionId();
-
     /*
      * Sets a group generic audio configuration parameters. The use of these parameters
      * are platform dependent, see libaudio
@@ -146,7 +130,6 @@ public class AudioSystem
      *    key1=value1;key2=value2;...
      */
     public static native int setParameters(String keyValuePairs);
-
     /*
      * Gets a group generic audio configuration parameters. The use of these parameters
      * are platform dependent, see libaudio
@@ -156,7 +139,6 @@ public class AudioSystem
      *    key1=value1;key2=value2;...
      */
     public static native String getParameters(String keys);
-
     // These match the enum AudioError in frameworks/base/core/jni/android_media_AudioSystem.cpp
     /* Command sucessful or Media server restarted. see ErrorCallback */
     public static final int AUDIO_STATUS_OK = 0;
@@ -164,9 +146,7 @@ public class AudioSystem
     public static final int AUDIO_STATUS_ERROR = 1;
     /* Media server died. see ErrorCallback */
     public static final int AUDIO_STATUS_SERVER_DIED = 100;
-
     private static ErrorCallback mErrorCallback;
-
     /*
      * Handles the audio error callback.
      */
@@ -181,7 +161,6 @@ public class AudioSystem
          */
         void onError(int error);
     };
-
     /*
      * Registers a callback to be invoked when an error occurs.
      * @param cb the callback to run
@@ -195,7 +174,6 @@ public class AudioSystem
             }
         }
     }
-
     private static void errorCallbackFromNative(int error)
     {
         ErrorCallback errorCallback = null;
@@ -208,7 +186,6 @@ public class AudioSystem
             errorCallback.onError(error);
         }
     }
-
     /*
      * Error codes used by public APIs (AudioTrack, AudioRecord, AudioManager ...)
      * Must be kept in sync with frameworks/base/core/jni/android_media_AudioErrors.h
@@ -220,15 +197,12 @@ public class AudioSystem
     public static final int PERMISSION_DENIED  = -4;
     public static final int NO_INIT            = -5;
     public static final int DEAD_OBJECT        = -6;
-
     /*
      * AudioPolicyService methods
      */
-
     //
     // audio device definitions: must be kept in sync with values in system/core/audio.h
     //
-
     public static final int DEVICE_NONE = 0x0;
     // reserved bits
     public static final int DEVICE_BIT_IN = 0x80000000;
@@ -258,9 +232,7 @@ public class AudioSystem
     public static final int DEVICE_OUT_FM = 0x100000;
     public static final int DEVICE_OUT_AUX_LINE = 0x200000;
     public static final int DEVICE_OUT_SPEAKER_SAFE = 0x400000;
-
     public static final int DEVICE_OUT_DEFAULT = DEVICE_BIT_DEFAULT;
-
     public static final int DEVICE_OUT_ALL = (DEVICE_OUT_EARPIECE |
                                               DEVICE_OUT_SPEAKER |
                                               DEVICE_OUT_WIRED_HEADSET |
@@ -299,7 +271,6 @@ public class AudioSystem
     public static final int DEVICE_ALL_HDMI_SYSTEM_AUDIO_AND_SPEAKER =
             (DEVICE_OUT_ALL_HDMI_SYSTEM_AUDIO |
              DEVICE_OUT_SPEAKER);
-
     // input devices
     public static final int DEVICE_IN_COMMUNICATION = DEVICE_BIT_IN | 0x1;
     public static final int DEVICE_IN_AMBIENT = DEVICE_BIT_IN | 0x2;
@@ -323,7 +294,6 @@ public class AudioSystem
     public static final int DEVICE_IN_BLUETOOTH_A2DP = DEVICE_BIT_IN | 0x20000;
     public static final int DEVICE_IN_LOOPBACK = DEVICE_BIT_IN | 0x40000;
     public static final int DEVICE_IN_DEFAULT = DEVICE_BIT_IN | DEVICE_BIT_DEFAULT;
-
     public static final int DEVICE_IN_ALL = (DEVICE_IN_COMMUNICATION |
                                              DEVICE_IN_AMBIENT |
                                              DEVICE_IN_BUILTIN_MIC |
@@ -347,12 +317,10 @@ public class AudioSystem
     public static final int DEVICE_IN_ALL_SCO = DEVICE_IN_BLUETOOTH_SCO_HEADSET;
     public static final int DEVICE_IN_ALL_USB = (DEVICE_IN_USB_ACCESSORY |
                                                  DEVICE_IN_USB_DEVICE);
-
     // device states, must match AudioSystem::device_connection_state
     public static final int DEVICE_STATE_UNAVAILABLE = 0;
     public static final int DEVICE_STATE_AVAILABLE = 1;
     private static final int NUM_DEVICE_STATES = 1;
-
     public static final String DEVICE_OUT_EARPIECE_NAME = "earpiece";
     public static final String DEVICE_OUT_SPEAKER_NAME = "speaker";
     public static final String DEVICE_OUT_WIRED_HEADSET_NAME = "headset";
@@ -377,7 +345,6 @@ public class AudioSystem
     public static final String DEVICE_OUT_FM_NAME = "fm_transmitter";
     public static final String DEVICE_OUT_AUX_LINE_NAME = "aux_line";
     public static final String DEVICE_OUT_SPEAKER_SAFE_NAME = "speaker_safe";
-
     public static final String DEVICE_IN_COMMUNICATION_NAME = "communication";
     public static final String DEVICE_IN_AMBIENT_NAME = "ambient";
     public static final String DEVICE_IN_BUILTIN_MIC_NAME = "mic";
@@ -397,7 +364,6 @@ public class AudioSystem
     public static final String DEVICE_IN_SPDIF_NAME = "spdif";
     public static final String DEVICE_IN_BLUETOOTH_A2DP_NAME = "bt_a2dp";
     public static final String DEVICE_IN_LOOPBACK_NAME = "loopback";
-
     public static String getOutputDeviceName(int device)
     {
         switch(device) {
@@ -452,7 +418,6 @@ public class AudioSystem
             return Integer.toString(device);
         }
     }
-
     public static String getInputDeviceName(int device)
     {
         switch(device) {
@@ -499,12 +464,10 @@ public class AudioSystem
             return Integer.toString(device);
         }
     }
-
     // phone state, match audio_mode???
     public static final int PHONE_STATE_OFFCALL = 0;
     public static final int PHONE_STATE_RINGING = 1;
     public static final int PHONE_STATE_INCALL = 2;
-
     // device categories config for setForceUse, must match AudioSystem::forced_config
     public static final int FORCE_NONE = 0;
     public static final int FORCE_SPEAKER = 1;
@@ -519,20 +482,17 @@ public class AudioSystem
     public static final int FORCE_NO_BT_A2DP = 10;
     public static final int FORCE_SYSTEM_ENFORCED = 11;
     public static final int FORCE_HDMI_SYSTEM_AUDIO_ENFORCED = 12;
-
 	/**
-	 * Date: Feb 25, 2016
+	 * Date: Apr 7, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-	 * 
-	 * Forced audio configuration for WiFi display
+	 *
+	 * Add a device category config for miracast.
 	 */
 	public static final int FORCE_WIFI_SYSTEM_AUDIO_ENFORCED = 13;
     // private static final int NUM_FORCE_CONFIG = 13;
    	private static final int NUM_FORCE_CONFIG = 14;
 	// END
-
     public static final int FORCE_DEFAULT = FORCE_NONE;
-
     // usage for setForceUse, must match AudioSystem::force_use
     public static final int FOR_COMMUNICATION = 0;
     public static final int FOR_MEDIA = 1;
@@ -541,11 +501,9 @@ public class AudioSystem
     public static final int FOR_SYSTEM = 4;
     public static final int FOR_HDMI_SYSTEM_AUDIO = 5;
     private static final int NUM_FORCE_USE = 6;
-
     // usage for AudioRecord.startRecordingSync(), must match AudioSystem::sync_event_t
     public static final int SYNC_EVENT_NONE = 0;
     public static final int SYNC_EVENT_PRESENTATION_COMPLETE = 1;
-
     public static native int setDeviceConnectionState(int device, int state, String device_address);
     public static native int getDeviceConnectionState(int device, String device_address);
     public static native int setPhoneState(int state);
@@ -559,27 +517,21 @@ public class AudioSystem
     public static native int setMasterMute(boolean mute);
     public static native boolean getMasterMute();
     public static native int getDevicesForStream(int stream);
-
     // helpers for android.media.AudioManager.getProperty(), see description there for meaning
     public static native int getPrimaryOutputSamplingRate();
     public static native int getPrimaryOutputFrameCount();
     public static native int getOutputLatency(int stream);
-
     public static native int setLowRamDevice(boolean isLowRamDevice);
     public static native int checkAudioFlinger();
-
     public static native int listAudioPorts(ArrayList<AudioPort> ports, int[] generation);
     public static native int createAudioPatch(AudioPatch[] patch,
                                             AudioPortConfig[] sources, AudioPortConfig[] sinks);
     public static native int releaseAudioPatch(AudioPatch patch);
     public static native int listAudioPatches(ArrayList<AudioPatch> patches, int[] generation);
     public static native int setAudioPortConfig(AudioPortConfig config);
-
     // must be kept in sync with value in include/system/audio.h
     public static final int AUDIO_HW_SYNC_INVALID = 0;
-
     public static native int getAudioHwSyncForSession(int sessionId);
-
     public static native int registerPolicyMixes(ArrayList<AudioMix> mixes, boolean register);
 }
 

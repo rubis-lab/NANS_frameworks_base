@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package android.app;
-
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.annotation.SystemApi;
@@ -26,11 +24,9 @@ import android.graphics.Point;
 import android.os.BatteryStats;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
-
 import com.android.internal.app.ProcessStats;
 import com.android.internal.os.TransferPipe;
 import com.android.internal.util.FastPrintWriter;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -58,35 +54,29 @@ import android.util.DisplayMetrics;
 import android.util.Size;
 import android.util.Slog;
 import org.xmlpull.v1.XmlSerializer;
-
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-
 /**
- * Date: Feb 25, 2016
+ * Date: Apr 7, 2016
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
- * 
- * Add android.view.Display class for NANS framework.
+ *
+ * Add android.view.Display
  */
 import android.view.Display;
 // END
-
 /**
  * Interact with the overall activities running in the system.
  */
 public class ActivityManager {
     private static String TAG = "ActivityManager";
     private static boolean localLOGV = false;
-
     private static int gMaxRecentTasks = -1;
-
     private final Context mContext;
     private final Handler mHandler;
-
     /**
      * <a href="{@docRoot}guide/topics/manifest/meta-data-element.html">{@code
      * &lt;meta-data>}</a> name for a 'home' Activity that declares a package that is to be
@@ -94,35 +84,30 @@ public class ActivityManager {
      * signed with the same certificate as the one declaring the {@code &lt;meta-data>}.
      */
     public static final String META_HOME_ALTERNATE = "android.app.home.alternate";
-
     /**
      * Result for IActivityManager.startActivity: trying to start an activity under voice
      * control when that activity does not support the VOICE category.
      * @hide
      */
     public static final int START_NOT_VOICE_COMPATIBLE = -7;
-
     /**
      * Result for IActivityManager.startActivity: an error where the
      * start had to be canceled.
      * @hide
      */
     public static final int START_CANCELED = -6;
-
     /**
      * Result for IActivityManager.startActivity: an error where the
      * thing being started is not an activity.
      * @hide
      */
     public static final int START_NOT_ACTIVITY = -5;
-
     /**
      * Result for IActivityManager.startActivity: an error where the
      * caller does not have permission to start the activity.
      * @hide
      */
     public static final int START_PERMISSION_DENIED = -4;
-
     /**
      * Result for IActivityManager.startActivity: an error where the
      * caller has requested both to forward a result and to receive
@@ -130,49 +115,42 @@ public class ActivityManager {
      * @hide
      */
     public static final int START_FORWARD_AND_REQUEST_CONFLICT = -3;
-
     /**
      * Result for IActivityManager.startActivity: an error where the
      * requested class is not found.
      * @hide
      */
     public static final int START_CLASS_NOT_FOUND = -2;
-
     /**
      * Result for IActivityManager.startActivity: an error where the
      * given Intent could not be resolved to an activity.
      * @hide
      */
     public static final int START_INTENT_NOT_RESOLVED = -1;
-
     /**
      * Result for IActivityManaqer.startActivity: the activity was started
      * successfully as normal.
      * @hide
      */
     public static final int START_SUCCESS = 0;
-
     /**
      * Result for IActivityManaqer.startActivity: the caller asked that the Intent not
      * be executed if it is the recipient, and that is indeed the case.
      * @hide
      */
     public static final int START_RETURN_INTENT_TO_CALLER = 1;
-
     /**
      * Result for IActivityManaqer.startActivity: activity wasn't really started, but
      * a task was simply brought to the foreground.
      * @hide
      */
     public static final int START_TASK_TO_FRONT = 2;
-
     /**
      * Result for IActivityManaqer.startActivity: activity wasn't really started, but
      * the given Intent was given to the existing top activity.
      * @hide
      */
     public static final int START_DELIVERED_TO_TOP = 3;
-
     /**
      * Result for IActivityManaqer.startActivity: request was canceled because
      * app switches are temporarily canceled to ensure the user's last request
@@ -180,190 +158,153 @@ public class ActivityManager {
      * @hide
      */
     public static final int START_SWITCHES_CANCELED = 4;
-
     /**
      * Result for IActivityManaqer.startActivity: a new activity was attempted to be started
      * while in Lock Task Mode.
      * @hide
      */
     public static final int START_RETURN_LOCK_TASK_MODE_VIOLATION = 5;
-
     /**
      * Flag for IActivityManaqer.startActivity: do special start mode where
      * a new activity is launched only if it is needed.
      * @hide
      */
     public static final int START_FLAG_ONLY_IF_NEEDED = 1<<0;
-
     /**
      * Flag for IActivityManaqer.startActivity: launch the app for
      * debugging.
      * @hide
      */
     public static final int START_FLAG_DEBUG = 1<<1;
-
     /**
      * Flag for IActivityManaqer.startActivity: launch the app for
      * OpenGL tracing.
      * @hide
      */
     public static final int START_FLAG_OPENGL_TRACES = 1<<2;
-
     /**
      * Result for IActivityManaqer.broadcastIntent: success!
      * @hide
      */
     public static final int BROADCAST_SUCCESS = 0;
-
     /**
      * Result for IActivityManaqer.broadcastIntent: attempt to broadcast
      * a sticky intent without appropriate permission.
      * @hide
      */
     public static final int BROADCAST_STICKY_CANT_HAVE_PERMISSION = -1;
-
     /**
      * Result for IActivityManager.broadcastIntent: trying to send a broadcast
      * to a stopped user. Fail.
      * @hide
      */
     public static final int BROADCAST_FAILED_USER_STOPPED = -2;
-
     /**
      * Type for IActivityManaqer.getIntentSender: this PendingIntent is
      * for a sendBroadcast operation.
      * @hide
      */
     public static final int INTENT_SENDER_BROADCAST = 1;
-
     /**
      * Type for IActivityManaqer.getIntentSender: this PendingIntent is
      * for a startActivity operation.
      * @hide
      */
     public static final int INTENT_SENDER_ACTIVITY = 2;
-
     /**
      * Type for IActivityManaqer.getIntentSender: this PendingIntent is
      * for an activity result operation.
      * @hide
      */
     public static final int INTENT_SENDER_ACTIVITY_RESULT = 3;
-
     /**
      * Type for IActivityManaqer.getIntentSender: this PendingIntent is
      * for a startService operation.
      * @hide
      */
     public static final int INTENT_SENDER_SERVICE = 4;
-
     /** @hide User operation call: success! */
     public static final int USER_OP_SUCCESS = 0;
-
     /** @hide User operation call: given user id is not known. */
     public static final int USER_OP_UNKNOWN_USER = -1;
-
     /** @hide User operation call: given user id is the current user, can't be stopped. */
     public static final int USER_OP_IS_CURRENT = -2;
-
     /** @hide Process is a persistent system process. */
     public static final int PROCESS_STATE_PERSISTENT = 0;
-
     /** @hide Process is a persistent system process and is doing UI. */
     public static final int PROCESS_STATE_PERSISTENT_UI = 1;
-
     /** @hide Process is hosting the current top activities.  Note that this covers
      * all activities that are visible to the user. */
     public static final int PROCESS_STATE_TOP = 2;
-
     /** @hide Process is important to the user, and something they are aware of. */
     public static final int PROCESS_STATE_IMPORTANT_FOREGROUND = 3;
-
     /** @hide Process is important to the user, but not something they are aware of. */
     public static final int PROCESS_STATE_IMPORTANT_BACKGROUND = 4;
-
     /** @hide Process is in the background running a backup/restore operation. */
     public static final int PROCESS_STATE_BACKUP = 5;
-
     /** @hide Process is in the background, but it can't restore its state so we want
      * to try to avoid killing it. */
     public static final int PROCESS_STATE_HEAVY_WEIGHT = 6;
-
     /** @hide Process is in the background running a service.  Unlike oom_adj, this level
      * is used for both the normal running in background state and the executing
      * operations state. */
     public static final int PROCESS_STATE_SERVICE = 7;
-
     /** @hide Process is in the background running a receiver.   Note that from the
      * perspective of oom_adj receivers run at a higher foreground level, but for our
      * prioritization here that is not necessary and putting them below services means
      * many fewer changes in some process states as they receive broadcasts. */
     public static final int PROCESS_STATE_RECEIVER = 8;
-
     /** @hide Process is in the background but hosts the home activity. */
     public static final int PROCESS_STATE_HOME = 9;
-
     /** @hide Process is in the background but hosts the last shown activity. */
     public static final int PROCESS_STATE_LAST_ACTIVITY = 10;
-
     /** @hide Process is being cached for later use and contains activities. */
     public static final int PROCESS_STATE_CACHED_ACTIVITY = 11;
-
     /** @hide Process is being cached for later use and is a client of another cached
      * process that contains activities. */
     public static final int PROCESS_STATE_CACHED_ACTIVITY_CLIENT = 12;
-
     /** @hide Process is being cached for later use and is empty. */
     public static final int PROCESS_STATE_CACHED_EMPTY = 13;
-
     Point mAppTaskThumbnailSize;
-
     /*package*/ ActivityManager(Context context, Handler handler) {
         mContext = context;
         mHandler = handler;
     }
-
     /**
      * Screen compatibility mode: the application most always run in
      * compatibility mode.
      * @hide
      */
     public static final int COMPAT_MODE_ALWAYS = -1;
-
     /**
      * Screen compatibility mode: the application can never run in
      * compatibility mode.
      * @hide
      */
     public static final int COMPAT_MODE_NEVER = -2;
-
     /**
      * Screen compatibility mode: unknown.
      * @hide
      */
     public static final int COMPAT_MODE_UNKNOWN = -3;
-
     /**
      * Screen compatibility mode: the application currently has compatibility
      * mode disabled.
      * @hide
      */
     public static final int COMPAT_MODE_DISABLED = 0;
-
     /**
      * Screen compatibility mode: the application currently has compatibility
      * mode enabled.
      * @hide
      */
     public static final int COMPAT_MODE_ENABLED = 1;
-
     /**
      * Screen compatibility mode: request to toggle the application's
      * compatibility mode.
      * @hide
      */
     public static final int COMPAT_MODE_TOGGLE = 2;
-
     /** @hide */
     public int getFrontActivityScreenCompatMode() {
         try {
@@ -373,7 +314,6 @@ public class ActivityManager {
             return 0;
         }
     }
-
     /** @hide */
     public void setFrontActivityScreenCompatMode(int mode) {
         try {
@@ -382,7 +322,6 @@ public class ActivityManager {
             // System dead, we will be dead too soon!
         }
     }
-
     /** @hide */
     public int getPackageScreenCompatMode(String packageName) {
         try {
@@ -392,7 +331,6 @@ public class ActivityManager {
             return 0;
         }
     }
-
     /** @hide */
     public void setPackageScreenCompatMode(String packageName, int mode) {
         try {
@@ -401,7 +339,6 @@ public class ActivityManager {
             // System dead, we will be dead too soon!
         }
     }
-
     /** @hide */
     public boolean getPackageAskScreenCompat(String packageName) {
         try {
@@ -411,7 +348,6 @@ public class ActivityManager {
             return false;
         }
     }
-
     /** @hide */
     public void setPackageAskScreenCompat(String packageName, boolean ask) {
         try {
@@ -420,7 +356,6 @@ public class ActivityManager {
             // System dead, we will be dead too soon!
         }
     }
-
     /**
      * Return the approximate per-application memory class of the current
      * device.  This gives you an idea of how hard a memory limit you should
@@ -468,7 +403,6 @@ public class ActivityManager {
         String vmHeapSize = SystemProperties.get("dalvik.vm.heapsize", "16m");
         return Integer.parseInt(vmHeapSize.substring(0, vmHeapSize.length() - 1));
     }
-
     /**
      * Returns true if this is a low-RAM device.  Exactly whether a device is low-RAM
      * is ultimately up to the device configuration, but currently it generally means
@@ -479,12 +413,10 @@ public class ActivityManager {
     public boolean isLowRamDevice() {
         return isLowRamDeviceStatic();
     }
-
     /** @hide */
     public static boolean isLowRamDeviceStatic() {
         return "true".equals(SystemProperties.get("ro.config.low_ram", "false"));
     }
-
     /**
      * Used by persistent processes to determine if they are running on a
      * higher-end device so should be okay using hardware drawing acceleration
@@ -495,7 +427,6 @@ public class ActivityManager {
         return !isLowRamDeviceStatic() &&
                 !Resources.getSystem().getBoolean(com.android.internal.R.bool.config_avoidGfxAccel);
     }
-
     /**
      * Return the maximum number of recents entries that we will maintain and show.
      * @hide
@@ -506,7 +437,6 @@ public class ActivityManager {
         }
         return gMaxRecentTasks;
     }
-
     /**
      * Return the default limit on the number of recents that an app can make.
      * @hide
@@ -514,7 +444,6 @@ public class ActivityManager {
     static public int getDefaultAppRecentsLimitStatic() {
         return getMaxRecentTasksStatic() / 6;
     }
-
     /**
      * Return the maximum limit on the number of recents that an app can make.
      * @hide
@@ -522,7 +451,6 @@ public class ActivityManager {
     static public int getMaxAppRecentsLimitStatic() {
         return getMaxRecentTasksStatic() / 2;
     }
-
     /**
      * Information you can set and retrieve about the current activity within the recent task list.
      */
@@ -535,12 +463,10 @@ public class ActivityManager {
                 ATTR_TASKDESCRIPTION_PREFIX + "color";
         private static final String ATTR_TASKDESCRIPTIONICONFILENAME =
                 ATTR_TASKDESCRIPTION_PREFIX + "icon_filename";
-
         private String mLabel;
         private Bitmap mIcon;
         private String mIconFilename;
         private int mColorPrimary;
-
         /**
          * Creates the TaskDescription to the specified values.
          *
@@ -552,18 +478,15 @@ public class ActivityManager {
             if ((colorPrimary != 0) && (Color.alpha(colorPrimary) != 255)) {
                 throw new RuntimeException("A TaskDescription's primary color should be opaque");
             }
-
             mLabel = label;
             mIcon = icon;
             mColorPrimary = colorPrimary;
         }
-
         /** @hide */
         public TaskDescription(String label, int colorPrimary, String iconFilename) {
             this(label, null, colorPrimary);
             mIconFilename = iconFilename;
         }
-
         /**
          * Creates the TaskDescription to the specified values.
          *
@@ -573,7 +496,6 @@ public class ActivityManager {
         public TaskDescription(String label, Bitmap icon) {
             this(label, icon, 0);
         }
-
         /**
          * Creates the TaskDescription to the specified values.
          *
@@ -582,14 +504,12 @@ public class ActivityManager {
         public TaskDescription(String label) {
             this(label, null, 0);
         }
-
         /**
          * Creates an empty TaskDescription.
          */
         public TaskDescription() {
             this(null, null, 0);
         }
-
         /**
          * Creates a copy of another TaskDescription.
          */
@@ -599,11 +519,9 @@ public class ActivityManager {
             mColorPrimary = td.mColorPrimary;
             mIconFilename = td.mIconFilename;
         }
-
         private TaskDescription(Parcel source) {
             readFromParcel(source);
         }
-
         /**
          * Sets the label for this task description.
          * @hide
@@ -611,7 +529,6 @@ public class ActivityManager {
         public void setLabel(String label) {
             mLabel = label;
         }
-
         /**
          * Sets the primary color for this task description.
          * @hide
@@ -623,7 +540,6 @@ public class ActivityManager {
             }
             mColorPrimary = primaryColor;
         }
-
         /**
          * Sets the icon for this task description.
          * @hide
@@ -631,7 +547,6 @@ public class ActivityManager {
         public void setIcon(Bitmap icon) {
             mIcon = icon;
         }
-
         /**
          * Moves the icon bitmap reference from an actual Bitmap to a file containing the
          * bitmap.
@@ -641,14 +556,12 @@ public class ActivityManager {
             mIconFilename = iconFilename;
             mIcon = null;
         }
-
         /**
          * @return The label and description of the current state of this task.
          */
         public String getLabel() {
             return mLabel;
         }
-
         /**
          * @return The icon that represents the current state of this task.
          */
@@ -658,17 +571,14 @@ public class ActivityManager {
             }
             return loadTaskDescriptionIcon(mIconFilename);
         }
-
         /** @hide */
         public String getIconFilename() {
             return mIconFilename;
         }
-
         /** @hide */
         public Bitmap getInMemoryIcon() {
             return mIcon;
         }
-
         /** @hide */
         public static Bitmap loadTaskDescriptionIcon(String iconFilename) {
             if (iconFilename != null) {
@@ -680,14 +590,12 @@ public class ActivityManager {
             }
             return null;
         }
-
         /**
          * @return The color override on the theme's primary color.
          */
         public int getPrimaryColor() {
             return mColorPrimary;
         }
-
         /** @hide */
         public void saveToXml(XmlSerializer out) throws IOException {
             if (mLabel != null) {
@@ -700,7 +608,6 @@ public class ActivityManager {
                 out.attribute(null, ATTR_TASKDESCRIPTIONICONFILENAME, mIconFilename);
             }
         }
-
         /** @hide */
         public void restoreFromXml(String attrName, String attrValue) {
             if (ATTR_TASKDESCRIPTIONLABEL.equals(attrName)) {
@@ -711,12 +618,10 @@ public class ActivityManager {
                 setIconFilename(attrValue);
             }
         }
-
         @Override
         public int describeContents() {
             return 0;
         }
-
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             if (mLabel == null) {
@@ -739,14 +644,12 @@ public class ActivityManager {
                 dest.writeString(mIconFilename);
             }
         }
-
         public void readFromParcel(Parcel source) {
             mLabel = source.readInt() > 0 ? source.readString() : null;
             mIcon = source.readInt() > 0 ? Bitmap.CREATOR.createFromParcel(source) : null;
             mColorPrimary = source.readInt();
             mIconFilename = source.readInt() > 0 ? source.readString() : null;
         }
-
         public static final Creator<TaskDescription> CREATOR
                 = new Creator<TaskDescription>() {
             public TaskDescription createFromParcel(Parcel source) {
@@ -756,14 +659,12 @@ public class ActivityManager {
                 return new TaskDescription[size];
             }
         };
-
         @Override
         public String toString() {
             return "TaskDescription Label: " + mLabel + " Icon: " + mIcon +
                     " colorPrimary: " + mColorPrimary;
         }
     }
-
     /**
      * Information you can retrieve about tasks that the user has most recently
      * started or visited.
@@ -774,7 +675,6 @@ public class ActivityManager {
          * If it is not running, this will be -1.
          */
         public int id;
-
         /**
          * The true identifier of this task, valid even if it is not running.
          */
@@ -786,7 +686,6 @@ public class ActivityManager {
          * the current task to the front.
          */
         public Intent baseIntent;
-
         /**
          * If this task was started from an alias, this is the actual
          * activity component that was initially started; the component of
@@ -794,62 +693,51 @@ public class ActivityManager {
          * implementation that the alias referred to.  Otherwise, this is null.
          */
         public ComponentName origActivity;
-
         /**
          * Description of the task's last state.
          */
         public CharSequence description;
-
         /**
          * The id of the ActivityStack this Task was on most recently.
          * @hide
          */
         public int stackId;
-
         /**
          * The id of the user the task was running as.
          * @hide
          */
         public int userId;
-
         /**
          * The first time this task was active.
          * @hide
          */
         public long firstActiveTime;
-
         /**
          * The last time this task was active.
          * @hide
          */
         public long lastActiveTime;
-
         /**
          * The recent activity values for the highest activity in the stack to have set the values.
          * {@link Activity#setTaskDescription(android.app.ActivityManager.TaskDescription)}.
          */
         public TaskDescription taskDescription;
-
         /**
          * Task affiliation for grouping with other tasks.
          */
         public int affiliatedTaskId;
-
         /**
          * Task affiliation color of the source task with the affiliated task id.
          *
          * @hide
          */
         public int affiliatedTaskColor;
-
         public RecentTaskInfo() {
         }
-
         @Override
         public int describeContents() {
             return 0;
         }
-
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(id);
@@ -876,7 +764,6 @@ public class ActivityManager {
             dest.writeInt(affiliatedTaskId);
             dest.writeInt(affiliatedTaskColor);
         }
-
         public void readFromParcel(Parcel source) {
             id = source.readInt();
             persistentId = source.readInt();
@@ -892,7 +779,6 @@ public class ActivityManager {
             affiliatedTaskId = source.readInt();
             affiliatedTaskColor = source.readInt();
         }
-
         public static final Creator<RecentTaskInfo> CREATOR
                 = new Creator<RecentTaskInfo>() {
             public RecentTaskInfo createFromParcel(Parcel source) {
@@ -902,38 +788,32 @@ public class ActivityManager {
                 return new RecentTaskInfo[size];
             }
         };
-
         private RecentTaskInfo(Parcel source) {
             readFromParcel(source);
         }
     }
-
     /**
      * Flag for use with {@link #getRecentTasks}: return all tasks, even those
      * that have set their
      * {@link android.content.Intent#FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS} flag.
      */
     public static final int RECENT_WITH_EXCLUDED = 0x0001;
-
     /**
      * Provides a list that does not contain any
      * recent tasks that currently are not available to the user.
      */
     public static final int RECENT_IGNORE_UNAVAILABLE = 0x0002;
-
     /**
      * Provides a list that contains recent tasks for all
      * profiles of a user.
      * @hide
      */
     public static final int RECENT_INCLUDE_PROFILES = 0x0004;
-
     /**
      * Ignores all tasks that are on the home stack.
      * @hide
      */
     public static final int RECENT_IGNORE_HOME_STACK_TASKS = 0x0008;
-
     /**
      * <p></p>Return a list of the tasks that the user has recently launched, with
      * the most recent being first and older ones after in order.
@@ -976,7 +856,6 @@ public class ActivityManager {
             return null;
         }
     }
-
     /**
      * Same as {@link #getRecentTasks(int, int)} but returns the recent tasks for a
      * specific user. It requires holding
@@ -1002,7 +881,6 @@ public class ActivityManager {
             return null;
         }
     }
-
     /**
      * Information you can retrieve about a particular task that is currently
      * "running" in the system.  Note that a running task does not mean the
@@ -1016,54 +894,44 @@ public class ActivityManager {
          * A unique identifier for this task.
          */
         public int id;
-
         /**
          * The component launched as the first activity in the task.  This can
          * be considered the "application" of this task.
          */
         public ComponentName baseActivity;
-
         /**
          * The activity component at the top of the history stack of the task.
          * This is what the user is currently doing.
          */
         public ComponentName topActivity;
-
         /**
          * Thumbnail representation of the task's current state.  Currently
          * always null.
          */
         public Bitmap thumbnail;
-
         /**
          * Description of the task's current state.
          */
         public CharSequence description;
-
         /**
          * Number of activities in this task.
          */
         public int numActivities;
-
         /**
          * Number of activities that are currently running (not stopped
          * and persisted) in this task.
          */
         public int numRunning;
-
         /**
          * Last time task was run. For sorting.
          * @hide
          */
         public long lastActiveTime;
-
         public RunningTaskInfo() {
         }
-
         public int describeContents() {
             return 0;
         }
-
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(id);
             ComponentName.writeToParcel(baseActivity, dest);
@@ -1079,7 +947,6 @@ public class ActivityManager {
             dest.writeInt(numActivities);
             dest.writeInt(numRunning);
         }
-
         public void readFromParcel(Parcel source) {
             id = source.readInt();
             baseActivity = ComponentName.readFromParcel(source);
@@ -1102,12 +969,10 @@ public class ActivityManager {
                 return new RunningTaskInfo[size];
             }
         };
-
         private RunningTaskInfo(Parcel source) {
             readFromParcel(source);
         }
     }
-
     /**
      * Get the list of tasks associated with the calling application.
      *
@@ -1129,7 +994,6 @@ public class ActivityManager {
         }
         return tasks;
     }
-
     /**
      * Return the current design dimensions for {@link AppTask} thumbnails, for use
      * with {@link #addAppTask}.
@@ -1140,7 +1004,6 @@ public class ActivityManager {
             return new Size(mAppTaskThumbnailSize.x, mAppTaskThumbnailSize.y);
         }
     }
-
     private void ensureAppTaskThumbnailSizeLocked() {
         if (mAppTaskThumbnailSize == null) {
             try {
@@ -1150,7 +1013,6 @@ public class ActivityManager {
             }
         }
     }
-
     /**
      * Add a new {@link AppTask} for the calling application.  This will create a new
      * recents entry that is added to the <b>end</b> of all existing recents.
@@ -1184,7 +1046,6 @@ public class ActivityManager {
         final int th = thumbnail.getHeight();
         if (tw != size.x || th != size.y) {
             Bitmap bm = Bitmap.createBitmap(size.x, size.y, thumbnail.getConfig());
-
             // Use ScaleType.CENTER_CROP, except we leave the top edge at the top.
             float scale;
             float dx = 0, dy = 0;
@@ -1198,11 +1059,9 @@ public class ActivityManager {
             Matrix matrix = new Matrix();
             matrix.setScale(scale, scale);
             matrix.postTranslate((int) (dx + 0.5f), 0);
-
             Canvas canvas = new Canvas(bm);
             canvas.drawBitmap(thumbnail, matrix, null);
             canvas.setBitmap(null);
-
             thumbnail = bm;
         }
         if (description == null) {
@@ -1215,7 +1074,6 @@ public class ActivityManager {
             throw new IllegalStateException("System dead?", e);
         }
     }
-
     /**
      * Return a list of the tasks that are currently running, with
      * the most recent being first and older ones after in order.  Note that
@@ -1258,7 +1116,6 @@ public class ActivityManager {
             return null;
         }
     }
-
     /**
      * Completely remove the given task.
      *
@@ -1275,22 +1132,18 @@ public class ActivityManager {
             return false;
         }
     }
-
     /** @hide */
     public static class TaskThumbnail implements Parcelable {
         public Bitmap mainThumbnail;
         public ParcelFileDescriptor thumbnailFileDescriptor;
-
         public TaskThumbnail() {
         }
-
         public int describeContents() {
             if (thumbnailFileDescriptor != null) {
                 return thumbnailFileDescriptor.describeContents();
             }
             return 0;
         }
-
         public void writeToParcel(Parcel dest, int flags) {
             if (mainThumbnail != null) {
                 dest.writeInt(1);
@@ -1305,7 +1158,6 @@ public class ActivityManager {
                 dest.writeInt(0);
             }
         }
-
         public void readFromParcel(Parcel source) {
             if (source.readInt() != 0) {
                 mainThumbnail = Bitmap.CREATOR.createFromParcel(source);
@@ -1318,7 +1170,6 @@ public class ActivityManager {
                 thumbnailFileDescriptor = null;
             }
         }
-
         public static final Creator<TaskThumbnail> CREATOR = new Creator<TaskThumbnail>() {
             public TaskThumbnail createFromParcel(Parcel source) {
                 return new TaskThumbnail(source);
@@ -1327,12 +1178,10 @@ public class ActivityManager {
                 return new TaskThumbnail[size];
             }
         };
-
         private TaskThumbnail(Parcel source) {
             readFromParcel(source);
         }
     }
-
     /** @hide */
     public TaskThumbnail getTaskThumbnail(int id) throws SecurityException {
         try {
@@ -1342,7 +1191,6 @@ public class ActivityManager {
             return null;
         }
     }
-
     /** @hide */
     public boolean isInHomeStack(int taskId) {
         try {
@@ -1352,21 +1200,18 @@ public class ActivityManager {
             return false;
         }
     }
-
     /**
      * Flag for {@link #moveTaskToFront(int, int)}: also move the "home"
      * activity along with the task, so it is positioned immediately behind
      * the task.
      */
     public static final int MOVE_TASK_WITH_HOME = 0x00000001;
-
     /**
      * Flag for {@link #moveTaskToFront(int, int)}: don't count this as a
      * user-instigated action, so the current activity will not receive a
      * hint that the user is leaving.
      */
     public static final int MOVE_TASK_NO_USER_ACTION = 0x00000002;
-
     /**
      * Equivalent to calling {@link #moveTaskToFront(int, int, Bundle)}
      * with a null options argument.
@@ -1379,7 +1224,6 @@ public class ActivityManager {
     public void moveTaskToFront(int taskId, int flags) {
         moveTaskToFront(taskId, flags, null);
     }
-
     /**
      * Ask that the task associated with a given task ID be moved to the
      * front of the stack, so it is now visible to the user.  Requires that
@@ -1401,7 +1245,6 @@ public class ActivityManager {
             // System dead, we will be dead too soon!
         }
     }
-
     /**
      * Information you can retrieve about a particular Service that is
      * currently running in the system.
@@ -1411,7 +1254,6 @@ public class ActivityManager {
          * The service component.
          */
         public ComponentName service;
-
         /**
          * If non-zero, this is the process the service is running in.
          */
@@ -1512,11 +1354,9 @@ public class ActivityManager {
         
         public RunningServiceInfo() {
         }
-
         public int describeContents() {
             return 0;
         }
-
         public void writeToParcel(Parcel dest, int flags) {
             ComponentName.writeToParcel(service, dest);
             dest.writeInt(pid);
@@ -1533,7 +1373,6 @@ public class ActivityManager {
             dest.writeString(clientPackage);
             dest.writeInt(clientLabel);
         }
-
         public void readFromParcel(Parcel source) {
             service = ComponentName.readFromParcel(source);
             pid = source.readInt();
@@ -1559,12 +1398,10 @@ public class ActivityManager {
                 return new RunningServiceInfo[size];
             }
         };
-
         private RunningServiceInfo(Parcel source) {
             readFromParcel(source);
         }
     }
-
     /**
      * Return a list of the services that are currently running.
      *
@@ -1617,14 +1454,12 @@ public class ActivityManager {
          * system to run well.
          */
         public long availMem;
-
         /**
          * The total memory accessible by the kernel.  This is basically the
          * RAM size of the device, not including below-kernel fixed allocations
          * like DMA buffers, RAM for the baseband CPU, etc.
          */
         public long totalMem;
-
         /**
          * The threshold of {@link #availMem} at which we consider memory to be
          * low and start killing background services and other non-extraneous
@@ -1637,7 +1472,6 @@ public class ActivityManager {
          * memory situation.
          */
         public boolean lowMemory;
-
         /** @hide */
         public long hiddenAppThreshold;
         /** @hide */
@@ -1646,14 +1480,11 @@ public class ActivityManager {
         public long visibleAppThreshold;
         /** @hide */
         public long foregroundAppThreshold;
-
         public MemoryInfo() {
         }
-
         public int describeContents() {
             return 0;
         }
-
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeLong(availMem);
             dest.writeLong(totalMem);
@@ -1675,7 +1506,6 @@ public class ActivityManager {
             visibleAppThreshold = source.readLong();
             foregroundAppThreshold = source.readLong();
         }
-
         public static final Creator<MemoryInfo> CREATOR
                 = new Creator<MemoryInfo>() {
             public MemoryInfo createFromParcel(Parcel source) {
@@ -1685,12 +1515,10 @@ public class ActivityManager {
                 return new MemoryInfo[size];
             }
         };
-
         private MemoryInfo(Parcel source) {
             readFromParcel(source);
         }
     }
-
     /**
      * Return general information about the memory state of the system.  This
      * can be used to help decide how to manage your own memory, though note
@@ -1707,7 +1535,6 @@ public class ActivityManager {
         } catch (RemoteException e) {
         }
     }
-
     /**
      * Information you can retrieve about an ActivityStack in the system.
      * @hide
@@ -1718,12 +1545,10 @@ public class ActivityManager {
         public int[] taskIds;
         public String[] taskNames;
         public int displayId;
-
         @Override
         public int describeContents() {
             return 0;
         }
-
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(stackId);
@@ -1735,7 +1560,6 @@ public class ActivityManager {
             dest.writeStringArray(taskNames);
             dest.writeInt(displayId);
         }
-
         public void readFromParcel(Parcel source) {
             stackId = source.readInt();
             bounds = new Rect(
@@ -1744,7 +1568,6 @@ public class ActivityManager {
             taskNames = source.createStringArray();
             displayId = source.readInt();
         }
-
         public static final Creator<StackInfo> CREATOR = new Creator<StackInfo>() {
             @Override
             public StackInfo createFromParcel(Parcel source) {
@@ -1755,14 +1578,11 @@ public class ActivityManager {
                 return new StackInfo[size];
             }
         };
-
         public StackInfo() {
         }
-
         private StackInfo(Parcel source) {
             readFromParcel(source);
         }
-
         public String toString(String prefix) {
             StringBuilder sb = new StringBuilder(256);
             sb.append(prefix); sb.append("Stack id="); sb.append(stackId);
@@ -1776,13 +1596,11 @@ public class ActivityManager {
             }
             return sb.toString();
         }
-
         @Override
         public String toString() {
             return toString("");
         }
     }
-
     /**
      * @hide
      */
@@ -1794,7 +1612,6 @@ public class ActivityManager {
             return false;
         }
     }
-
     /**
      * Permits an application to erase its own data from disk.  This is equivalent to
      * the user choosing to clear the app's data from within the device settings UI.  It
@@ -1808,7 +1625,6 @@ public class ActivityManager {
     public boolean clearApplicationUserData() {
         return clearApplicationUserData(mContext.getPackageName(), null);
     }
-
     /**
      * Information you can retrieve about any processes that are in an error condition.
      */
@@ -1819,12 +1635,10 @@ public class ActivityManager {
         public static final int NO_ERROR = 0;
         public static final int CRASHED = 1;
         public static final int NOT_RESPONDING = 2;
-
         /**
          * The condition that the process is in.
          */
         public int condition;
-
         /**
          * The process name in which the crash or error occurred.
          */
@@ -1834,7 +1648,6 @@ public class ActivityManager {
          * The pid of this process; 0 if none
          */
         public int pid;
-
         /**
          * The kernel user-ID that has been assigned to this process;
          * currently this is not a unique ID (multiple applications can have
@@ -1846,35 +1659,28 @@ public class ActivityManager {
          * The activity name associated with the error, if known.  May be null.
          */
         public String tag;
-
         /**
          * A short message describing the error condition.
          */
         public String shortMsg;
-
         /**
          * A long message describing the error condition.
          */
         public String longMsg;
-
         /**
          * The stack trace where the error originated.  May be null.
          */
         public String stackTrace;
-
         /**
          * to be deprecated: This value will always be null.
          */
         public byte[] crashData = null;
-
         public ProcessErrorStateInfo() {
         }
-
         @Override
         public int describeContents() {
             return 0;
         }
-
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(condition);
@@ -1886,7 +1692,6 @@ public class ActivityManager {
             dest.writeString(longMsg);
             dest.writeString(stackTrace);
         }
-
         public void readFromParcel(Parcel source) {
             condition = source.readInt();
             processName = source.readString();
@@ -1907,7 +1712,6 @@ public class ActivityManager {
                 return new ProcessErrorStateInfo[size];
             }
         };
-
         private ProcessErrorStateInfo(Parcel source) {
             readFromParcel(source);
         }
@@ -1928,7 +1732,6 @@ public class ActivityManager {
             return null;
         }
     }
-
     /**
      * Information you can retrieve about a running process.
      */
@@ -1937,7 +1740,6 @@ public class ActivityManager {
          * The name of the process that this object is associated with
          */
         public String processName;
-
         /**
          * The pid of this process; 0 if none
          */
@@ -1967,28 +1769,24 @@ public class ActivityManager {
          * @hide
          */
         public static final int FLAG_PERSISTENT = 1<<1;
-
         /**
          * Constant for {@link #flags}: this process is associated with a
          * persistent system app.
          * @hide
          */
         public static final int FLAG_HAS_ACTIVITIES = 1<<2;
-
         /**
          * Flags of information.  May be any of
          * {@link #FLAG_CANT_SAVE_STATE}.
          * @hide
          */
         public int flags;
-
         /**
          * Last memory trim level reported to the process: corresponds to
          * the values supplied to {@link android.content.ComponentCallbacks2#onTrimMemory(int)
          * ComponentCallbacks2.onTrimMemory(int)}.
          */
         public int lastTrimLevel;
-
         /**
          * Constant for {@link #importance}: this process is running the
          * foreground UI.
@@ -2034,12 +1832,10 @@ public class ActivityManager {
          * actively running code.
          */
         public static final int IMPORTANCE_EMPTY = 500;
-
         /**
          * Constant for {@link #importance}: this process does not exist.
          */
         public static final int IMPORTANCE_GONE = 1000;
-
         /** @hide */
         public static int procStateToImportance(int procState) {
             if (procState >= ActivityManager.PROCESS_STATE_HOME) {
@@ -2056,7 +1852,6 @@ public class ActivityManager {
                 return ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
             }
         }
-
         /**
          * The relative importance level that the system places on this
          * process.  May be one of {@link #IMPORTANCE_FOREGROUND},
@@ -2077,7 +1872,6 @@ public class ActivityManager {
          * be maintained in the future.
          */
         public int lru;
-
         /**
          * Constant for {@link #importanceReasonCode}: nothing special has
          * been specified for the reason for this level.
@@ -2125,13 +1919,11 @@ public class ActivityManager {
          * of the other pid. @hide
          */
         public int importanceReasonImportance;
-
         /**
          * Current process state, as per PROCESS_STATE_* constants.
          * @hide
          */
         public int processState;
-
         public RunningAppProcessInfo() {
             importance = IMPORTANCE_FOREGROUND;
             importanceReasonCode = REASON_UNKNOWN;
@@ -2143,11 +1935,9 @@ public class ActivityManager {
             pid = pPid;
             pkgList = pArr;
         }
-
         public int describeContents() {
             return 0;
         }
-
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(processName);
             dest.writeInt(pid);
@@ -2163,7 +1953,6 @@ public class ActivityManager {
             dest.writeInt(importanceReasonImportance);
             dest.writeInt(processState);
         }
-
         public void readFromParcel(Parcel source) {
             processName = source.readString();
             pid = source.readInt();
@@ -2179,7 +1968,6 @@ public class ActivityManager {
             importanceReasonImportance = source.readInt();
             processState = source.readInt();
         }
-
         public static final Creator<RunningAppProcessInfo> CREATOR = 
             new Creator<RunningAppProcessInfo>() {
             public RunningAppProcessInfo createFromParcel(Parcel source) {
@@ -2189,7 +1977,6 @@ public class ActivityManager {
                 return new RunningAppProcessInfo[size];
             }
         };
-
         private RunningAppProcessInfo(Parcel source) {
             readFromParcel(source);
         }
@@ -2213,7 +2000,6 @@ public class ActivityManager {
             return null;
         }
     }
-
     /**
      * Returns a list of application processes that are running on the device.
      *
@@ -2231,7 +2017,6 @@ public class ActivityManager {
             return null;
         }
     }
-
     /**
      * Return global memory state information for the calling process.  This
      * does not fill in all fields of the {@link RunningAppProcessInfo}.  The
@@ -2249,7 +2034,6 @@ public class ActivityManager {
         } catch (RemoteException e) {
         }
     }
-
     /**
      * Return information about the memory usage of one or more processes.
      *
@@ -2327,7 +2111,6 @@ public class ActivityManager {
         } catch (RemoteException e) {
         }
     }
-
     /**
      * @see #forceStopPackageAsUser(String, int)
      * @hide
@@ -2335,7 +2118,6 @@ public class ActivityManager {
     public void forceStopPackage(String packageName) {
         forceStopPackageAsUser(packageName, UserHandle.myUserId());
     }
-
     /**
      * Get the device configuration attributes.
      */
@@ -2346,7 +2128,6 @@ public class ActivityManager {
         }
         return null;
     }
-
     /**
      * Get the preferred density of icons for the launcher. This is used when
      * custom drawables are created (e.g., for shortcuts).
@@ -2357,12 +2138,10 @@ public class ActivityManager {
         final Resources res = mContext.getResources();
         final int density = res.getDisplayMetrics().densityDpi;
         final int sw = res.getConfiguration().smallestScreenWidthDp;
-
         if (sw < 600) {
             // Smaller than approx 7" tablets, use the regular icon size.
             return density;
         }
-
         switch (density) {
             case DisplayMetrics.DENSITY_LOW:
                 return DisplayMetrics.DENSITY_MEDIUM;
@@ -2382,7 +2161,6 @@ public class ActivityManager {
                 return (int)((density*1.5f)+.5f);
         }
     }
-
     /**
      * Get the preferred launcher icon size. This is used when custom drawables
      * are created (e.g., for shortcuts).
@@ -2392,19 +2170,15 @@ public class ActivityManager {
     public int getLauncherLargeIconSize() {
         return getLauncherLargeIconSizeInner(mContext);
     }
-
     static int getLauncherLargeIconSizeInner(Context context) {
         final Resources res = context.getResources();
         final int size = res.getDimensionPixelSize(android.R.dimen.app_icon_size);
         final int sw = res.getConfiguration().smallestScreenWidthDp;
-
         if (sw < 600) {
             // Smaller than approx 7" tablets, use the regular icon size.
             return size;
         }
-
         final int density = res.getDisplayMetrics().densityDpi;
-
         switch (density) {
             case DisplayMetrics.DENSITY_LOW:
                 return (size * DisplayMetrics.DENSITY_MEDIUM) / DisplayMetrics.DENSITY_LOW;
@@ -2424,7 +2198,6 @@ public class ActivityManager {
                 return (int)((size*1.5f) + .5f);
         }
     }
-
     /**
      * Returns "true" if the user interface is currently being messed with
      * by a monkey.
@@ -2436,14 +2209,12 @@ public class ActivityManager {
         }
         return false;
     }
-
     /**
      * Returns "true" if device is running in a test harness.
      */
     public static boolean isRunningInTestHarness() {
         return SystemProperties.getBoolean("ro.test_harness", false);
     }
-
     /**
      * Returns the launch count of each installed package.
      *
@@ -2456,25 +2227,21 @@ public class ActivityManager {
             if (usageStatsService == null) {
                 return new HashMap<String, Integer>();
             }
-
             UsageStats.PackageStats[] allPkgUsageStats = usageStatsService.getAllPkgUsageStats(
                     ActivityThread.currentPackageName());
             if (allPkgUsageStats == null) {
                 return new HashMap<String, Integer>();
             }
-
             Map<String, Integer> launchCounts = new HashMap<String, Integer>();
             for (UsageStats.PackageStats pkgUsageStats : allPkgUsageStats) {
                 launchCounts.put(pkgUsageStats.getPackageName(), pkgUsageStats.getLaunchCount());
             }
-
             return launchCounts;
         } catch (RemoteException e) {
             Log.w(TAG, "Could not query launch counts", e);
             return new HashMap<String, Integer>();
         }
     }*/
-
     /** @hide */
     public static int checkComponentPermission(String permission, int uid,
             int owningUid, boolean exported) {
@@ -2513,7 +2280,6 @@ public class ActivityManager {
         }
         return PackageManager.PERMISSION_DENIED;
     }
-
     /** @hide */
     public static int checkUidPermission(String permission, int uid) {
         try {
@@ -2525,7 +2291,6 @@ public class ActivityManager {
         }
         return PackageManager.PERMISSION_DENIED;
     }
-
     /**
      * @hide
      * Helper for dealing with incoming user arguments to system service calls.
@@ -2562,7 +2327,6 @@ public class ActivityManager {
             throw new SecurityException("Failed calling activity manager", e);
         }
     }
-
     /**
      * Gets the userId of the current foreground user. Requires system permissions.
      * @hide
@@ -2577,7 +2341,6 @@ public class ActivityManager {
             return 0;
         }
     }
-
     /**
      * @param userid the user's id. Zero indicates the default user 
      * @hide
@@ -2589,7 +2352,6 @@ public class ActivityManager {
             return false;
         }
     }
-
     /**
      * Return whether the given user is actively running.  This means that
      * the user is in the "started" state, not "stopped" -- it is currently
@@ -2606,7 +2368,6 @@ public class ActivityManager {
             return false;
         }
     }
-
     /**
      * Perform a system dump of various state associated with the given application
      * package name.  This call blocks while the dump is being performed, so should
@@ -2621,7 +2382,6 @@ public class ActivityManager {
     public void dumpPackageState(FileDescriptor fd, String packageName) {
         dumpPackageStateStatic(fd, packageName);
     }
-
     /**
      * @hide
      */
@@ -2642,7 +2402,6 @@ public class ActivityManager {
         dumpService(pw, fd, BatteryStats.SERVICE_NAME, new String[] { packageName });
         pw.flush();
     }
-
     private static void dumpService(PrintWriter pw, FileDescriptor fd, String name, String[] args) {
         pw.print("DUMP OF SERVICE "); pw.print(name); pw.println(":");
         IBinder service = ServiceManager.checkService(name);
@@ -2665,7 +2424,6 @@ public class ActivityManager {
             e.printStackTrace(pw);
         }
     }
-
     /**
      * @hide
      */
@@ -2675,7 +2433,6 @@ public class ActivityManager {
         } catch (RemoteException e) {
         }
     }
-
     /**
      * @hide
      */
@@ -2685,7 +2442,6 @@ public class ActivityManager {
         } catch (RemoteException e) {
         }
     }
-
     /**
      * Return whether currently in lock task mode.  When in this mode
      * no new tasks can be created or switched to.
@@ -2699,63 +2455,16 @@ public class ActivityManager {
             return false;
         }
     }
-
-    /**
-	 * Date: Feb 25, 2016
-	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-	 *
-	 * Display the package on the selected display.
-	 *
-	 * @param packageName The name of package that is displayed on the display.
-	 * @param display The instance of Display that displays the package.
-     * @return Returns true if the package is successfully displayed on the display.
-	 */
-	public boolean setExternalDisplay(String packageName, Display display) {
-        try {
-			if (display == null)
-				return false;
-            return ActivityManagerNative.getDefault().setExternalDisplay(
-                packageName, display.getDisplayId());
-        } catch (RemoteException e) {
-            return false;
-        }
-    }
-	// END
-
-    /**
-	 * Date: Feb 25, 2016
-	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-	 *
-	 * Display the task on the selected display.
-	 *
-	 * @param taskId The identifier of task that is displayed on the display.
-	 * @param display The instance of Display that displays the package.
-     * @return Returns true if the task is successfully displayed on the display.
-	 */
-    public boolean setExternalDisplay(int taskId, Display display) {
-        try {
-			if (display == null)
-				return false;
-            return ActivityManagerNative.getDefault().setExternalDisplay(
-                taskId, display.getDisplayId());
-        } catch (RemoteException e) {
-            return false;
-        }
-	}
-    // END
-
     /**
      * The AppTask allows you to manage your own application's tasks.
      * See {@link android.app.ActivityManager#getAppTasks()}
      */
     public static class AppTask {
         private IAppTask mAppTaskImpl;
-
         /** @hide */
         public AppTask(IAppTask task) {
             mAppTaskImpl = task;
         }
-
         /**
          * Finishes all activities in this task and removes it from the recent tasks list.
          */
@@ -2766,7 +2475,6 @@ public class ActivityManager {
                 Slog.e(TAG, "Invalid AppTask", e);
             }
         }
-
         /**
          * Get the RecentTaskInfo associated with this task.
          *
@@ -2780,7 +2488,6 @@ public class ActivityManager {
                 return null;
             }
         }
-
         /**
          * Bring this task to the foreground.  If it contains activities, they will be
          * brought to the foreground with it and their instances re-created if needed.
@@ -2794,7 +2501,6 @@ public class ActivityManager {
                 Slog.e(TAG, "Invalid AppTask", e);
             }
         }
-
         /**
          * Start an activity in this task.  Brings the task to the foreground.  If this task
          * is not currently active (that is, its id < 0), then a new activity for the given
@@ -2821,7 +2527,6 @@ public class ActivityManager {
             thread.getInstrumentation().execStartActivityFromAppTask(context,
                     thread.getApplicationThread(), mAppTaskImpl, intent, options);
         }
-
         /**
          * Modify the {@link Intent#FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS} flag in the root
          * Intent of this AppTask.
@@ -2837,4 +2542,94 @@ public class ActivityManager {
             }
         }
     }
+
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Set the external display, then stay here.
+	 */
+    public static final int SET_EXTERNAL_DISPLAY_AND_STAY = 0x00000001;
+	// END
+
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Set the external display, then start the launcher activity.
+	 */
+    public static final int SET_EXTERNAL_DISPLAY_AND_GO_HOME = 0x00000002;
+	// END
+
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Set the external display, then start the launcher activity.
+	 */
+    public boolean setExternalDisplay(String packageName, Display display) {
+        try {
+			if (display == null)
+				return false;
+            return ActivityManagerNative.getDefault().setExternalDisplay(
+                packageName, display.getDisplayId(), SET_EXTERNAL_DISPLAY_AND_STAY);
+        } catch (RemoteException e) {
+            return false;
+        }
+    }
+	// END
+
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Set the external display, then start the launcher activity.
+	 */
+    public boolean setExternalDisplay(int taskId, Display display) {
+        try {
+			if (display == null)
+				return false;
+            return ActivityManagerNative.getDefault().setExternalDisplay(
+                taskId, display.getDisplayId(), SET_EXTERNAL_DISPLAY_AND_STAY);
+        } catch (RemoteException e) {
+            return false;
+        }
+	}
+	// END
+
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Set the external display, then start the launcher activity.
+	 */
+	public boolean setExternalDisplay(int taskId, Display display, int flag) {
+        try {
+			if (display == null)
+				return false;
+            return ActivityManagerNative.getDefault().setExternalDisplay(
+                taskId, display.getDisplayId(), flag);
+        } catch (RemoteException e) {
+            return false;
+        }
+	}
+	// END
+
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Set the external display, then start the launcher activity.
+	 */
+    public boolean setExternalDisplay(String packageName, Display display, int flag) {
+        try {
+			if (display == null)
+				return false;
+            return ActivityManagerNative.getDefault().setExternalDisplay(
+                packageName, display.getDisplayId(), flag);
+        } catch (RemoteException e) {
+            return false;
+        }
+    }
+    // END
 }
