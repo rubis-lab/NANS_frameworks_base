@@ -145,4 +145,26 @@ public class BridgePowerManager implements IPowerManager {
     public void boostScreenBrightness(long time) throws RemoteException {
         // pass for now.
     }
+
+	// RUBIS ockwon
+	@Override
+	public void activityResumed(String componentName) {
+
+	}
+
+	@Override
+	public String getPowerProfile() {
+		return null;
+	}
+
+	@Override
+	public boolean setPowerProfile(String profile) {
+		return false;
+	}
+
+	@Override
+	public void wakeUpWithProximityCheck(long time) {
+	
+	}
+	// END
 }

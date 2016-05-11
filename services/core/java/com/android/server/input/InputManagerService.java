@@ -201,7 +201,7 @@ public class InputManagerService extends IInputManager.Stub
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Add the native function of setInputDisplay.
 	 *
 	 * @param ptr, layerStack
 	 * @return void
@@ -547,7 +547,7 @@ public class InputManagerService extends IInputManager.Stub
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Bypass the arguments to injectInputEventInternal.
 	 *
 	 * @param event, displayId, mode
 	 * @return boolean
@@ -1826,7 +1826,7 @@ public class InputManagerService extends IInputManager.Stub
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 *
-		 * Comments
+		 * Call the native function of setInputDisplay.
 		 *
 		 * @param layerStack
 		 * @return void

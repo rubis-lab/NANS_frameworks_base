@@ -1000,6 +1000,14 @@ public final class BridgeContext extends Context {
         return null;
     }
 
+    // RUBIS ockwon
+	@Override
+    public Context createPackageContextAsUser(String arg0, String arg1, int arg2, UserHandle user) {
+        // pass
+        return null;
+    }
+	// END
+
     @Override
     public Context createConfigurationContext(Configuration overrideConfiguration) {
         // pass
@@ -1023,6 +1031,14 @@ public final class BridgeContext extends Context {
             throws PackageManager.NameNotFoundException {
         return null;
     }
+
+    // RUBIS ockwon
+	@Override
+    public Context createApplicationContext(ApplicationInfo application, String msg, int flags)
+            throws PackageManager.NameNotFoundException {
+        return null;
+    }
+	// END
 
     @Override
     public boolean deleteDatabase(String arg0) {

@@ -14,11 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package android.hardware.input;
-
 import com.android.internal.util.ArrayUtils;
-
 import android.annotation.SdkConstant;
 import android.annotation.SdkConstant.SdkConstantType;
 import android.content.Context;
@@ -39,9 +36,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.InputEvent;
-
 import java.util.ArrayList;
-
 /**
  * Provides information about input devices and available key layouts.
  * <p>
@@ -54,22 +49,17 @@ import java.util.ArrayList;
 public final class InputManager {
     private static final String TAG = "InputManager";
     private static final boolean DEBUG = false;
-
     private static final int MSG_DEVICE_ADDED = 1;
     private static final int MSG_DEVICE_REMOVED = 2;
     private static final int MSG_DEVICE_CHANGED = 3;
-
     private static InputManager sInstance;
-
     private final IInputManager mIm;
-
     // Guarded by mInputDevicesLock
     private final Object mInputDevicesLock = new Object();
     private SparseArray<InputDevice> mInputDevices;
     private InputDevicesChangedListener mInputDevicesChangedListener;
     private final ArrayList<InputDeviceListenerDelegate> mInputDeviceListeners =
             new ArrayList<InputDeviceListenerDelegate>();
-
     /**
      * Broadcast Action: Query available keyboard layouts.
      * <p>
@@ -120,7 +110,6 @@ public final class InputManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_QUERY_KEYBOARD_LAYOUTS =
             "android.hardware.input.action.QUERY_KEYBOARD_LAYOUTS";
-
     /**
      * Metadata Key: Keyboard layout metadata associated with
      * {@link #ACTION_QUERY_KEYBOARD_LAYOUTS}.
@@ -131,32 +120,27 @@ public final class InputManager {
      */
     public static final String META_DATA_KEYBOARD_LAYOUTS =
             "android.hardware.input.metadata.KEYBOARD_LAYOUTS";
-
     /**
      * Pointer Speed: The minimum (slowest) pointer speed (-7).
      * @hide
      */
     public static final int MIN_POINTER_SPEED = -7;
-
     /**
      * Pointer Speed: The maximum (fastest) pointer speed (7).
      * @hide
      */
     public static final int MAX_POINTER_SPEED = 7;
-
     /**
      * Pointer Speed: The default pointer speed (0).
      * @hide
      */
     public static final int DEFAULT_POINTER_SPEED = 0;
-
     /**
      * Input Event Injection Synchronization Mode: None.
      * Never blocks.  Injection is asynchronous and is assumed always to be successful.
      * @hide
      */
     public static final int INJECT_INPUT_EVENT_MODE_ASYNC = 0; // see InputDispatcher.h
-
     /**
      * Input Event Injection Synchronization Mode: Wait for result.
      * Waits for previous events to be dispatched so that the input dispatcher can
@@ -166,18 +150,15 @@ public final class InputManager {
      * @hide
      */
     public static final int INJECT_INPUT_EVENT_MODE_WAIT_FOR_RESULT = 1;  // see InputDispatcher.h
-
     /**
      * Input Event Injection Synchronization Mode: Wait for finish.
      * Waits for the event to be delivered to the application and handled.
      * @hide
      */
     public static final int INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH = 2;  // see InputDispatcher.h
-
     private InputManager(IInputManager im) {
         mIm = im;
     }
-
     /**
      * Gets an instance of the input manager.
      *
@@ -194,7 +175,6 @@ public final class InputManager {
             return sInstance;
         }
     }
-
     /**
      * Gets information about the input device with the specified id.
      * @param id The device id.
@@ -203,12 +183,10 @@ public final class InputManager {
     public InputDevice getInputDevice(int id) {
         synchronized (mInputDevicesLock) {
             populateInputDevicesLocked();
-
             int index = mInputDevices.indexOfKey(id);
             if (index < 0) {
                 return null;
             }
-
             InputDevice inputDevice = mInputDevices.valueAt(index);
             if (inputDevice == null) {
                 try {
@@ -223,7 +201,6 @@ public final class InputManager {
             return inputDevice;
         }
     }
-
     /**
      * Gets information about the input device with the specified descriptor.
      * @param descriptor The input device descriptor.
@@ -234,10 +211,8 @@ public final class InputManager {
         if (descriptor == null) {
             throw new IllegalArgumentException("descriptor must not be null.");
         }
-
         synchronized (mInputDevicesLock) {
             populateInputDevicesLocked();
-
             int numDevices = mInputDevices.size();
             for (int i = 0; i < numDevices; i++) {
                 InputDevice inputDevice = mInputDevices.valueAt(i);
@@ -260,7 +235,6 @@ public final class InputManager {
             return null;
         }
     }
-
     /**
      * Gets the ids of all input devices in the system.
      * @return The input device ids.
@@ -268,7 +242,6 @@ public final class InputManager {
     public int[] getInputDeviceIds() {
         synchronized (mInputDevicesLock) {
             populateInputDevicesLocked();
-
             final int count = mInputDevices.size();
             final int[] ids = new int[count];
             for (int i = 0; i < count; i++) {
@@ -277,7 +250,6 @@ public final class InputManager {
             return ids;
         }
     }
-
     /**
      * Registers an input device listener to receive notifications about when
      * input devices are added, removed or changed.
@@ -292,7 +264,6 @@ public final class InputManager {
         if (listener == null) {
             throw new IllegalArgumentException("listener must not be null");
         }
-
         synchronized (mInputDevicesLock) {
             int index = findInputDeviceListenerLocked(listener);
             if (index < 0) {
@@ -300,7 +271,6 @@ public final class InputManager {
             }
         }
     }
-
     /**
      * Unregisters an input device listener.
      *
@@ -312,7 +282,6 @@ public final class InputManager {
         if (listener == null) {
             throw new IllegalArgumentException("listener must not be null");
         }
-
         synchronized (mInputDevicesLock) {
             int index = findInputDeviceListenerLocked(listener);
             if (index >= 0) {
@@ -322,7 +291,6 @@ public final class InputManager {
             }
         }
     }
-
     private int findInputDeviceListenerLocked(InputDeviceListener listener) {
         final int numListeners = mInputDeviceListeners.size();
         for (int i = 0; i < numListeners; i++) {
@@ -332,7 +300,6 @@ public final class InputManager {
         }
         return -1;
     }
-
     /**
      * Gets information about all supported keyboard layouts.
      * <p>
@@ -353,7 +320,6 @@ public final class InputManager {
             return new KeyboardLayout[0];
         }
     }
-
     /**
      * Gets the keyboard layout with the specified descriptor.
      *
@@ -367,7 +333,6 @@ public final class InputManager {
         if (keyboardLayoutDescriptor == null) {
             throw new IllegalArgumentException("keyboardLayoutDescriptor must not be null");
         }
-
         try {
             return mIm.getKeyboardLayout(keyboardLayoutDescriptor);
         } catch (RemoteException ex) {
@@ -375,7 +340,6 @@ public final class InputManager {
             return null;
         }
     }
-
     /**
      * Gets the current keyboard layout descriptor for the specified input
      * device.
@@ -393,7 +357,6 @@ public final class InputManager {
             return null;
         }
     }
-
     /**
      * Sets the current keyboard layout descriptor for the specified input
      * device.
@@ -415,7 +378,6 @@ public final class InputManager {
         if (keyboardLayoutDescriptor == null) {
             throw new IllegalArgumentException("keyboardLayoutDescriptor must not be null");
         }
-
         try {
             mIm.setCurrentKeyboardLayoutForInputDevice(identifier,
                     keyboardLayoutDescriptor);
@@ -436,7 +398,6 @@ public final class InputManager {
         if (identifier == null) {
             throw new IllegalArgumentException("inputDeviceDescriptor must not be null");
         }
-
         try {
             return mIm.getKeyboardLayoutsForInputDevice(identifier);
         } catch (RemoteException ex) {
@@ -444,7 +405,6 @@ public final class InputManager {
             return ArrayUtils.emptyArray(String.class);
         }
     }
-
     /**
      * Adds the keyboard layout descriptor for the specified input device.
      * <p>
@@ -465,14 +425,12 @@ public final class InputManager {
         if (keyboardLayoutDescriptor == null) {
             throw new IllegalArgumentException("keyboardLayoutDescriptor must not be null");
         }
-
         try {
             mIm.addKeyboardLayoutForInputDevice(identifier, keyboardLayoutDescriptor);
         } catch (RemoteException ex) {
             Log.w(TAG, "Could not add keyboard layout for input device.", ex);
         }
     }
-
     /**
      * Removes the keyboard layout descriptor for the specified input device.
      * <p>
@@ -493,14 +451,12 @@ public final class InputManager {
         if (keyboardLayoutDescriptor == null) {
             throw new IllegalArgumentException("keyboardLayoutDescriptor must not be null");
         }
-
         try {
             mIm.removeKeyboardLayoutForInputDevice(identifier, keyboardLayoutDescriptor);
         } catch (RemoteException ex) {
             Log.w(TAG, "Could not remove keyboard layout for input device.", ex);
         }
     }
-
     /**
      * Gets the TouchCalibration applied to the specified input device's coordinates.
      *
@@ -518,7 +474,6 @@ public final class InputManager {
             return TouchCalibration.IDENTITY;
         }
     }
-
     /**
      * Sets the TouchCalibration to apply to the specified input device's coordinates.
      * <p>
@@ -539,7 +494,6 @@ public final class InputManager {
             Log.w(TAG, "Could not set calibration matrix for input device.", ex);
         }
     }
-
     /**
      * Gets the mouse pointer speed.
      * <p>
@@ -562,7 +516,6 @@ public final class InputManager {
         }
         return speed;
     }
-
     /**
      * Sets the mouse pointer speed.
      * <p>
@@ -579,11 +532,9 @@ public final class InputManager {
         if (speed < MIN_POINTER_SPEED || speed > MAX_POINTER_SPEED) {
             throw new IllegalArgumentException("speed out of range");
         }
-
         Settings.System.putInt(context.getContentResolver(),
                 Settings.System.POINTER_SPEED, speed);
     }
-
     /**
      * Changes the mouse pointer speed temporarily, but does not save the setting.
      * <p>
@@ -599,14 +550,12 @@ public final class InputManager {
         if (speed < MIN_POINTER_SPEED || speed > MAX_POINTER_SPEED) {
             throw new IllegalArgumentException("speed out of range");
         }
-
         try {
             mIm.tryPointerSpeed(speed);
         } catch (RemoteException ex) {
             Log.w(TAG, "Could not set temporary pointer speed.", ex);
         }
     }
-
     /**
      * Queries the framework about whether any physical keys exist on the
      * any keyboard attached to the device that are capable of producing the given
@@ -622,7 +571,6 @@ public final class InputManager {
     public boolean[] deviceHasKeys(int[] keyCodes) {
         return deviceHasKeys(-1, keyCodes);
     }
-
     /**
      * Queries the framework about whether any physical keys exist on the
      * any keyboard attached to the device that are capable of producing the given
@@ -645,8 +593,6 @@ public final class InputManager {
         }
         return ret;
     }
-
-
     /**
      * Injects an input event into the event system on behalf of an application.
      * The synchronization mode determines whether the method blocks while waiting for
@@ -677,25 +623,18 @@ public final class InputManager {
                 && mode != INJECT_INPUT_EVENT_MODE_WAIT_FOR_RESULT) {
             throw new IllegalArgumentException("mode is invalid");
         }
-
         try {
             return mIm.injectInputEvent(event, mode);
         } catch (RemoteException ex) {
             return false;
         }
     }
-
+	
 	/**
-	 * Date: Feb 25, 2016
+	 * Date: Apr 7, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-     *
-	 * Injects an input event into event system. 
-     * It is delivered to the application displayed on the target display device.
-     *
-     * @param event The event to inject.
-     * @param displayId The identifier of display.
-     * @param mode The synchronization mode.
-     * @return True if input event injection succeeded.
+	 *
+	 * Inject an InputEvent to the Display which identifier is equal to displayId.
 	 */
 	public boolean injectInputEventToDisplay(InputEvent event, int displayId, int mode) {
         if (event == null) {
@@ -726,7 +665,6 @@ public final class InputManager {
             }
             mInputDevicesChangedListener = listener;
         }
-
         if (mInputDevices == null) {
             final int[] ids;
             try {
@@ -734,19 +672,16 @@ public final class InputManager {
             } catch (RemoteException ex) {
                 throw new RuntimeException("Could not get input device ids.", ex);
             }
-
             mInputDevices = new SparseArray<InputDevice>();
             for (int i = 0; i < ids.length; i++) {
                 mInputDevices.put(ids[i], null);
             }
         }
     }
-
     private void onInputDevicesChanged(int[] deviceIdAndGeneration) {
         if (DEBUG) {
             Log.d(TAG, "Received input devices changed.");
         }
-
         synchronized (mInputDevicesLock) {
             for (int i = mInputDevices.size(); --i > 0; ) {
                 final int deviceId = mInputDevices.keyAt(i);
@@ -758,7 +693,6 @@ public final class InputManager {
                     sendMessageToInputDeviceListenersLocked(MSG_DEVICE_REMOVED, deviceId);
                 }
             }
-
             for (int i = 0; i < deviceIdAndGeneration.length; i += 2) {
                 final int deviceId = deviceIdAndGeneration[i];
                 int index = mInputDevices.indexOfKey(deviceId);
@@ -784,7 +718,6 @@ public final class InputManager {
             }
         }
     }
-
     private void sendMessageToInputDeviceListenersLocked(int what, int deviceId) {
         final int numListeners = mInputDeviceListeners.size();
         for (int i = 0; i < numListeners; i++) {
@@ -792,7 +725,6 @@ public final class InputManager {
             listener.sendMessage(listener.obtainMessage(what, deviceId, 0));
         }
     }
-
     private static boolean containsDeviceId(int[] deviceIdAndGeneration, int deviceId) {
         for (int i = 0; i < deviceIdAndGeneration.length; i += 2) {
             if (deviceIdAndGeneration[i] == deviceId) {
@@ -801,7 +733,6 @@ public final class InputManager {
         }
         return false;
     }
-
     /**
      * Gets a vibrator service associated with an input device, assuming it has one.
      * @return The vibrator, never null.
@@ -810,7 +741,6 @@ public final class InputManager {
     public Vibrator getInputDeviceVibrator(int deviceId) {
         return new InputDeviceVibrator(deviceId);
     }
-
     /**
      * Listens for changes in input devices.
      */
@@ -822,14 +752,12 @@ public final class InputManager {
          * @param deviceId The id of the input device that was added.
          */
         void onInputDeviceAdded(int deviceId);
-
         /**
          * Called whenever an input device has been removed from the system.
          *
          * @param deviceId The id of the input device that was removed.
          */
         void onInputDeviceRemoved(int deviceId);
-
         /**
          * Called whenever the properties of an input device have changed since they
          * were last queried.  Use {@link InputManager#getInputDevice} to get
@@ -839,22 +767,18 @@ public final class InputManager {
          */
         void onInputDeviceChanged(int deviceId);
     }
-
     private final class InputDevicesChangedListener extends IInputDevicesChangedListener.Stub {
         @Override
         public void onInputDevicesChanged(int[] deviceIdAndGeneration) throws RemoteException {
             InputManager.this.onInputDevicesChanged(deviceIdAndGeneration);
         }
     }
-
     private static final class InputDeviceListenerDelegate extends Handler {
         public final InputDeviceListener mListener;
-
         public InputDeviceListenerDelegate(InputDeviceListener listener, Handler handler) {
             super(handler != null ? handler.getLooper() : Looper.myLooper());
             mListener = listener;
         }
-
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -870,21 +794,17 @@ public final class InputManager {
             }
         }
     }
-
     private final class InputDeviceVibrator extends Vibrator {
         private final int mDeviceId;
         private final Binder mToken;
-
         public InputDeviceVibrator(int deviceId) {
             mDeviceId = deviceId;
             mToken = new Binder();
         }
-
         @Override
         public boolean hasVibrator() {
             return true;
         }
-
         /**
          * @hide
          */
@@ -892,7 +812,6 @@ public final class InputManager {
         public void vibrate(int uid, String opPkg, long milliseconds, AudioAttributes attributes) {
             vibrate(new long[] { 0, milliseconds}, -1);
         }
-
         /**
          * @hide
          */
@@ -908,7 +827,6 @@ public final class InputManager {
                 Log.w(TAG, "Failed to vibrate.", ex);
             }
         }
-
         @Override
         public void cancel() {
             try {

@@ -212,4 +212,16 @@ public final class BridgeWindowSession implements IWindowSession {
         // pass for now.
         return null;
     }
+
+	// RUBIS ockwon
+	@Override
+	public int getLastWallpaperX() {
+		return 0;
+	}
+	
+	@Override
+	public int getLastWallpaperY() {
+		return 0;
+	}
+	// END
 }

@@ -71,7 +71,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Date: Feb 25, 2016
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  * 
- * Comments
+ * Add a library for NANS.
  */
 import android.content.pm.ActivityInfo;
 // END
@@ -314,7 +314,7 @@ public final class DisplayManagerService extends SystemService {
 				 * Date: Feb 25, 2016
 				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 				 * 
-				 * Comments
+				 * If the display is not the default display, get and overwrite the default display info.
 				 */
 				if (displayId != Display.DEFAULT_DISPLAY) {
 					info = mLogicalDisplays.get(Display.DEFAULT_DISPLAY).getDisplayInfoLocked();
@@ -664,7 +664,7 @@ public final class DisplayManagerService extends SystemService {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * If the external display is connected, set the rotation to landscape.
 		 */
 		if(mDisplayDevices.size() > 1 && mWindowManagerInternal != null)
 			mWindowManagerInternal.setForcedRotation(Surface.ROTATION_90);
@@ -715,7 +715,7 @@ public final class DisplayManagerService extends SystemService {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 * 
-		 * Comments
+		 * If there is no connected external displays, set the rotation to default value.
 		 */
 		if(mDisplayDevices.size() == 1 && mWindowManagerInternal != null)
 			mWindowManagerInternal.setForcedRotation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
@@ -889,13 +889,14 @@ public final class DisplayManagerService extends SystemService {
             if (display != null && !display.hasContentLocked()) {
                 // If the display does not have any content of its own, then
                 // automatically mirror the default logical display contents.
-                
 				/**
 				 * Date: Feb 25, 2016
 				 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 				 * 
-				 * Comments
 				 * display = null;
+				 *
+				 * Even if there is no content to display on the display device,
+				 * display device will not mirror the default display..
 				 */
 				// END
             }
@@ -1051,7 +1052,7 @@ public final class DisplayManagerService extends SystemService {
 	 * Date: Feb 25, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Comments
+	 * Set the display layerStack.
 	 *
 	 * @param displayId, layerStack
 	 * @return void
@@ -1463,8 +1464,7 @@ public final class DisplayManagerService extends SystemService {
 		 * Date: Feb 25, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 		 *
-		 * Comments
-		 * Binder call
+		 * Binder call of setDisplayLayerStack.
 		 *
 		 * @param displayId, layerStack
 		 * @return void

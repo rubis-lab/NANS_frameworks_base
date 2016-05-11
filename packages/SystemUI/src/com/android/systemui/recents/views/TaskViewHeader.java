@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.android.systemui.recents.views;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -51,10 +49,10 @@ import com.android.systemui.recents.misc.Utilities;
 import com.android.systemui.recents.model.Task;
 
 /**
- * Date: Feb 25, 2016
+ * Date: Apr 7, 2016
  * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
- * 
- * Add classes for NANS framework.
+ *
+ * Add libraries for NANS.
  */
 import android.provider.Settings;
 import android.util.Slog;
@@ -62,14 +60,11 @@ import android.util.Slog;
 
 /* The task bar view */
 public class TaskViewHeader extends FrameLayout {
-
     RecentsConfiguration mConfig;
-
     // Header views
     ImageView mDismissButton;
     ImageView mApplicationIcon;
     TextView mActivityDescription;
-
     // Header drawables
     boolean mCurrentPrimaryColorIsDark;
     int mCurrentPrimaryColor;
@@ -80,37 +75,31 @@ public class TaskViewHeader extends FrameLayout {
     GradientDrawable mBackgroundColorDrawable;
     AnimatorSet mFocusAnimator;
     String mDismissContentDescription;
-
     // Static highlight that we draw at the top of each view
     static Paint sHighlightPaint;
-
     // Header dim, which is only used when task view hardware layers are not used
     Paint mDimLayerPaint = new Paint();
     PorterDuffColorFilter mDimColorFilter = new PorterDuffColorFilter(0, PorterDuff.Mode.SRC_ATOP);
-
 	/**
-	 * Date: Feb 25, 2016
+	 * Date: Apr 7, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-	 * 
-	 * Add views and context instance for display button.
+	 *
+	 * Add the variables for NANS.
 	 */
     ImageView mDisplayButton;
     Drawable mDisplayDrawable;
     Context mContext;
     // END
-	
+
     public TaskViewHeader(Context context) {
         this(context, null);
     }
-
     public TaskViewHeader(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
-
     public TaskViewHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
-
     public TaskViewHeader(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         mConfig = RecentsConfiguration.getInstance();
@@ -122,14 +111,12 @@ public class TaskViewHeader extends FrameLayout {
                 outline.setRect(0, 0, getMeasuredWidth(), getMeasuredHeight());
             }
         });
-
         // Load the dismiss resources
         Resources res = context.getResources();
         mLightDismissDrawable = res.getDrawable(R.drawable.recents_dismiss_light);
         mDarkDismissDrawable = res.getDrawable(R.drawable.recents_dismiss_dark);
         mDismissContentDescription =
                 res.getString(R.string.accessibility_recents_item_will_be_dismissed);
-
         // Configure the highlight paint
         if (sHighlightPaint == null) {
             sHighlightPaint = new Paint();
@@ -141,24 +128,22 @@ public class TaskViewHeader extends FrameLayout {
         }
 
 		/**
-		 * Date: Feb 25, 2016
+		 * Date: Apr 7, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-		 * 
-		 * Add initiations for the display button.
+		 *
+		 * Init the variables.
 		 */
         mDisplayDrawable = res.getDrawable(R.drawable.ic_qs_cast_on);
         mContext = context;
         // END
-    }
 
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // We ignore taps on the task bar except on the filter and dismiss buttons
         if (!Constants.DebugFlags.App.EnableTaskBarTouchEvents) return true;
-
         return super.onTouchEvent(event);
     }
-
     @Override
     protected void onFinishInflate() {
         // Initialize the icon and description views
@@ -167,13 +152,14 @@ public class TaskViewHeader extends FrameLayout {
         mDismissButton = (ImageView) findViewById(R.id.dismiss_task);
 
 		/**
-		 * Date: Feb 25, 2016
+		 * Date: Apr 7, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-		 * 
-		 * Add the initiation for display buttion.
+		 *
+		 * Init the display button.
 		 */
 		mDisplayButton = (ImageView) findViewById(R.id.display_task);
 		// END
+
 
         // Hide the backgrounds if they are ripple drawables
         if (!Constants.DebugFlags.App.EnableTaskFiltering) {
@@ -181,7 +167,6 @@ public class TaskViewHeader extends FrameLayout {
                 mApplicationIcon.setBackground(null);
             }
         }
-
         mBackgroundColorDrawable = (GradientDrawable) getContext().getDrawable(R.drawable
                 .recents_task_view_header_bg_color);
         // Copy the ripple drawable since we are going to be manipulating it
@@ -192,7 +177,6 @@ public class TaskViewHeader extends FrameLayout {
         mBackground.setDrawableByLayerId(mBackground.getId(0), mBackgroundColorDrawable);
         setBackground(mBackground);
     }
-
     @Override
     protected void onDraw(Canvas canvas) {
         // Draw the highlight at the top edge (but put the bottom edge just out of view)
@@ -204,12 +188,10 @@ public class TaskViewHeader extends FrameLayout {
                 getMeasuredHeight() + radius, radius, radius, sHighlightPaint);
         canvas.restoreToCount(count);
     }
-
     @Override
     public boolean hasOverlappingRendering() {
         return false;
     }
-
     /**
      * Sets the dim alpha, only used when we are not using hardware layers.
      * (see RecentsConfiguration.useHardwareLayers)
@@ -219,13 +201,11 @@ public class TaskViewHeader extends FrameLayout {
         mDimLayerPaint.setColorFilter(mDimColorFilter);
         setLayerType(LAYER_TYPE_HARDWARE, mDimLayerPaint);
     }
-
     /** Returns the secondary color for a primary color. */
     int getSecondaryColor(int primaryColor, boolean useLightOverlayColor) {
         int overlayColor = useLightOverlayColor ? Color.WHITE : Color.BLACK;
         return Utilities.getColorWithOverlay(primaryColor, overlayColor, 0.8f);
     }
-
     /** Binds the bar view to the task */
     public void rebindToTask(Task t) {
         // If an activity icon is defined, then we use that as the primary icon to show in the bar,
@@ -254,25 +234,23 @@ public class TaskViewHeader extends FrameLayout {
                 mLightDismissDrawable : mDarkDismissDrawable);
         mDismissButton.setContentDescription(String.format(mDismissContentDescription,
                 t.activityLabel));
-
 		/**
-		 * Date: Feb 25, 2016
+		 * Date: Apr 7, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-		 * 
-		 * Set the display button on rebindToTask().
+		 *
+		 * Set the image and description of display button.
 		 */
         mDisplayButton.setImageDrawable(mDisplayDrawable);
         mDisplayButton.setContentDescription(
                 getContext().getString(R.string.accessibility_recents_item_will_be_dismissed,
                         t.activityLabel));
         // END
-    }
 
+    }
     /** Unbinds the bar view from the task */
     void unbindFromTask() {
         mApplicationIcon.setImageDrawable(null);
     }
-
     /** Animates this task bar dismiss button when launching a task. */
     void startLaunchTaskDismissAnimation() {
         if (mDismissButton.getVisibility() == View.VISIBLE) {
@@ -285,12 +263,11 @@ public class TaskViewHeader extends FrameLayout {
                     .withLayer()
                     .start();
         }
-
 		/**
-		 * Date: Feb 25, 2016
+		 * Date: Apr 7, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-		 * 
-		 * Set the display button on startLaunchTaskDismissAnimation().
+		 *
+		 * If NANS setting is enabled, show or hide the display button.
 		 */
         final boolean isNansEnabled = Settings.Global.getInt(
                 mContext.getContentResolver(), Settings.Global.NANS_ENABLED, 0) == 1;
@@ -308,8 +285,8 @@ public class TaskViewHeader extends FrameLayout {
                     .start();
         }
         // END
-    }
 
+    }
     /** Animates this task bar if the user does not interact with the stack after a certain time. */
     void startNoUserInteractionAnimation() {
         if (mDismissButton.getVisibility() != View.VISIBLE) {
@@ -322,12 +299,11 @@ public class TaskViewHeader extends FrameLayout {
                     .setDuration(mConfig.taskViewEnterFromAppDuration)
                     .withLayer()
                     .start();
-        }
 		/**
-		 * Date: Feb 25, 2016
+		 * Date: Apr 7, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-		 * 
-		 * Set the display button on startNoUserInteractionAnimation.
+		 *
+		 * If NANS setting is enabled, show or hide the display button.
 		 */
         final boolean isNansEnabled = Settings.Global.getInt(
                 mContext.getContentResolver(), Settings.Global.NANS_ENABLED, 0) == 1;
@@ -345,8 +321,9 @@ public class TaskViewHeader extends FrameLayout {
                     .start();
         }
         // END
-    }
 
+        }
+    }
     /** Mark this task view that the user does has not interacted with the stack after a certain time. */
     void setNoUserInteractionState() {
         if (mDismissButton.getVisibility() != View.VISIBLE) {
@@ -355,10 +332,10 @@ public class TaskViewHeader extends FrameLayout {
             mDismissButton.setAlpha(1f);
         }
 		/**
-		 * Date: Feb 25, 2016
+		 * Date: Apr 7, 2016
 		 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-		 * 
-		 * Set the display button on setNoUserInteractionState().
+		 *
+		 * If NANS setting is enabled, show or hide the display button.
 		 */
         final boolean isNansEnabled = Settings.Global.getInt(
                 mContext.getContentResolver(), Settings.Global.NANS_ENABLED, 0) == 1;
@@ -371,32 +348,27 @@ public class TaskViewHeader extends FrameLayout {
             mDisplayButton.setAlpha(1f);
         }
         // END
-    }
 
+    }
     /** Resets the state tracking that the user has not interacted with the stack after a certain time. */
     void resetNoUserInteractionState() {
         mDismissButton.setVisibility(View.INVISIBLE);
     }
-
     @Override
     protected int[] onCreateDrawableState(int extraSpace) {
-
         // Don't forward our state to the drawable - we do it manually in onTaskViewFocusChanged.
         // This is to prevent layer trashing when the view is pressed.
         return new int[] {};
     }
-
     /** Notifies the associated TaskView has been focused. */
     void onTaskViewFocusChanged(boolean focused, boolean animateFocusedState) {
         // If we are not animating the visible state, just return
         if (!animateFocusedState) return;
-
         boolean isRunning = false;
         if (mFocusAnimator != null) {
             isRunning = mFocusAnimator.isRunning();
             Utilities.cancelAnimationWithoutCallbacks(mFocusAnimator);
         }
-
         if (focused) {
             int secondaryColor = getSecondaryColor(mCurrentPrimaryColor, mCurrentPrimaryColorIsDark);
             int[][] states = new int[][] {
@@ -438,7 +410,6 @@ public class TaskViewHeader extends FrameLayout {
             ObjectAnimator translation = ObjectAnimator.ofFloat(this, "translationZ", 15f);
             translation.setRepeatCount(ValueAnimator.INFINITE);
             translation.setRepeatMode(ValueAnimator.REVERSE);
-
             mFocusAnimator = new AnimatorSet();
             mFocusAnimator.playTogether(backgroundColor, translation);
             mFocusAnimator.setStartDelay(750);
@@ -460,7 +431,6 @@ public class TaskViewHeader extends FrameLayout {
                 });
                 // Restore the translation
                 ObjectAnimator translation = ObjectAnimator.ofFloat(this, "translationZ", 0f);
-
                 mFocusAnimator = new AnimatorSet();
                 mFocusAnimator.playTogether(backgroundColor, translation);
                 mFocusAnimator.setDuration(150);

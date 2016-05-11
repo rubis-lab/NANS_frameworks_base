@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package android.media;
-
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
@@ -33,105 +31,58 @@ import android.media.audiopolicy.AudioPolicyConfig;
 import android.media.audiopolicy.IAudioPolicyCallback;
 import android.net.Uri;
 import android.view.KeyEvent;
-
 /**
  * {@hide}
  */
 interface IAudioService {
-
     void adjustSuggestedStreamVolume(int direction, int suggestedStreamType, int flags,
             String callingPackage);
-
     void adjustStreamVolume(int streamType, int direction, int flags, String callingPackage);
-
     void adjustMasterVolume(int direction, int flags, String callingPackage);
-
     void setStreamVolume(int streamType, int index, int flags, String callingPackage);
-
     oneway void setRemoteStreamVolume(int index);
-
     void setMasterVolume(int index, int flags, String callingPackage);
-
     void setStreamSolo(int streamType, boolean state, IBinder cb);
-
     void setStreamMute(int streamType, boolean state, IBinder cb);
-
     boolean isStreamMute(int streamType);
-
     void forceRemoteSubmixFullVolume(boolean startForcing, IBinder cb);
-
     void setMasterMute(boolean state, int flags, String callingPackage, IBinder cb);
-
     boolean isMasterMute();
-
     int getStreamVolume(int streamType);
-
     int getMasterVolume();
-
     int getStreamMaxVolume(int streamType);
-
     int getMasterMaxVolume();
-
     int getLastAudibleStreamVolume(int streamType);
-
     int getLastAudibleMasterVolume();
-
     void setMicrophoneMute(boolean on, String callingPackage);
-
     void setRingerModeExternal(int ringerMode, String caller);
-
     void setRingerModeInternal(int ringerMode, String caller);
-
     int getRingerModeExternal();
-
     int getRingerModeInternal();
-
     boolean isValidRingerMode(int ringerMode);
-
     void setVibrateSetting(int vibrateType, int vibrateSetting);
-
     int getVibrateSetting(int vibrateType);
-
     boolean shouldVibrate(int vibrateType);
-
     void setMode(int mode, IBinder cb);
-
     int getMode();
-
     oneway void playSoundEffect(int effectType);
-
     oneway void playSoundEffectVolume(int effectType, float volume);
-
     boolean loadSoundEffects();
-
     oneway void unloadSoundEffects();
-
     oneway void reloadAudioSettings();
-
     oneway void avrcpSupportsAbsoluteVolume(String address, boolean support);
-
     void setSpeakerphoneOn(boolean on);
-
     boolean isSpeakerphoneOn();
-
     void setBluetoothScoOn(boolean on);
-
     boolean isBluetoothScoOn();
-
     void setBluetoothA2dpOn(boolean on);
-
     boolean isBluetoothA2dpOn();
-
     int requestAudioFocus(in AudioAttributes aa, int durationHint, IBinder cb,
             IAudioFocusDispatcher fd, String clientId, String callingPackageName, int flags,
             IAudioPolicyCallback pcb);
-
     int abandonAudioFocus(IAudioFocusDispatcher fd, String clientId, in AudioAttributes aa);
-
     void unregisterAudioFocusClient(String clientId);
-
     int getCurrentAudioFocus();
-
     /**
      * Register an IRemoteControlDisplay.
      * Success of registration is subject to a check on
@@ -145,7 +96,6 @@ interface IAudioService {
      *   display doesn't need to receive artwork.
      */
     boolean registerRemoteControlDisplay(in IRemoteControlDisplay rcd, int w, int h);
-
     /**
      * Like registerRemoteControlDisplay, but with success being subject to a check on
      *   the android.Manifest.permission.MEDIA_CONTENT_CONTROL permission, and if it fails,
@@ -154,7 +104,6 @@ interface IAudioService {
      */
     boolean registerRemoteController(in IRemoteControlDisplay rcd, int w, int h,
             in ComponentName listenerComp);
-
     /**
      * Unregister an IRemoteControlDisplay.
      * No effect if the IRemoteControlDisplay hasn't been successfully registered.
@@ -184,39 +133,25 @@ interface IAudioService {
      */
     oneway void remoteControlDisplayWantsPlaybackPositionSync(in IRemoteControlDisplay rcd,
             boolean wantsSync);
-
     void startBluetoothSco(IBinder cb, int targetSdkVersion);
     void startBluetoothScoVirtualCall(IBinder cb);
     void stopBluetoothSco(IBinder cb);
-
     void forceVolumeControlStream(int streamType, IBinder cb);
-
     void setRingtonePlayer(IRingtonePlayer player);
     IRingtonePlayer getRingtonePlayer();
     int getMasterStreamType();
-
     void setWiredDeviceConnectionState(int device, int state, String name);
     int setBluetoothA2dpDeviceConnectionState(in BluetoothDevice device, int state, int profile);
-
     AudioRoutesInfo startWatchingRoutes(in IAudioRoutesObserver observer);
-
     boolean isCameraSoundForced();
-
     void setVolumeController(in IVolumeController controller);
-
     void notifyVolumeControllerVisible(in IVolumeController controller, boolean visible);
-
     boolean isStreamAffectedByRingerMode(int streamType);
-
     void disableSafeMediaVolume();
-
     int setHdmiSystemAudioSupported(boolean on);
-
     boolean isHdmiSystemAudioSupported();
-
            String registerAudioPolicy(in AudioPolicyConfig policyConfig,
                     in IAudioPolicyCallback pcb, boolean hasFocusListener);
     oneway void unregisterAudioPolicyAsync(in IAudioPolicyCallback pcb);
-
            int setFocusPropertiesForPolicy(int duckingBehavior, in IAudioPolicyCallback pcb);
 }

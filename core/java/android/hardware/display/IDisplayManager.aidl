@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package android.hardware.display;
-
 import android.hardware.display.IDisplayManagerCallback;
 import android.hardware.display.IVirtualDisplayCallback;
 import android.hardware.display.WifiDisplay;
@@ -24,65 +22,49 @@ import android.hardware.display.WifiDisplayStatus;
 import android.media.projection.IMediaProjection;
 import android.view.DisplayInfo;
 import android.view.Surface;
-
 /** @hide */
 interface IDisplayManager {
     DisplayInfo getDisplayInfo(int displayId);
     int[] getDisplayIds();
-
     void registerCallback(in IDisplayManagerCallback callback);
-
     // Requires CONFIGURE_WIFI_DISPLAY permission.
     // The process must have previously registered a callback.
     void startWifiDisplayScan();
-
     // Requires CONFIGURE_WIFI_DISPLAY permission.
     void stopWifiDisplayScan();
-
     // Requires CONFIGURE_WIFI_DISPLAY permission.
     void connectWifiDisplay(String address);
-
     // No permissions required.
     void disconnectWifiDisplay();
-
     // Requires CONFIGURE_WIFI_DISPLAY permission.
     void renameWifiDisplay(String address, String alias);
-
     // Requires CONFIGURE_WIFI_DISPLAY permission.
     void forgetWifiDisplay(String address);
-
     // Requires CONFIGURE_WIFI_DISPLAY permission.
     void pauseWifiDisplay();
-
     // Requires CONFIGURE_WIFI_DISPLAY permission.
     void resumeWifiDisplay();
-
     // No permissions required.
     WifiDisplayStatus getWifiDisplayStatus();
-
     // Requires CAPTURE_VIDEO_OUTPUT, CAPTURE_SECURE_VIDEO_OUTPUT, or an appropriate
     // MediaProjection token for certain combinations of flags.
     int createVirtualDisplay(in IVirtualDisplayCallback callback,
             in IMediaProjection projectionToken, String packageName, String name,
             int width, int height, int densityDpi, in Surface surface, int flags);
-
     // No permissions required, but must be same Uid as the creator.
     void resizeVirtualDisplay(in IVirtualDisplayCallback token,
             int width, int height, int densityDpi);
-
     // No permissions required but must be same Uid as the creator.
     void setVirtualDisplaySurface(in IVirtualDisplayCallback token, in Surface surface);
-
     // No permissions required but must be same Uid as the creator.
     void releaseVirtualDisplay(in IVirtualDisplayCallback token);
-    
-    
-	/**
-	 * Date: Feb 25, 2016
+
+	/*
+	 * Date: Apr 7, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
-	 *
-	 * Add AIDL functions of DisplayManager for NANS framework.
+     *
+	 * Add an interface funstion for NANS
 	 */
-    void setDisplayLayerStack(int displayId, int layerStack);
-    // END
+	void setDisplayLayerStack(int displayId, int layerStack);
+	// END
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package android.media;
-
 import android.Manifest;
 import android.annotation.NonNull;
 import android.annotation.SdkConstant;
@@ -45,11 +44,9 @@ import android.os.ServiceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
 /**
  * AudioManager provides access to volume and ringer mode control.
  * <p>
@@ -57,7 +54,6 @@ import java.util.Iterator;
  * an instance of this class.
  */
 public class AudioManager {
-
     private final Context mContext;
     private long mVolumeKeyUpTime;
     private final boolean mUseMasterVolume;
@@ -66,7 +62,6 @@ public class AudioManager {
     private final Binder mToken = new Binder();
     private static String TAG = "AudioManager";
     private static final AudioPortEventHandler sAudioPortEventHandler = new AudioPortEventHandler();
-
     /**
      * Broadcast intent, a hint for applications that audio is about to become
      * 'noisy' due to a change in audio outputs. For example, this intent may
@@ -79,7 +74,6 @@ public class AudioManager {
      */
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_AUDIO_BECOMING_NOISY = "android.media.AUDIO_BECOMING_NOISY";
-
     /**
      * Sticky broadcast intent action indicating that the ringer mode has
      * changed. Includes the new ringer mode.
@@ -88,7 +82,6 @@ public class AudioManager {
      */
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String RINGER_MODE_CHANGED_ACTION = "android.media.RINGER_MODE_CHANGED";
-
     /**
      * @hide
      * Sticky broadcast intent action indicating that the internal ringer mode has
@@ -99,7 +92,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String INTERNAL_RINGER_MODE_CHANGED_ACTION =
             "android.media.INTERNAL_RINGER_MODE_CHANGED_ACTION";
-
     /**
      * The new ringer mode.
      *
@@ -109,7 +101,6 @@ public class AudioManager {
      * @see #RINGER_MODE_VIBRATE
      */
     public static final String EXTRA_RINGER_MODE = "android.media.EXTRA_RINGER_MODE";
-
     /**
      * Broadcast intent action indicating that the vibrate setting has
      * changed. Includes the vibrate type and its new setting.
@@ -122,7 +113,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String VIBRATE_SETTING_CHANGED_ACTION =
         "android.media.VIBRATE_SETTING_CHANGED";
-
     /**
      * @hide Broadcast intent when the volume for a particular stream type changes.
      * Includes the stream, the new volume and previous volumes.
@@ -136,7 +126,6 @@ public class AudioManager {
      */
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION";
-
     /**
      * @hide Broadcast intent when a stream mute state changes.
      * Includes the stream that changed and the new mute state
@@ -147,7 +136,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String STREAM_MUTE_CHANGED_ACTION =
         "android.media.STREAM_MUTE_CHANGED_ACTION";
-
     /**
      * @hide Broadcast intent when the master volume changes.
      * Includes the new volume
@@ -158,7 +146,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String MASTER_VOLUME_CHANGED_ACTION =
         "android.media.MASTER_VOLUME_CHANGED_ACTION";
-
     /**
      * @hide Broadcast intent when the master mute state changes.
      * Includes the the new volume
@@ -168,7 +155,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String MASTER_MUTE_CHANGED_ACTION =
         "android.media.MASTER_MUTE_CHANGED_ACTION";
-
     /**
      * The new vibrate setting for a particular type.
      *
@@ -181,7 +167,6 @@ public class AudioManager {
      * current ringer mode and listen to {@link #RINGER_MODE_CHANGED_ACTION} instead.
      */
     public static final String EXTRA_VIBRATE_SETTING = "android.media.EXTRA_VIBRATE_SETTING";
-
     /**
      * The vibrate type whose setting has changed.
      *
@@ -192,52 +177,44 @@ public class AudioManager {
      * current ringer mode and listen to {@link #RINGER_MODE_CHANGED_ACTION} instead.
      */
     public static final String EXTRA_VIBRATE_TYPE = "android.media.EXTRA_VIBRATE_TYPE";
-
     /**
      * @hide The stream type for the volume changed intent.
      */
     public static final String EXTRA_VOLUME_STREAM_TYPE = "android.media.EXTRA_VOLUME_STREAM_TYPE";
-
     /**
      * @hide The volume associated with the stream for the volume changed intent.
      */
     public static final String EXTRA_VOLUME_STREAM_VALUE =
         "android.media.EXTRA_VOLUME_STREAM_VALUE";
-
     /**
      * @hide The previous volume associated with the stream for the volume changed intent.
      */
     public static final String EXTRA_PREV_VOLUME_STREAM_VALUE =
         "android.media.EXTRA_PREV_VOLUME_STREAM_VALUE";
-
     /**
      * @hide The new master volume value for the master volume changed intent.
      * Value is integer between 0 and 100 inclusive.
      */
     public static final String EXTRA_MASTER_VOLUME_VALUE =
         "android.media.EXTRA_MASTER_VOLUME_VALUE";
-
     /**
      * @hide The previous master volume value for the master volume changed intent.
      * Value is integer between 0 and 100 inclusive.
      */
     public static final String EXTRA_PREV_MASTER_VOLUME_VALUE =
         "android.media.EXTRA_PREV_MASTER_VOLUME_VALUE";
-
     /**
      * @hide The new master volume mute state for the master mute changed intent.
      * Value is boolean
      */
     public static final String EXTRA_MASTER_VOLUME_MUTED =
         "android.media.EXTRA_MASTER_VOLUME_MUTED";
-
     /**
      * @hide The new stream volume mute state for the stream mute changed intent.
      * Value is boolean
      */
     public static final String EXTRA_STREAM_VOLUME_MUTED =
         "android.media.EXTRA_STREAM_VOLUME_MUTED";
-
     /**
      * Broadcast Action: Wired Headset plugged in or unplugged.
      *
@@ -257,7 +234,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_HEADSET_PLUG =
             "android.intent.action.HEADSET_PLUG";
-
     /**
      * Broadcast Action: A sticky broadcast indicating an HMDI cable was plugged or unplugged
      *
@@ -269,14 +245,12 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_HDMI_AUDIO_PLUG =
             "android.media.action.HDMI_AUDIO_PLUG";
-
     /**
      * Extra used in {@link #ACTION_HDMI_AUDIO_PLUG} to communicate whether HDMI is plugged in
      * or unplugged.
      * An integer value of 1 indicates a plugged-in state, 0 is unplugged.
      */
     public static final String EXTRA_AUDIO_PLUG_STATE = "android.media.extra.AUDIO_PLUG_STATE";
-
     /**
      * Extra used in {@link #ACTION_HDMI_AUDIO_PLUG} to define the maximum number of channels
      * supported by the HDMI device.
@@ -284,7 +258,6 @@ public class AudioManager {
      * by {@link #EXTRA_AUDIO_PLUG_STATE}).
      */
     public static final String EXTRA_MAX_CHANNEL_COUNT = "android.media.extra.MAX_CHANNEL_COUNT";
-
     /**
      * Extra used in {@link #ACTION_HDMI_AUDIO_PLUG} to define the audio encodings supported by
      * the connected HDMI device.
@@ -294,7 +267,6 @@ public class AudioManager {
      * {@link android.content.Intent#getIntArrayExtra(String)} to retrieve the encoding values.
      */
     public static final String EXTRA_ENCODINGS = "android.media.extra.ENCODINGS";
-
     /**
      * Broadcast Action: An analog audio speaker/headset plugged in or unplugged.
      *
@@ -309,7 +281,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_ANALOG_AUDIO_DOCK_PLUG =
             "android.media.action.ANALOG_AUDIO_DOCK_PLUG";
-
     /**
      * Broadcast Action: A digital audio speaker/headset plugged in or unplugged.
      *
@@ -324,7 +295,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_DIGITAL_AUDIO_DOCK_PLUG =
             "android.media.action.DIGITAL_AUDIO_DOCK_PLUG";
-
     /**
      * Broadcast Action: A USB audio accessory was plugged in or unplugged.
      *
@@ -340,7 +310,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_USB_AUDIO_ACCESSORY_PLUG =
             "android.media.action.USB_AUDIO_ACCESSORY_PLUG";
-
     /**
      * Broadcast Action: A USB audio device was plugged in or unplugged.
      *
@@ -356,7 +325,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_USB_AUDIO_DEVICE_PLUG =
             "android.media.action.USB_AUDIO_DEVICE_PLUG";
-
     /** The audio stream for phone calls */
     public static final int STREAM_VOICE_CALL = AudioSystem.STREAM_VOICE_CALL;
     /** The audio stream for system sounds */
@@ -382,7 +350,6 @@ public class AudioManager {
      * @deprecated Use AudioSystem.getNumStreamTypes() instead
      */
     @Deprecated public static final int NUM_STREAMS = AudioSystem.NUM_STREAMS;
-
     /**
      * Increase the ringer volume.
      *
@@ -390,7 +357,6 @@ public class AudioManager {
      * @see #adjustStreamVolume(int, int, int)
      */
     public static final int ADJUST_RAISE = 1;
-
     /**
      * Decrease the ringer volume.
      *
@@ -398,7 +364,6 @@ public class AudioManager {
      * @see #adjustStreamVolume(int, int, int)
      */
     public static final int ADJUST_LOWER = -1;
-
     /**
      * Maintain the previous ringer volume. This may be useful when needing to
      * show the volume toast without actually modifying the volume.
@@ -407,9 +372,7 @@ public class AudioManager {
      * @see #adjustStreamVolume(int, int, int)
      */
     public static final int ADJUST_SAME = 0;
-
     // Flags should be powers of 2!
-
     /**
      * Show a toast containing the current volume.
      *
@@ -419,7 +382,6 @@ public class AudioManager {
      * @see #setRingerMode(int)
      */
     public static final int FLAG_SHOW_UI = 1 << 0;
-
     /**
      * Whether to include ringer modes as possible options when changing volume.
      * For example, if true and volume level is 0 and the volume is adjusted
@@ -434,7 +396,6 @@ public class AudioManager {
      * @see #adjustStreamVolume(int, int, int)
      */
     public static final int FLAG_ALLOW_RINGER_MODES = 1 << 1;
-
     /**
      * Whether to play a sound when changing the volume.
      * <p>
@@ -449,61 +410,51 @@ public class AudioManager {
      * @see #setStreamVolume(int, int, int)
      */
     public static final int FLAG_PLAY_SOUND = 1 << 2;
-
     /**
      * Removes any sounds/vibrate that may be in the queue, or are playing (related to
      * changing volume).
      */
     public static final int FLAG_REMOVE_SOUND_AND_VIBRATE = 1 << 3;
-
     /**
      * Whether to vibrate if going into the vibrate ringer mode.
      */
     public static final int FLAG_VIBRATE = 1 << 4;
-
     /**
      * Indicates to VolumePanel that the volume slider should be disabled as user
      * cannot change the stream volume
      * @hide
      */
     public static final int FLAG_FIXED_VOLUME = 1 << 5;
-
     /**
      * Indicates the volume set/adjust call is for Bluetooth absolute volume
      * @hide
      */
     public static final int FLAG_BLUETOOTH_ABS_VOLUME = 1 << 6;
-
     /**
      * Adjusting the volume was prevented due to silent mode, display a hint in the UI.
      * @hide
      */
     public static final int FLAG_SHOW_SILENT_HINT = 1 << 7;
-
     /**
      * Indicates the volume call is for Hdmi Cec system audio volume
      * @hide
      */
     public static final int FLAG_HDMI_SYSTEM_AUDIO_VOLUME = 1 << 8;
-
     /**
      * Indicates that this should only be handled if media is actively playing.
      * @hide
      */
     public static final int FLAG_ACTIVE_MEDIA_ONLY = 1 << 9;
-
     /**
      * Like FLAG_SHOW_UI, but only dialog warnings and confirmations, no sliders.
      * @hide
      */
     public static final int FLAG_SHOW_UI_WARNINGS = 1 << 10;
-
     /**
      * Adjusting the volume down from vibrated was prevented, display a hint in the UI.
      * @hide
      */
     public static final int FLAG_SHOW_VIBRATE_HINT = 1 << 11;
-
     private static final String[] FLAG_NAMES = {
         "FLAG_SHOW_UI",
         "FLAG_ALLOW_RINGER_MODES",
@@ -518,7 +469,6 @@ public class AudioManager {
         "FLAG_SHOW_UI_WARNINGS",
         "FLAG_SHOW_VIBRATE_HINT",
     };
-
     /** @hide */
     public static String flagsToString(int flags) {
         final StringBuilder sb = new StringBuilder();
@@ -540,7 +490,6 @@ public class AudioManager {
         }
         return sb.toString();
     }
-
     /**
      * Ringer mode that will be silent and will not vibrate. (This overrides the
      * vibrate setting.)
@@ -549,7 +498,6 @@ public class AudioManager {
      * @see #getRingerMode()
      */
     public static final int RINGER_MODE_SILENT = 0;
-
     /**
      * Ringer mode that will be silent and will vibrate. (This will cause the
      * phone ringer to always vibrate, but the notification vibrate to only
@@ -559,7 +507,6 @@ public class AudioManager {
      * @see #getRingerMode()
      */
     public static final int RINGER_MODE_VIBRATE = 1;
-
     /**
      * Ringer mode that may be audible and may vibrate. It will be audible if
      * the volume before changing out of this mode was audible. It will vibrate
@@ -569,13 +516,11 @@ public class AudioManager {
      * @see #getRingerMode()
      */
     public static final int RINGER_MODE_NORMAL = 2;
-
     /**
      * Maximum valid ringer mode value. Values must start from 0 and be contiguous.
      * @hide
      */
     public static final int RINGER_MODE_MAX = RINGER_MODE_NORMAL;
-
     /**
      * Vibrate type that corresponds to the ringer.
      *
@@ -586,7 +531,6 @@ public class AudioManager {
      * current ringer mode that can be queried via {@link #getRingerMode()}.
      */
     public static final int VIBRATE_TYPE_RINGER = 0;
-
     /**
      * Vibrate type that corresponds to notifications.
      *
@@ -597,7 +541,6 @@ public class AudioManager {
      * current ringer mode that can be queried via {@link #getRingerMode()}.
      */
     public static final int VIBRATE_TYPE_NOTIFICATION = 1;
-
     /**
      * Vibrate setting that suggests to never vibrate.
      *
@@ -607,7 +550,6 @@ public class AudioManager {
      * current ringer mode that can be queried via {@link #getRingerMode()}.
      */
     public static final int VIBRATE_SETTING_OFF = 0;
-
     /**
      * Vibrate setting that suggests to vibrate when possible.
      *
@@ -617,7 +559,6 @@ public class AudioManager {
      * current ringer mode that can be queried via {@link #getRingerMode()}.
      */
     public static final int VIBRATE_SETTING_ON = 1;
-
     /**
      * Vibrate setting that suggests to only vibrate when in the vibrate ringer
      * mode.
@@ -628,15 +569,12 @@ public class AudioManager {
      * current ringer mode that can be queried via {@link #getRingerMode()}.
      */
     public static final int VIBRATE_SETTING_ONLY_SILENT = 2;
-
     /**
      * Suggests using the default stream type. This may not be used in all
      * places a stream type is needed.
      */
     public static final int USE_DEFAULT_STREAM_TYPE = Integer.MIN_VALUE;
-
     private static IAudioService sService;
-
     /**
      * @hide
      */
@@ -650,7 +588,6 @@ public class AudioManager {
                 com.android.internal.R.bool.config_useFixedVolume);
         sAudioPortEventHandler.init();
     }
-
     private static IAudioService getService()
     {
         if (sService != null) {
@@ -660,7 +597,6 @@ public class AudioManager {
         sService = IAudioService.Stub.asInterface(b);
         return sService;
     }
-
     /**
      * Sends a simulated key event for a media button.
      * To simulate a key press, you must first send a KeyEvent built with a
@@ -688,7 +624,6 @@ public class AudioManager {
         MediaSessionLegacyHelper helper = MediaSessionLegacyHelper.getHelper(mContext);
         helper.sendMediaButtonEvent(keyEvent, false);
     }
-
     /**
      * @hide
      */
@@ -714,7 +649,6 @@ public class AudioManager {
             }
         }
     }
-
     /**
      * @hide
      */
@@ -728,7 +662,6 @@ public class AudioManager {
                  * responsive to the user.
                  */
                 int flags = FLAG_SHOW_UI | FLAG_VIBRATE;
-
                 if (mUseMasterVolume) {
                     adjustMasterVolume(
                             keyCode == KeyEvent.KEYCODE_VOLUME_UP
@@ -751,7 +684,6 @@ public class AudioManager {
                 break;
         }
     }
-
     /**
      * @hide
      */
@@ -782,7 +714,6 @@ public class AudioManager {
                 break;
         }
     }
-
     /**
      * Indicates if the device implements a fixed volume policy.
      * <p>Some devices may not have volume control and may operate at a fixed volume,
@@ -802,7 +733,6 @@ public class AudioManager {
     public boolean isVolumeFixed() {
         return mUseFixedVolume;
     }
-
     /**
      * Adjusts the volume of a particular stream by one step in a direction.
      * <p>
@@ -832,7 +762,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in adjustStreamVolume", e);
         }
     }
-
     /**
      * Adjusts the volume of the most relevant stream. For example, if a call is
      * active, it will have the highest priority regardless of if the in-call
@@ -865,7 +794,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in adjustVolume", e);
         }
     }
-
     /**
      * Adjusts the volume of the most relevant stream, or the given fallback
      * stream.
@@ -899,7 +827,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in adjustSuggestedStreamVolume", e);
         }
     }
-
     /**
      * Adjusts the master volume for the device's audio amplifier.
      * <p>
@@ -917,7 +844,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in adjustMasterVolume", e);
         }
     }
-
     /**
      * Returns the current ringtone mode.
      *
@@ -934,7 +860,6 @@ public class AudioManager {
             return RINGER_MODE_NORMAL;
         }
     }
-
     /**
      * Checks valid ringer mode values.
      *
@@ -955,7 +880,6 @@ public class AudioManager {
             return false;
         }
     }
-
     /**
      * Returns the maximum volume index for a particular stream.
      *
@@ -976,7 +900,6 @@ public class AudioManager {
             return 0;
         }
     }
-
     /**
      * Returns the current volume index for a particular stream.
      *
@@ -998,7 +921,6 @@ public class AudioManager {
             return 0;
         }
     }
-
     /**
      * Get last audible volume before stream was muted.
      *
@@ -1017,7 +939,6 @@ public class AudioManager {
             return 0;
         }
     }
-
     /**
      * Get the stream type whose volume is driving the UI sounds volume.
      * UI sounds are screen lock/unlock, camera shutter, key clicks...
@@ -1033,7 +954,6 @@ public class AudioManager {
             return STREAM_RING;
         }
     }
-
     /**
      * Sets the ringer mode.
      * <p>
@@ -1058,7 +978,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setRingerMode", e);
         }
     }
-
     /**
      * Sets the volume index for a particular stream.
      * <p>This method has no effect if the device implements a fixed volume policy
@@ -1083,7 +1002,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setStreamVolume", e);
         }
     }
-
     /**
      * Returns the maximum volume index for master volume.
      *
@@ -1098,7 +1016,6 @@ public class AudioManager {
             return 0;
         }
     }
-
     /**
      * Returns the current volume index for master volume.
      *
@@ -1114,7 +1031,6 @@ public class AudioManager {
             return 0;
         }
     }
-
     /**
      * Get last audible volume before master volume was muted.
      *
@@ -1129,7 +1045,6 @@ public class AudioManager {
             return 0;
         }
     }
-
     /**
      * Sets the volume index for master volume.
      *
@@ -1148,7 +1063,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setMasterVolume", e);
         }
     }
-
     /**
      * Solo or unsolo a particular stream. All other streams are muted.
      * <p>
@@ -1178,7 +1092,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setStreamSolo", e);
         }
     }
-
     /**
      * Mute or unmute an audio stream.
      * <p>
@@ -1211,7 +1124,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setStreamMute", e);
         }
     }
-
     /**
      * get stream mute state.
      *
@@ -1226,7 +1138,6 @@ public class AudioManager {
             return false;
         }
     }
-
     /**
      * set master mute state.
      *
@@ -1235,7 +1146,6 @@ public class AudioManager {
     public void setMasterMute(boolean state) {
         setMasterMute(state, FLAG_SHOW_UI);
     }
-
     /**
      * set master mute state with optional flags.
      *
@@ -1249,7 +1159,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setMasterMute", e);
         }
     }
-
     /**
      * get master mute state.
      *
@@ -1264,7 +1173,6 @@ public class AudioManager {
             return false;
         }
     }
-
     /**
      * forces the stream controlled by hard volume keys
      * specifying streamType == -1 releases control to the
@@ -1283,7 +1191,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in forceVolumeControlStream", e);
         }
     }
-
     /**
      * Returns whether a particular type should vibrate according to user
      * settings and the current ringer mode.
@@ -1312,7 +1219,6 @@ public class AudioManager {
             return false;
         }
     }
-
     /**
      * Returns whether the user's vibrate setting for a vibrate type.
      * <p>
@@ -1339,7 +1245,6 @@ public class AudioManager {
             return VIBRATE_SETTING_OFF;
         }
     }
-
     /**
      * Sets the setting for when the vibrate type should vibrate.
      * <p>
@@ -1366,7 +1271,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setVibrateSetting", e);
         }
     }
-
     /**
      * Sets the speakerphone on or off.
      * <p>
@@ -1384,7 +1288,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setSpeakerphoneOn", e);
         }
     }
-
     /**
      * Checks whether the speakerphone is on or off.
      *
@@ -1399,7 +1302,6 @@ public class AudioManager {
             return false;
         }
      }
-
     //====================================================================
     // Bluetooth SCO control
     /**
@@ -1415,7 +1317,6 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_SCO_AUDIO_STATE_CHANGED =
             "android.media.SCO_AUDIO_STATE_CHANGED";
-
      /**
      * Sticky broadcast intent action indicating that the bluetoooth SCO audio
      * connection state has been updated.
@@ -1435,21 +1336,18 @@ public class AudioManager {
     @SdkConstant(SdkConstantType.BROADCAST_INTENT_ACTION)
     public static final String ACTION_SCO_AUDIO_STATE_UPDATED =
             "android.media.ACTION_SCO_AUDIO_STATE_UPDATED";
-
     /**
      * Extra for intent {@link #ACTION_SCO_AUDIO_STATE_CHANGED} or
      * {@link #ACTION_SCO_AUDIO_STATE_UPDATED} containing the new bluetooth SCO connection state.
      */
     public static final String EXTRA_SCO_AUDIO_STATE =
             "android.media.extra.SCO_AUDIO_STATE";
-
     /**
      * Extra for intent {@link #ACTION_SCO_AUDIO_STATE_UPDATED} containing the previous
      * bluetooth SCO connection state.
      */
     public static final String EXTRA_SCO_AUDIO_PREVIOUS_STATE =
             "android.media.extra.SCO_AUDIO_PREVIOUS_STATE";
-
     /**
      * Value for extra EXTRA_SCO_AUDIO_STATE or EXTRA_SCO_AUDIO_PREVIOUS_STATE
      * indicating that the SCO audio channel is not established
@@ -1470,8 +1368,6 @@ public class AudioManager {
      * there was an error trying to obtain the state
      */
     public static final int SCO_AUDIO_STATE_ERROR = -1;
-
-
     /**
      * Indicates if current platform supports use of SCO for off call use cases.
      * Application wanted to use bluetooth SCO audio when the phone is not in call
@@ -1485,7 +1381,6 @@ public class AudioManager {
         return mContext.getResources().getBoolean(
                com.android.internal.R.bool.config_bluetooth_sco_off_call);
     }
-
     /**
      * Start bluetooth SCO audio connection.
      * <p>Requires Permission:
@@ -1539,7 +1434,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in startBluetoothSco", e);
         }
     }
-
     /**
      * @hide
      * Start bluetooth SCO audio connection in virtual call mode.
@@ -1563,7 +1457,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in startBluetoothScoVirtualCall", e);
         }
     }
-
     /**
      * Stop bluetooth SCO audio connection.
      * <p>Requires Permission:
@@ -1582,7 +1475,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in stopBluetoothSco", e);
         }
     }
-
     /**
      * Request use of Bluetooth SCO headset for communications.
      * <p>
@@ -1600,7 +1492,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setBluetoothScoOn", e);
         }
     }
-
     /**
      * Checks whether communications use Bluetooth SCO.
      *
@@ -1616,7 +1507,6 @@ public class AudioManager {
             return false;
         }
     }
-
     /**
      * @param on set <var>true</var> to route A2DP audio to/from Bluetooth
      *           headset; <var>false</var> disable A2DP audio
@@ -1624,7 +1514,6 @@ public class AudioManager {
      */
     @Deprecated public void setBluetoothA2dpOn(boolean on){
     }
-
     /**
      * Checks whether A2DP audio routing to the Bluetooth headset is on or off.
      *
@@ -1639,7 +1528,6 @@ public class AudioManager {
             return true;
         }
     }
-
     /**
      * Sets audio routing to the wired headset on or off.
      *
@@ -1649,7 +1537,6 @@ public class AudioManager {
      */
     @Deprecated public void setWiredHeadsetOn(boolean on){
     }
-
     /**
      * Checks whether a wired headset is connected or not.
      * <p>This is not a valid indication that audio playback is
@@ -1669,7 +1556,6 @@ public class AudioManager {
             return true;
         }
     }
-
     /**
      * Sets the microphone mute on or off.
      * <p>
@@ -1687,7 +1573,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setMicrophoneMute", e);
         }
     }
-
     /**
      * Checks whether the microphone mute is on or off.
      *
@@ -1696,7 +1581,6 @@ public class AudioManager {
     public boolean isMicrophoneMute() {
         return AudioSystem.isMicrophoneMuted();
     }
-
     /**
      * Sets the audio mode.
      * <p>
@@ -1720,7 +1604,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setMode", e);
         }
     }
-
     /**
      * Returns the current audio mode.
      *
@@ -1737,7 +1620,6 @@ public class AudioManager {
             return MODE_INVALID;
         }
     }
-
     /* modes for setMode/getMode/setRoute/getRoute */
     /**
      * Audio harware modes.
@@ -1766,7 +1648,6 @@ public class AudioManager {
      * In communication audio mode. An audio/video chat or VoIP call is established.
      */
     public static final int MODE_IN_COMMUNICATION   = AudioSystem.MODE_IN_COMMUNICATION;
-
     /* Routing bits for setRouting/getRouting API */
     /**
      * Routing audio output to earpiece
@@ -1810,7 +1691,6 @@ public class AudioManager {
      * setBluetoothScoOn() methods instead.
      */
     @Deprecated public static final int ROUTE_ALL               = AudioSystem.ROUTE_ALL;
-
     /**
      * Sets the audio routing for a specified mode
      *
@@ -1826,7 +1706,6 @@ public class AudioManager {
     @Deprecated
     public void setRouting(int mode, int routes, int mask) {
     }
-
     /**
      * Returns the current audio routing bit vector for a specified mode.
      *
@@ -1840,7 +1719,6 @@ public class AudioManager {
     public int getRouting(int mode) {
         return -1;
     }
-
     /**
      * Checks whether any music is active.
      *
@@ -1849,7 +1727,6 @@ public class AudioManager {
     public boolean isMusicActive() {
         return AudioSystem.isStreamActive(STREAM_MUSIC, 0);
     }
-
     /**
      * @hide
      * Checks whether any music or media is actively playing on a remote device (e.g. wireless
@@ -1859,7 +1736,6 @@ public class AudioManager {
     public boolean isMusicActiveRemotely() {
         return AudioSystem.isStreamActiveRemotely(STREAM_MUSIC, 0);
     }
-
     /**
      * @hide
      * Checks whether the current audio focus is exclusive.
@@ -1875,7 +1751,6 @@ public class AudioManager {
             return false;
         }
     }
-
     /**
      * Return a new audio session identifier not associated with any player or effect.
      * An audio session identifier is a system wide unique identifier for a set of audio streams
@@ -1901,7 +1776,6 @@ public class AudioManager {
             return ERROR;
         }
     }
-
     /**
      * A special audio session ID to indicate that the audio session ID isn't known and the
      * framework should generate a new value. This can be used when building a new
@@ -1909,8 +1783,6 @@ public class AudioManager {
      * {@link AudioTrack#AudioTrack(AudioAttributes, AudioFormat, int, int, int)}.
      */
     public static final int AUDIO_SESSION_ID_GENERATE = AudioSystem.AUDIO_SESSION_ALLOCATE;
-
-
     /*
      * Sets a generic audio configuration parameter. The use of these parameters
      * are platform dependant, see libaudio
@@ -1929,7 +1801,6 @@ public class AudioManager {
     @Deprecated public void setParameter(String key, String value) {
         setParameters(key+"="+value);
     }
-
     /**
      * Sets a variable number of parameter values to audio hardware.
      *
@@ -1940,7 +1811,6 @@ public class AudioManager {
     public void setParameters(String keyValuePairs) {
         AudioSystem.setParameters(keyValuePairs);
     }
-
     /**
      * Gets a variable number of parameter values from audio hardware.
      *
@@ -1951,7 +1821,6 @@ public class AudioManager {
     public String getParameters(String keys) {
         return AudioSystem.getParameters(keys);
     }
-
     /* Sound effect identifiers */
     /**
      * Keyboard and direction pad click sound
@@ -1998,7 +1867,6 @@ public class AudioManager {
      * @see #playSoundEffect(int)
      */
     public static final int FX_KEYPRESS_RETURN = 8;
-
     /**
      * Invalid keypress sound
      * @see #playSoundEffect(int)
@@ -2008,7 +1876,6 @@ public class AudioManager {
      * @hide Number of sound effects
      */
     public static final int NUM_SOUND_EFFECTS = 10;
-
     /**
      * Plays a sound effect (Key clicks, lid open/close...)
      * @param effectType The type of sound effect. One of
@@ -2029,11 +1896,9 @@ public class AudioManager {
         if (effectType < 0 || effectType >= NUM_SOUND_EFFECTS) {
             return;
         }
-
         if (!querySoundEffectsEnabled(Process.myUserHandle().getIdentifier())) {
             return;
         }
-
         IAudioService service = getService();
         try {
             service.playSoundEffect(effectType);
@@ -2041,7 +1906,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in playSoundEffect"+e);
         }
     }
-
     /**
      * Plays a sound effect (Key clicks, lid open/close...)
      * @param effectType The type of sound effect. One of
@@ -2064,11 +1928,9 @@ public class AudioManager {
         if (effectType < 0 || effectType >= NUM_SOUND_EFFECTS) {
             return;
         }
-
         if (!querySoundEffectsEnabled(userId)) {
             return;
         }
-
         IAudioService service = getService();
         try {
             service.playSoundEffect(effectType);
@@ -2076,7 +1938,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in playSoundEffect"+e);
         }
     }
-
     /**
      * Plays a sound effect (Key clicks, lid open/close...)
      * @param effectType The type of sound effect. One of
@@ -2100,7 +1961,6 @@ public class AudioManager {
         if (effectType < 0 || effectType >= NUM_SOUND_EFFECTS) {
             return;
         }
-
         IAudioService service = getService();
         try {
             service.playSoundEffectVolume(effectType, volume);
@@ -2108,7 +1968,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in playSoundEffect"+e);
         }
     }
-
     /**
      * Settings has an in memory cache, so this is fast.
      */
@@ -2116,8 +1975,6 @@ public class AudioManager {
         return Settings.System.getIntForUser(mContext.getContentResolver(),
                 Settings.System.SOUND_EFFECTS_ENABLED, 0, user) != 0;
     }
-
-
     /**
      *  Load Sound effects.
      *  This method must be called when sound effects are enabled.
@@ -2130,7 +1987,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in loadSoundEffects"+e);
         }
     }
-
     /**
      *  Unload Sound effects.
      *  This method can be called to free some memory when
@@ -2144,13 +2000,11 @@ public class AudioManager {
             Log.e(TAG, "Dead object in unloadSoundEffects"+e);
         }
     }
-
     /**
      * @hide
      * Used to indicate no audio focus has been gained or lost.
      */
     public static final int AUDIOFOCUS_NONE = 0;
-
     /**
      * Used to indicate a gain of audio focus, or a request of audio focus, of unknown duration.
      * @see OnAudioFocusChangeListener#onAudioFocusChange(int)
@@ -2202,7 +2056,6 @@ public class AudioManager {
      */
     public static final int AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK =
             -1 * AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
-
     /**
      * Interface definition for a callback to be invoked when the audio focus of the system is
      * updated.
@@ -2222,7 +2075,6 @@ public class AudioManager {
          */
         public void onAudioFocusChange(int focusChange);
     }
-
     /**
      * Map to convert focus event listener IDs, as used in the AudioService audio focus stack,
      * to actual listener objects.
@@ -2234,29 +2086,24 @@ public class AudioManager {
      * instance.
      */
     private final Object mFocusListenerLock = new Object();
-
     private OnAudioFocusChangeListener findFocusListener(String id) {
         return mAudioFocusIdListenerMap.get(id);
     }
-
     /**
      * Handler for audio focus events coming from the audio service.
      */
     private final FocusEventHandlerDelegate mAudioFocusEventHandlerDelegate =
             new FocusEventHandlerDelegate();
-
     /**
      * Helper class to handle the forwarding of audio focus events to the appropriate listener
      */
     private class FocusEventHandlerDelegate {
         private final Handler mHandler;
-
         FocusEventHandlerDelegate() {
             Looper looper;
             if ((looper = Looper.myLooper()) == null) {
                 looper = Looper.getMainLooper();
             }
-
             if (looper != null) {
                 // implement the event handler delegate to receive audio focus events
                 mHandler = new Handler(looper) {
@@ -2277,21 +2124,16 @@ public class AudioManager {
                 mHandler = null;
             }
         }
-
         Handler getHandler() {
             return mHandler;
         }
     }
-
     private final IAudioFocusDispatcher mAudioFocusDispatcher = new IAudioFocusDispatcher.Stub() {
-
         public void dispatchAudioFocusChange(int focusChange, String id) {
             Message m = mAudioFocusEventHandlerDelegate.getHandler().obtainMessage(focusChange, id);
             mAudioFocusEventHandlerDelegate.getHandler().sendMessage(m);
         }
-
     };
-
     private String getIdForAudioFocusListener(OnAudioFocusChangeListener l) {
         if (l == null) {
             return new String(this.toString());
@@ -2299,7 +2141,6 @@ public class AudioManager {
             return new String(this.toString() + l.toString());
         }
     }
-
     /**
      * @hide
      * Registers a listener to be called when audio focus changes. Calling this method is optional
@@ -2315,21 +2156,17 @@ public class AudioManager {
             mAudioFocusIdListenerMap.put(getIdForAudioFocusListener(l), l);
         }
     }
-
     /**
      * @hide
      * Causes the specified listener to not be called anymore when focus is gained or lost.
      * @param l the listener to unregister.
      */
     public void unregisterAudioFocusListener(OnAudioFocusChangeListener l) {
-
         // remove locally
         synchronized(mFocusListenerLock) {
             mAudioFocusIdListenerMap.remove(getIdForAudioFocusListener(l));
         }
     }
-
-
     /**
      * A failed focus change request.
      */
@@ -2346,8 +2183,6 @@ public class AudioManager {
       * See {@link #requestAudioFocus(OnAudioFocusChangeListener, AudioAttributes, int, int)}
       */
     public static final int AUDIOFOCUS_REQUEST_DELAYED = 2;
-
-
     /**
      *  Request audio focus.
      *  Send a request to obtain the audio focus
@@ -2367,7 +2202,6 @@ public class AudioManager {
      */
     public int requestAudioFocus(OnAudioFocusChangeListener l, int streamType, int durationHint) {
         int status = AUDIOFOCUS_REQUEST_FAILED;
-
         try {
             // status is guaranteed to be either AUDIOFOCUS_REQUEST_FAILED or
             // AUDIOFOCUS_REQUEST_GRANTED as focus is requested without the
@@ -2380,10 +2214,8 @@ public class AudioManager {
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "Audio focus request denied due to ", e);
         }
-
         return status;
     }
-
     // when adding new flags, add them to the relevant AUDIOFOCUS_FLAGS_APPS or SYSTEM masks
     /**
      * @hide
@@ -2421,7 +2253,6 @@ public class AudioManager {
     /** @hide */
     public static final int AUDIOFOCUS_FLAGS_SYSTEM = AUDIOFOCUS_FLAG_DELAY_OK
             | AUDIOFOCUS_FLAG_PAUSES_ON_DUCKABLE_LOSS | AUDIOFOCUS_FLAG_LOCK;
-
     /**
      * @hide
      * Request audio focus.
@@ -2467,7 +2298,6 @@ public class AudioManager {
                 flags & AUDIOFOCUS_FLAGS_APPS,
                 null /* no AudioPolicy*/);
     }
-
     /**
      * @hide
      * Request or lock audio focus.
@@ -2518,7 +2348,6 @@ public class AudioManager {
             throw new IllegalArgumentException(
                     "Illegal null audio policy when locking audio focus");
         }
-
         int status = AUDIOFOCUS_REQUEST_FAILED;
         registerAudioFocusListener(l);
         IAudioService service = getService();
@@ -2532,7 +2361,6 @@ public class AudioManager {
         }
         return status;
     }
-
     /**
      * @hide
      * Used internally by telephony package to request audio focus. Will cause the focus request
@@ -2557,7 +2385,6 @@ public class AudioManager {
             Log.e(TAG, "Can't call requestAudioFocusForCall() on AudioService:", e);
         }
     }
-
     /**
      * @hide
      * Used internally by telephony package to abandon audio focus, typically after a call or
@@ -2573,7 +2400,6 @@ public class AudioManager {
             Log.e(TAG, "Can't call abandonAudioFocusForCall() on AudioService:", e);
         }
     }
-
     /**
      *  Abandon audio focus. Causes the previous focus owner, if any, to receive focus.
      *  @param l the listener with which focus was requested.
@@ -2582,7 +2408,6 @@ public class AudioManager {
     public int abandonAudioFocus(OnAudioFocusChangeListener l) {
         return abandonAudioFocus(l, null /*AudioAttributes, legacy behavior*/);
     }
-
     /**
      * @hide
      * Abandon audio focus. Causes the previous focus owner, if any, to receive focus.
@@ -2603,7 +2428,6 @@ public class AudioManager {
         }
         return status;
     }
-
     //====================================================================
     // Remote Control
     /**
@@ -2632,7 +2456,6 @@ public class AudioManager {
                 0/*requestCode, ignored*/, mediaButtonIntent, 0/*flags*/);
         registerMediaButtonIntent(pi, eventReceiver);
     }
-
     /**
      * Register a component to be the sole receiver of MEDIA_BUTTON intents.  This is like
      * {@link #registerMediaButtonEventReceiver(android.content.ComponentName)}, but allows
@@ -2652,7 +2475,6 @@ public class AudioManager {
         }
         registerMediaButtonIntent(eventReceiver, null);
     }
-
     /**
      * @hide
      * no-op if (pi == null) or (eventReceiver == null)
@@ -2665,7 +2487,6 @@ public class AudioManager {
         MediaSessionLegacyHelper helper = MediaSessionLegacyHelper.getHelper(mContext);
         helper.addMediaButtonListener(pi, eventReceiver, mContext);
     }
-
     /**
      * Unregister the receiver of MEDIA_BUTTON intents.
      * @param eventReceiver identifier of a {@link android.content.BroadcastReceiver}
@@ -2685,7 +2506,6 @@ public class AudioManager {
                 0/*requestCode, ignored*/, mediaButtonIntent, 0/*flags*/);
         unregisterMediaButtonIntent(pi);
     }
-
     /**
      * Unregister the receiver of MEDIA_BUTTON intents.
      * @param eventReceiver same PendingIntent that was registed with
@@ -2699,7 +2519,6 @@ public class AudioManager {
         }
         unregisterMediaButtonIntent(eventReceiver);
     }
-
     /**
      * @hide
      */
@@ -2707,7 +2526,6 @@ public class AudioManager {
         MediaSessionLegacyHelper helper = MediaSessionLegacyHelper.getHelper(mContext);
         helper.removeMediaButtonListener(pi);
     }
-
     /**
      * Registers the remote control client for providing information to display on the remote
      * controls.
@@ -2723,7 +2541,6 @@ public class AudioManager {
         }
         rcClient.registerWithSession(MediaSessionLegacyHelper.getHelper(mContext));
     }
-
     /**
      * Unregisters the remote control client that was providing information to display on the
      * remote controls.
@@ -2738,7 +2555,6 @@ public class AudioManager {
         }
         rcClient.unregisterWithSession(MediaSessionLegacyHelper.getHelper(mContext));
     }
-
     /**
      * Registers a {@link RemoteController} instance for it to receive media
      * metadata updates and playback state information from applications using
@@ -2764,7 +2580,6 @@ public class AudioManager {
         rctlr.startListeningToSessions();
         return true;
     }
-
     /**
      * Unregisters a {@link RemoteController}, causing it to no longer receive
      * media metadata and playback state information, and no longer be capable
@@ -2782,7 +2597,6 @@ public class AudioManager {
         }
         rctlr.stopListeningToSessions();
     }
-
     /**
      * @hide
      * Registers a remote control display that will be sent information by remote control clients.
@@ -2798,7 +2612,6 @@ public class AudioManager {
         // passing a negative value for art work width and height as they are unknown at this stage
         registerRemoteControlDisplay(rcd, /*w*/-1, /*h*/ -1);
     }
-
     /**
      * @hide
      * Registers a remote control display that will be sent information by remote control clients.
@@ -2820,7 +2633,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in registerRemoteControlDisplay " + e);
         }
     }
-
     /**
      * @hide
      * Unregisters a remote control display that was sent information by remote control clients.
@@ -2837,7 +2649,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in unregisterRemoteControlDisplay " + e);
         }
     }
-
     /**
      * @hide
      * Sets the artwork size a remote control display expects when receiving bitmaps.
@@ -2858,7 +2669,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in remoteControlDisplayUsesBitmapSize " + e);
         }
     }
-
     /**
      * @hide
      * Controls whether a remote control display needs periodic checks of the RemoteControlClient
@@ -2884,7 +2694,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in remoteControlDisplayWantsPlaybackPositionSync " + e);
         }
     }
-
     /**
      * @hide
      * Register the given {@link AudioPolicy}.
@@ -2917,7 +2726,6 @@ public class AudioManager {
         }
         return SUCCESS;
     }
-
     /**
      * @hide
      * @param policy the non-null {@link AudioPolicy} to unregister.
@@ -2935,8 +2743,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in unregisterAudioPolicyAsync()", e);
         }
     }
-
-
     /**
      *  @hide
      *  Reload audio settings. This method is called by Settings backup
@@ -2951,7 +2757,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in reloadAudioSettings"+e);
         }
     }
-
     /**
      * @hide
      * Notifies AudioService that it is connected to an A2DP device that supports absolute volume,
@@ -2966,12 +2771,10 @@ public class AudioManager {
             Log.e(TAG, "Dead object in avrcpSupportsAbsoluteVolume", e);
         }
     }
-
      /**
       * {@hide}
       */
      private final IBinder mICallBack = new Binder();
-
     /**
      * Checks whether the phone is in silent mode, with or without vibrate.
      *
@@ -2988,11 +2791,9 @@ public class AudioManager {
             (ringerMode == RINGER_MODE_VIBRATE);
         return silentMode;
     }
-
     // This section re-defines new output device constants from AudioSystem, because the AudioSystem
     // class is not used by other parts of the framework, which instead use definitions and methods
     // from AudioManager. AudioSystem is an internal class used by AudioManager and AudioService.
-
     /** @hide
      * The audio device code for representing "no device." */
     public static final int DEVICE_NONE = AudioSystem.DEVICE_NONE;
@@ -3093,7 +2894,6 @@ public class AudioManager {
      *  platform-specific implementation.
      */
     public static final int DEVICE_OUT_DEFAULT = AudioSystem.DEVICE_OUT_DEFAULT;
-
     /** @hide
      * The audio input device code for default built-in microphone
      */
@@ -3165,7 +2965,6 @@ public class AudioManager {
      * The audio input device code for audio loopback
      */
     public static final int DEVICE_IN_LOOPBACK = AudioSystem.DEVICE_IN_LOOPBACK;
-
     /**
      * Return true if the device code corresponds to an output device.
      * @hide
@@ -3174,7 +2973,6 @@ public class AudioManager {
     {
         return (device & AudioSystem.DEVICE_BIT_IN) == 0;
     }
-
     /**
      * Return true if the device code corresponds to an input device.
      * @hide
@@ -3183,8 +2981,6 @@ public class AudioManager {
     {
         return (device & AudioSystem.DEVICE_BIT_IN) == AudioSystem.DEVICE_BIT_IN;
     }
-
-
     /**
      * Return the enabled devices for the specified output stream type.
      *
@@ -3243,7 +3039,6 @@ public class AudioManager {
             return 0;
         }
     }
-
      /**
      * Indicate wired accessory connection state change.
      * @param device type of device connected/disconnected (AudioManager.DEVICE_OUT_xxx)
@@ -3259,7 +3054,6 @@ public class AudioManager {
             Log.e(TAG, "Dead object in setWiredDeviceConnectionState "+e);
         }
     }
-
      /**
      * Indicate A2DP source or sink connection state change.
      * @param device Bluetooth device connected/disconnected
@@ -3283,7 +3077,6 @@ public class AudioManager {
             return delay;
         }
     }
-
     /** {@hide} */
     public IRingtonePlayer getRingtonePlayer() {
         try {
@@ -3292,21 +3085,18 @@ public class AudioManager {
             return null;
         }
     }
-
     /**
      * Used as a key for {@link #getProperty} to request the native or optimal output sample rate
      * for this device's primary output stream, in decimal Hz.
      */
     public static final String PROPERTY_OUTPUT_SAMPLE_RATE =
             "android.media.property.OUTPUT_SAMPLE_RATE";
-
     /**
      * Used as a key for {@link #getProperty} to request the native or optimal output buffer size
      * for this device's primary output stream, in decimal PCM frames.
      */
     public static final String PROPERTY_OUTPUT_FRAMES_PER_BUFFER =
             "android.media.property.OUTPUT_FRAMES_PER_BUFFER";
-
     /**
      * Returns the value of the property with the specified key.
      * @param key One of the strings corresponding to a property key: either
@@ -3327,7 +3117,6 @@ public class AudioManager {
             return null;
         }
     }
-
     /**
      * Returns the estimated latency for the given stream type in milliseconds.
      *
@@ -3338,7 +3127,6 @@ public class AudioManager {
     public int getOutputLatency(int streamType) {
         return AudioSystem.getOutputLatency(streamType);
     }
-
     /**
      * Registers a global volume controller interface.  Currently limited to SystemUI.
      *
@@ -3351,7 +3139,6 @@ public class AudioManager {
             Log.w(TAG, "Error setting volume controller", e);
         }
     }
-
     /**
      * Notify audio manager about volume controller visibility changes.
      * Currently limited to SystemUI.
@@ -3365,7 +3152,6 @@ public class AudioManager {
             Log.w(TAG, "Error notifying about volume controller visibility", e);
         }
     }
-
     /**
      * Only useful for volume controllers.
      * @hide
@@ -3378,7 +3164,6 @@ public class AudioManager {
             return false;
         }
     }
-
     /**
      * Only useful for volume controllers.
      * @hide
@@ -3390,7 +3175,6 @@ public class AudioManager {
             Log.w(TAG, "Error disabling safe media volume", e);
         }
     }
-
     /**
      * Only useful for volume controllers.
      * @hide
@@ -3402,7 +3186,6 @@ public class AudioManager {
             Log.w(TAG, "Error calling setRingerModeInternal", e);
         }
     }
-
     /**
      * Only useful for volume controllers.
      * @hide
@@ -3415,7 +3198,6 @@ public class AudioManager {
             return RINGER_MODE_NORMAL;
         }
     }
-
     /**
      * Set Hdmi Cec system audio mode.
      *
@@ -3431,7 +3213,6 @@ public class AudioManager {
             return AudioSystem.DEVICE_NONE;
         }
     }
-
     /**
      * Returns true if Hdmi Cec system audio mode is supported.
      *
@@ -3446,11 +3227,9 @@ public class AudioManager {
             return false;
         }
     }
-
     /**
      * Return codes for listAudioPorts(), createAudioPatch() ...
      */
-
     /** @hide
      * CANDIDATE FOR PUBLIC API
      */
@@ -3477,7 +3256,6 @@ public class AudioManager {
      * be recreated.
      */
     public static final int ERROR_DEAD_OBJECT = AudioSystem.DEAD_OBJECT;
-
     /**
      * Returns a list of descriptors for all audio ports managed by the audio framework.
      * Audio ports are nodes in the audio framework or audio hardware that can be configured
@@ -3489,7 +3267,6 @@ public class AudioManager {
     public int listAudioPorts(ArrayList<AudioPort> ports) {
         return updateAudioPortCache(ports, null);
     }
-
     /**
      * Specialized version of listAudioPorts() listing only audio devices (AudioDevicePort)
      * @see listAudioPorts(ArrayList<AudioPort>)
@@ -3508,7 +3285,6 @@ public class AudioManager {
         }
         return status;
     }
-
     /**
      * Create a connection between two or more devices. The framework will reject the request if
      * device types are not compatible or the implementation does not support the requested
@@ -3537,7 +3313,6 @@ public class AudioManager {
                                  AudioPortConfig[] sinks) {
         return AudioSystem.createAudioPatch(patch, sources, sinks);
     }
-
     /**
      * Releases an existing audio patch connection.
      * @param patch The audio patch to disconnect.
@@ -3552,7 +3327,6 @@ public class AudioManager {
     public int releaseAudioPatch(AudioPatch patch) {
         return AudioSystem.releaseAudioPatch(patch);
     }
-
     /**
      * List all existing connections between audio ports.
      * @param patches An AudioPatch array where the list will be returned.
@@ -3561,7 +3335,6 @@ public class AudioManager {
     public int listAudioPatches(ArrayList<AudioPatch> patches) {
         return updateAudioPortCache(null, patches);
     }
-
     /**
      * Set the gain on the specified AudioPort. The AudioGainConfig config is build by
      * AudioGain.buildConfig()
@@ -3577,19 +3350,25 @@ public class AudioManager {
         config.mConfigMask = AudioPortConfig.GAIN;
         return AudioSystem.setAudioPortConfig(config);
     }
-
 	/**
-	 * Date: Feb 25, 2016
+	 * Date: Apr 7, 2016
 	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
 	 *
-	 * Set the forced audio output configuration for type
-	 *
-	 * @param usage
-	 * @param config
-	 * @return discribtion
+	 * Set the forced audio config for the usage.
 	 */
 	public int setForceUse(int usage, int config) {
 		return AudioSystem.setForceUse(usage, config);
+	}
+	// END
+	
+	/**
+	 * Date: Apr 7, 2016
+	 * Copyright (C) 2016 RUBIS Laboratory at Seoul National University
+	 *
+	 * Get the forced audio config for the usage.
+	 */
+	public int getForceUse(int usage) {
+		return AudioSystem.getForceUse(usage);
 	}
 	// END
 
@@ -3604,19 +3383,16 @@ public class AudioManager {
          * @param portList the updated list of audio ports
          */
         public void onAudioPortListUpdate(AudioPort[] portList);
-
         /**
          * Callback method called upon audio patch list update.
          * @param patchList the updated list of audio patches
          */
         public void onAudioPatchListUpdate(AudioPatch[] patchList);
-
         /**
          * Callback method called when the mediaserver dies
          */
         public void onServiceDied();
     }
-
     /**
      * Register an audio port list update listener.
      * @hide
@@ -3624,7 +3400,6 @@ public class AudioManager {
     public void registerAudioPortUpdateListener(OnAudioPortUpdateListener l) {
         sAudioPortEventHandler.registerListener(l);
     }
-
     /**
      * Unregister an audio port list update listener.
      * @hide
@@ -3632,16 +3407,13 @@ public class AudioManager {
     public void unregisterAudioPortUpdateListener(OnAudioPortUpdateListener l) {
         sAudioPortEventHandler.unregisterListener(l);
     }
-
     //
     // AudioPort implementation
     //
-
     static final int AUDIOPORT_GENERATION_INIT = 0;
     static Integer sAudioPortGeneration = new Integer(AUDIOPORT_GENERATION_INIT);
     static ArrayList<AudioPort> sAudioPortsCached = new ArrayList<AudioPort>();
     static ArrayList<AudioPatch> sAudioPatchesCached = new ArrayList<AudioPatch>();
-
     static int resetAudioPortGeneration() {
         int generation;
         synchronized (sAudioPortGeneration) {
@@ -3650,17 +3422,14 @@ public class AudioManager {
         }
         return generation;
     }
-
     static int updateAudioPortCache(ArrayList<AudioPort> ports, ArrayList<AudioPatch> patches) {
         synchronized (sAudioPortGeneration) {
-
             if (sAudioPortGeneration == AUDIOPORT_GENERATION_INIT) {
                 int[] patchGeneration = new int[1];
                 int[] portGeneration = new int[1];
                 int status;
                 ArrayList<AudioPort> newPorts = new ArrayList<AudioPort>();
                 ArrayList<AudioPatch> newPatches = new ArrayList<AudioPatch>();
-
                 do {
                     newPorts.clear();
                     status = AudioSystem.listAudioPorts(newPorts, portGeneration);
@@ -3675,7 +3444,6 @@ public class AudioManager {
                         return status;
                     }
                 } while (patchGeneration[0] != portGeneration[0]);
-
                 for (int i = 0; i < newPatches.size(); i++) {
                     for (int j = 0; j < newPatches.get(i).sources().length; j++) {
                         AudioPortConfig portCfg = updatePortConfig(newPatches.get(i).sources()[j],
@@ -3709,7 +3477,6 @@ public class AudioManager {
                         i.remove();
                     }
                 }
-
                 sAudioPortsCached = newPorts;
                 sAudioPatchesCached = newPatches;
                 sAudioPortGeneration = portGeneration[0];
@@ -3725,7 +3492,6 @@ public class AudioManager {
         }
         return SUCCESS;
     }
-
     static AudioPortConfig updatePortConfig(AudioPortConfig portCfg, ArrayList<AudioPort> ports) {
         AudioPort port = portCfg.port();
         int k;

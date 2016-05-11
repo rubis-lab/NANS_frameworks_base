@@ -493,4 +493,26 @@ public class IWindowManagerImpl implements IWindowManager {
         // TODO Auto-generated method stub
         return null;
     }
+
+	// RUBIS ockwon
+	@Override
+	public boolean needsNavigationBar() {
+		return false;		
+	}
+
+	@Override
+	public boolean hasPermanentMenuKey() {
+		return false;
+	}
+
+	@Override
+	public int getLastWallpaperY() {
+		return 0;
+	}
+
+	@Override
+	public int getLastWallpaperX() {
+		return 0;
+	}
+	// END
 }
