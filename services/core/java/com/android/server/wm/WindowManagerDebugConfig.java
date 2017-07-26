@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +74,14 @@ public class WindowManagerDebugConfig {
     static final boolean SHOW_LIGHT_TRANSACTIONS = false || SHOW_TRANSACTIONS;
     static final boolean SHOW_STACK_CRAWLS = false;
     static final boolean DEBUG_WINDOW_CROP = false;
+    
+    /**
+     * Date: Jul 26, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * add static final boolean variable DEBUG_NANS
+     */
+    static final boolean DEBUG_NANS = true;
 
     static final String TAG_KEEP_SCREEN_ON = "DebugKeepScreenOn";
     static final boolean DEBUG_KEEP_SCREEN_ON = false;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -683,6 +684,19 @@ public interface IActivityManager extends IInterface {
      */
     public boolean canBypassWorkChallenge(PendingIntent intent) throws RemoteException;
 
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add NANS interface functions
+     */
+    public boolean setExternalDisplay(String packageName, int displayId, int flag) throws RemoteException;
+    public boolean setExternalDisplay(int taskId, int displayId, int flag) throws RemoteException;
+    public int getTaskIdByDisplayId(int displayId) throws RemoteException;
+    public int getDisplayIdByTaskId(int taskId) throws RemoteException;
+    public int getDisplayIdOfFocusedStack() throws RemoteException;
+    // END
+
     /*
      * Private non-Binder interfaces
      */
@@ -1075,4 +1089,18 @@ public interface IActivityManager extends IInterface {
     int SET_RENDER_THREAD_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION + 378;
     int SET_HAS_TOP_UI = IBinder.FIRST_CALL_TRANSACTION + 379;
     int CAN_BYPASS_WORK_CHALLENGE = IBinder.FIRST_CALL_TRANSACTION + 380;
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add NANS API transaction codes
+     */
+    // NANS transactions
+    int SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME = IBinder.FIRST_CALL_TRANSACTION + 381;
+    int SET_EXTERNAL_DISPLAY_BY_TASK_ID = IBinder.FIRST_CALL_TRANSACTION + 382;
+    int GET_TASK_ID_BY_DISPLAY_ID = IBinder.FIRST_CALL_TRANSACTION + 383;
+    int GET_DISPLAY_ID_BY_TASK_ID = IBinder.FIRST_CALL_TRANSACTION + 384;
+    int GET_DISPLAY_ID_OF_FOCUSED_STACK = IBinder.FIRST_CALL_TRANSACTION + 385;
+    // END
 }

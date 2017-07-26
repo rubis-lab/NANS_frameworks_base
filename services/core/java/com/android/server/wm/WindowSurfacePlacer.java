@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2015 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 package com.android.server.wm;
 
 import static android.app.ActivityManagerInternal.APP_TRANSITION_SAVED_SURFACE;
@@ -83,7 +102,14 @@ import java.util.ArrayList;
  * It sets positions of windows by calculating their frames and then applies this by positioning
  * surfaces according to these frames. Z layer is still assigned withing WindowManagerService.
  */
-class WindowSurfacePlacer {
+/**
+ * Date: Jul 21, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Set WindowSurfacePlacer as public class.
+ */
+// class WindowSurfacePlacer {
+public class WindowSurfacePlacer {
     private static final String TAG = TAG_WITH_CLASS_NAME ? "WindowSurfacePlacer" : TAG_WM;
     private final WindowManagerService mService;
     private final WallpaperController mWallpaperControllerLocked;
@@ -174,7 +200,14 @@ class WindowSurfacePlacer {
         }
     }
 
-    final void performSurfacePlacement() {
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Change the private function to public function.
+     */
+    // final void performSurfacePlacement() {
+    public final void performSurfacePlacement() {
         if (mDeferDepth > 0) {
             return;
         }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +50,15 @@ class WindowSurfaceController {
 
     final WindowStateAnimator mAnimator;
 
-    private SurfaceControl mSurfaceControl;
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * set mSurfaceControl as public
+     */
+    // private SurfaceControl mSurfaceControl;
+    public SurfaceControl mSurfaceControl;
+    // END
 
     private boolean mSurfaceShown = false;
     private float mSurfaceX = 0;

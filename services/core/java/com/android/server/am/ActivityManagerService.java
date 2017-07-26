@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006-2008 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -372,6 +373,14 @@ import static com.android.server.wm.AppTransition.TRANSIT_TASK_OPEN;
 import static com.android.server.wm.AppTransition.TRANSIT_TASK_TO_FRONT;
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
+
+/**
+ * Date: Jul 26, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * import DEBUG_NANS variable
+ */
+import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
 
 public final class ActivityManagerService extends ActivityManagerNative
         implements Watchdog.Monitor, BatteryStatsImpl.BatteryCallback {
@@ -3145,6 +3154,15 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     boolean setFocusedActivityLocked(ActivityRecord r, String reason) {
+
+        // RUBIS gyKim
+        if (DEBUG_NANS) {
+            Slog.d("RUBIS", "ActivityManagerService::setFocusedActivityLocked()");
+            Slog.d("RUBIS", "  L r=" + r);
+            Slog.d("RUBIS", "  L mFocusedActivity=" + mFocusedActivity);
+        }
+        // END
+
         if (r == null || mFocusedActivity == r) {
             return false;
         }
@@ -3201,6 +3219,11 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
         }
         if (mStackSupervisor.moveActivityStackToFront(r, reason + " setFocusedActivity")) {
+
+            // RUBIS gyKim
+            if (DEBUG_NANS) Slog.d("RUBIS", "  L called move ActivityStackToFront");
+            // END
+
             mWindowManager.setFocusedApp(r.appToken, true);
         }
         applyUpdateLockStateLocked(r);
@@ -9925,6 +9948,11 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     void moveTaskToFrontLocked(int taskId, int flags, Bundle bOptions) {
+
+        // RUBIS gyKim
+        if (DEBUG_NANS) Slog.d("RUBIS", "ActivityManagerService::moveTaskToFrontLocked(), taskId=" + taskId);
+        // END
+
         ActivityOptions options = ActivityOptions.fromBundle(bOptions);
 
         if (!checkAppSwitchAllowedLocked(Binder.getCallingPid(),
@@ -22201,6 +22229,82 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
         }
     }
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add a function to call the same function of ActivityStackSupervisor.
+     */
+    @Override
+    public boolean setExternalDisplay(String packageName, int displayId, int flag)
+            throws RemoteException {
+        synchronized (this) {
+            return mStackSupervisor.setExternalDisplayLocked(packageName, displayId, flag);
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add a function to call the same function of ActivityStackSupervisor.
+     */
+    @Override
+    public boolean setExternalDisplay(int taskId, int displayId, int flag)
+            throws RemoteException {
+        synchronized (this) {
+            return mStackSupervisor.setExternalDisplayLocked(taskId, displayId, flag);
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add a function to call the same function of ActivityStackSupervisor
+     */
+    @Override
+    public int getTaskIdByDisplayId(int displayId)
+            throws RemoteException {
+        synchronized (this) {
+            return mStackSupervisor.getTaskIdByDisplayId(displayId);
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add a function to call the same function of ActivityStackSupervisor
+     */
+    @Override
+    public int getDisplayIdByTaskId(int taskId)
+            throws RemoteException {
+        synchronized (this) {
+            return mStackSupervisor.getDisplayIdByTaskId(taskId);
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Return the displayId of current focused stack.
+     */
+    @Override
+    public int getDisplayIdOfFocusedStack()
+            throws RemoteException {
+        synchronized (this) {
+            final TaskRecord top = getFocusedStack().topTask();
+            return top.displayId;
+        }
+    }
+    // END
 
     private final class LocalService extends ActivityManagerInternal {
         @Override

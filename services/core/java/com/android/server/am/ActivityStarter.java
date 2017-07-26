@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,6 +78,14 @@ import static com.android.server.am.ActivityStackSupervisor.ON_TOP;
 import static com.android.server.am.ActivityStackSupervisor.PRESERVE_WINDOWS;
 import static com.android.server.am.ActivityStackSupervisor.TAG_TASKS;
 import static com.android.server.am.EventLogTags.AM_NEW_INTENT;
+
+/**
+ * Date: Jul 26, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * import DEBUG_NANS variable
+ */
+import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
 
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
@@ -1073,6 +1082,19 @@ class ActivityStarter {
             IVoiceInteractionSession voiceSession, IVoiceInteractor voiceInteractor,
             int startFlags, boolean doResume, ActivityOptions options, TaskRecord inTask) {
 
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * nans debug log
+         */
+        if (DEBUG_NANS && sourceRecord != null) {
+            Slog.d("RUBIS", "ActivityStarter::startActivityUnchecked()");
+            Slog.d("RUBIS", "  L sourceRecord=" + sourceRecord.task);
+            Slog.d("RUBIS", "  L displayId=" + sourceRecord.task.displayId);
+        }
+        // END
+
         setInitialState(r, options, inTask, doResume, startFlags, sourceRecord, voiceSession,
                 voiceInteractor);
 
@@ -1629,10 +1651,44 @@ class ActivityStarter {
                         // We only want to move to the front, if we aren't going to launch on a
                         // different stack. If we launch on a different stack, we will put the
                         // task on top there.
-                        mTargetStack.moveTaskToFrontLocked(
-                                intentActivity.task, mNoAnimation, mOptions,
-                                mStartActivity.appTimeTracker, "bringingFoundTaskToFront");
+
+                        /**
+                         * Date: Jul 21, 2017
+                         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+                         *
+                         * Conditional call of moveTaskToFrontLocked.
+                         */
+                        /*
+                         * mTargetStack.moveTaskToFrontLocked(
+                         *         intentActivity.task, mNoAnimation, mOptions,
+                         *         mStartActivity.appTimeTracker, "bringingFoundTaskToFront");
+                         */
+
+                        Slog.d("RUBIS", "ActivityStarter::setTargetStackAndMoveToFrontIfNeeded()");
+                        Slog.d("RUBIS", "  L mFocusedStack=" + mSupervisor.mFocusedStack);
+                        Slog.d("RUBIS", "  L mFocusedActivity=" + mService.mFocusedActivity);
+                        if (mSourceRecord != null) {
+                            Slog.d("RUBIS", "  L mSourceRecord=" + mSourceRecord);
+                        }
+                        if (intentActivity != null) {
+                            Slog.d("RUBIS", "  L intentActivity=" + intentActivity);
+                        }
+
+                        ActivityStackSupervisor.ActivityDisplay ac = mSupervisor.getActivityDisplay(mStartActivity.task.displayId);
+                        if (intentActivity.task.displayId == 0 || ac.mDisplayMode != ActivityStackSupervisor.ActivityDisplay.NANS ||
+                                (mSourceRecord != null && intentActivity.task != mSourceRecord.task)) {
+                            mTargetStack.moveTaskToFrontLocked(
+                                    intentActivity.task, mNoAnimation, mOptions,
+                                    mStartActivity.appTimeTracker, "bringingFoundTaskToFront");
+                        }
+
+                        if (intentActivity.task.displayId != 0) {
+                            mTargetStack = intentActivity.task.stack;
+                        }
+                        // END
+
                         mMovedToFront = true;
+
                     } else if (launchStack.mStackId == DOCKED_STACK_ID
                             || launchStack.mStackId == FULLSCREEN_WORKSPACE_STACK_ID) {
                         if ((mLaunchFlags & FLAG_ACTIVITY_LAUNCH_ADJACENT) != 0) {

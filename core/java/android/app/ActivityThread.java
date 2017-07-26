@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2703,6 +2704,14 @@ public final class ActivityThread {
         appContext.setOuterContext(activity);
         Context baseContext = appContext;
 
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Disable the presentation API and debug.use-second-display for NANS service.
+         */
+        /*
+
         final DisplayManagerGlobal dm = DisplayManagerGlobal.getInstance();
         // For debugging purposes, if the activity's package name contains the value of
         // the "debug.use-second-display" system property as a substring, then show
@@ -2719,6 +2728,8 @@ public final class ActivityThread {
                 }
             }
         }
+        */
+        // END
         return baseContext;
     }
 

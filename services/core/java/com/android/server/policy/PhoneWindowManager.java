@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,6 +149,15 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
+
+/**
+ * Date: Jul 21, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add DisplayManager package for NANS
+ */
+import android.hardware.display.DisplayManager;
+// END
 
 import com.android.internal.R;
 import com.android.internal.annotations.GuardedBy;
@@ -522,6 +532,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mDemoHdmiRotationLock;
     int mDemoRotation;
     boolean mDemoRotationLock;
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Define a variable for forced rotation configuration.
+     */
+    int mForcedRotation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+    // END
 
     boolean mWakeGestureEnabledSetting;
     MyWakeGestureListener mWakeGestureListener;
@@ -2359,9 +2378,27 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public void setInitialDisplaySize(Display display, int width, int height, int density) {
         // This method might be called before the policy has been fully initialized
         // or for other displays we don't care about.
-        if (mContext == null || display.getDisplayId() != Display.DEFAULT_DISPLAY) {
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Init the mForcedRotation.
+         */
+        if (display.getDisplayId() != Display.DEFAULT_DISPLAY) {
+            mForcedRotation = Surface.ROTATION_90;
             return;
         }
+        if (mContext == null) {
+            return;
+        }
+        /*
+         * if (mContext == null || display.getDisplayId() != Display.DEFAULT_DISPLAY) {
+         *     return;
+         * }
+         */
+        // END
+
         mDisplay = display;
 
         final Resources res = mContext.getResources();
@@ -2437,6 +2474,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // $ adb shell setprop config.override_forced_orient true
                 // $ adb shell wm size reset
                 !"true".equals(SystemProperties.get("config.override_forced_orient"));
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Init the mForcedRotation
+         */
+        if (mForcedRotation < 0) {
+            mForcedRotation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        }
     }
 
     /**
@@ -6277,6 +6324,24 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     }
 
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the forced rotation.
+     */
+    @Override
+    public void setForcedRotation(int rotation) {
+        Slog.d("RUBIS", "PhoneWindowManager::setForcedRotation()");
+        Slog.d("RUBIS", "  L mForcedRotation=" + mForcedRotation);
+        Slog.d("RUBIS", "  L rotation=" + rotation);
+        if (mForcedRotation != rotation) {
+            mForcedRotation = rotation;
+            updateRotation(false);
+        }
+    }
+    // END
+
     void initializeHdmiState() {
         boolean plugged = false;
         // watch for HDMI plug messages if the hdmi switch exists
@@ -7759,7 +7824,23 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             final int preferredRotation;
-            if (mDesiredRotation >= 0) {
+
+            /**
+             * Date: Jul 21, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * mForcedRotation has the highest priority
+             * and modify next line if -> else if
+             */
+            Slog.d("RUBIS", "PhoneWindowManager::rotationForOrientationLw()");
+            Slog.d("RUBIS", "  L mForcedRotation=" + mForcedRotation);
+            if (mForcedRotation >= 0) {
+                preferredRotation = mForcedRotation;
+                return Surface.ROTATION_90;
+            }
+            // END
+
+            else if (mDesiredRotation >= 0) {
                 preferredRotation = mDesiredRotation;
                 Slog.i(TAG, "mDesiredRotation:" + mDesiredRotation);
                 return preferredRotation;

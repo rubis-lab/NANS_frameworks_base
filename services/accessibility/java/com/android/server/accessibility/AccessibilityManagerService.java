@@ -1,17 +1,18 @@
 /*
- ** Copyright 2009, The Android Open Source Project
- **
- ** Licensed under the Apache License, Version 2.0 (the "License");
- ** you may not use this file except in compliance with the License.
- ** You may obtain a copy of the License at
- **
- **     http://www.apache.org/licenses/LICENSE-2.0
- **
- ** Unless required by applicable law or agreed to in writing, software
- ** distributed under the License is distributed on an "AS IS" BASIS,
- ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- ** See the License for the specific language governing permissions and
- ** limitations under the License.
+ * Copyright 2009, The Android Open Source Project
+ * Copyright 2017, RUBIS Laboratory at Seoul National University
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.android.server.accessibility;
@@ -701,6 +702,15 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
                 userState.mIsDisplayMagnificationEnabled = false;
                 userState.mIsAutoclickEnabled = false;
                 userState.mEnabledServices.clear();
+                /**
+                 * Date: Jul 21, 2017
+                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+                 *
+                 * Set the temporary state of swipe gesture.
+                 */
+                Slog.d(LOG_TAG, "registerUiTestAutomationService()");
+                userState.mIsSwipeGestureEnabled = false;
+                // END
             }
             userState.mEnabledServices.add(sFakeAccessibilityServiceComponentName);
             userState.mTouchExplorationGrantedServices.add(sFakeAccessibilityServiceComponentName);
@@ -755,6 +765,16 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
             userState.mBindingServices.clear();
             userState.mTouchExplorationGrantedServices.clear();
             userState.mTouchExplorationGrantedServices.add(service);
+
+            /**
+             * Date: Jul 21, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Set the temporary state of swipe gesture.
+             */
+            Slog.d(LOG_TAG, "temporaryEnableAccessibilityStateUntilKeyguardRemoved()");
+            userState.mIsSwipeGestureEnabled = false;
+            // END
 
             // User the current state instead settings.
             onUserStateChangedLocked(userState);
@@ -1368,6 +1388,18 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
             if (userState.mIsPerformGesturesEnabled) {
                 flags |= AccessibilityInputFilter.FLAG_FEATURE_INJECT_MOTION_EVENTS;
             }
+
+            /**
+             * Date: Jul 21, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Set the flag for the screen swiper.
+             */
+            Slog.d(LOG_TAG, "updateInputFilter()");
+            if (userState.mIsSwipeGestureEnabled) {
+                flags |= AccessibilityInputFilter.FLAG_FEATURE_SCREEN_SWIPER;
+            }
+
             if (flags != 0) {
                 if (!mHasInputFilter) {
                     mHasInputFilter = true;
@@ -1584,6 +1616,16 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
         somethingChanged |= readDisplayMagnificationEnabledSettingLocked(userState);
         somethingChanged |= readAutoclickEnabledSettingLocked(userState);
 
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Read the configuration of swipe gesture.
+         */
+        Slog.d(LOG_TAG, "readConfigurationForUserStateLocked()");
+        somethingChanged |= readSwipeGestureEnabledSettingLocked(userState);
+        // END
+
         return somethingChanged;
     }
 
@@ -1668,6 +1710,25 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
         }
         return false;
     }
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Read the configuration of swipe gesture.
+     */
+    private boolean readSwipeGestureEnabledSettingLocked(UserState userState) {
+        Slog.d(LOG_TAG, "readSwipeGestureEnabledSettingLocked()");
+        final boolean swipeGestureEnabled = Settings.Secure.getIntForUser(
+                mContext.getContentResolver(), Settings.Secure.SWIPE_GESTURE_ENABLED,
+                0, userState.mUserId) == 1;
+        if (swipeGestureEnabled != userState.mIsSwipeGestureEnabled) {
+            userState.mIsSwipeGestureEnabled = swipeGestureEnabled;
+            return true;
+        }
+        return false;
+    }
+    // END
 
     private void updateTouchExplorationLocked(UserState userState) {
         boolean enabled = false;
@@ -1960,6 +2021,16 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
                 pw.append(", displayMagnificationEnabled="
                         + userState.mIsDisplayMagnificationEnabled);
                 pw.append(", autoclickEnabled=" + userState.mIsAutoclickEnabled);
+
+                /**
+                 * Date: Jul 10, 2017
+                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+                 *
+                 * Append the mIsSwipeGestureEnabled.
+                 */
+                pw.append(", swipeGestureEnabled=" + userState.mIsSwipeGestureEnabled);
+                // END
+
                 if (userState.mUiAutomationService != null) {
                     pw.append(", ");
                     userState.mUiAutomationService.dump(fd, pw, args);
@@ -4240,6 +4311,15 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
         public boolean mIsFilterKeyEventsEnabled;
         public boolean mAccessibilityFocusOnlyInActiveWindow;
 
+        /**
+         * Date: Jul 10, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add a variable of swipe gesture.
+         */
+        public boolean mIsSwipeGestureEnabled;
+        // END
+
         private Service mUiAutomationService;
         private int mUiAutomationFlags;
         private IAccessibilityServiceClient mUiAutomationServiceClient;
@@ -4304,6 +4384,17 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
             mIsEnhancedWebAccessibilityEnabled = false;
             mIsDisplayMagnificationEnabled = false;
             mIsAutoclickEnabled = false;
+
+            /**
+             * Date: Jul 21, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Set the initial value of mIsSwipeGestureEnabled.
+             */
+            Slog.d(LOG_TAG, "onSwitchToAnotherUser()");
+            mIsSwipeGestureEnabled = false;
+            // END
+
             mSoftKeyboardShowMode = 0;
         }
 
@@ -4359,6 +4450,16 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
         private final Uri mAccessibilitySoftKeyboardModeUri = Settings.Secure.getUriFor(
                 Settings.Secure.ACCESSIBILITY_SOFT_KEYBOARD_MODE);
 
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add a uri variable for the mSwipeGestureEnabled.
+         */
+        private final Uri mSwipeGestureEnabledUri = Settings.Secure.getUriFor(
+                Settings.Secure.SWIPE_GESTURE_ENABLED);
+        // END
+
         public AccessibilityContentObserver(Handler handler) {
             super(handler);
         }
@@ -4413,6 +4514,18 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
                     if (readAutoclickEnabledSettingLocked(userState)) {
                         onUserStateChangedLocked(userState);
                     }
+                /**
+                 * Date: Jul 21, 2017
+                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+                 *
+                 * Read and handle for the changed swipe gesture configuration.
+                 */
+                } else if (mSwipeGestureEnabledUri.equals(uri)) {
+                    Slog.d(LOG_TAG, "onChange()");
+                    if (readSwipeGestureEnabledSettingLocked(userState)) {
+                        onUserStateChangedLocked(userState);
+                    }
+                // END
                 } else if (mEnabledAccessibilityServicesUri.equals(uri)) {
                     if (readEnabledAccessibilityServicesLocked(userState)) {
                         onUserStateChangedLocked(userState);

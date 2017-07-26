@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -6607,6 +6608,17 @@ public final class Settings {
         public static final String DEVICE_PAIRED = "device_paired";
 
         /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Setting that specifies whether the NANS mode and the swipe gesture control are enabled.
+         * @hide
+         */
+        public static final String NANS_MODE_ENABLED = "nans_mode_enabled";
+        public static final String SWIPE_GESTURE_ENABLED = "swipe_gesture_enabled";
+        // END
+
+        /**
          * Whether to include options in power menu for rebooting into recovery or bootloader
          * @hide
          */
@@ -6705,7 +6717,16 @@ public final class Settings {
             DOZE_PULSE_ON_DOUBLE_TAP,
             NFC_PAYMENT_DEFAULT_COMPONENT,
             ADVANCED_REBOOT,
-            CAMERA_GESTURE_DISABLED
+            CAMERA_GESTURE_DISABLED,
+            /**
+             * Date: Jul 21, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Setting that specifies whether the NANS mode and the swipe gesture control are enabled.
+             */
+            NANS_MODE_ENABLED,
+            SWIPE_GESTURE_ENABLED
+            // END
         };
 
         /**

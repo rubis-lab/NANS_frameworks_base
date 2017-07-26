@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +55,15 @@ import android.view.Display;
 import android.view.DisplayInfo;
 import android.view.Surface;
 import android.view.WindowManagerInternal;
+
+/**
+ * Date: Jul 20, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add ActivityInfo package for NANS.
+ */
+import android.content.pm.ActivityInfo;
+// END
 
 import com.android.server.DisplayThread;
 import com.android.server.LocalServices;
@@ -320,6 +330,18 @@ public final class DisplayManagerService extends SystemService {
         synchronized (mSyncRoot) {
             LogicalDisplay display = mLogicalDisplays.get(displayId);
             if (display != null) {
+
+                /**
+                 * Date: Jul 21, 2017
+                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+                 *
+                 * If the display is not the default display, get and overwrite the default display info.
+                 */
+                if (displayId != Display.DEFAULT_DISPLAY) {
+                    info = mLogicalDisplays.get(Display.DEFAULT_DISPLAY).getDisplayInfoLocked();
+                }
+                // END
+
                 if (display.setDisplayInfoOverrideFromWindowManagerLocked(info)) {
                     sendDisplayEventLocked(displayId, DisplayManagerGlobal.EVENT_DISPLAY_CHANGED);
                     scheduleTraversalLocked(false);
@@ -690,6 +712,18 @@ public final class DisplayManagerService extends SystemService {
         synchronized (mSyncRoot) {
             handleDisplayDeviceAddedLocked(device);
         }
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * If the external display is connected, set the rotation to landscape.
+         */
+        if(mDisplayDevices.size() > 1 && mWindowManagerInternal != null) {
+            mWindowManagerInternal.setForcedRotation(Surface.ROTATION_90);
+        }
+        // END
+
     }
 
     private void handleDisplayDeviceAddedLocked(DisplayDevice device) {
@@ -758,6 +792,22 @@ public final class DisplayManagerService extends SystemService {
         synchronized (mSyncRoot) {
             handleDisplayDeviceRemovedLocked(device);
         }
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * If there is no connected external displays, set the rotation to default value.
+         */
+        Slog.d("RUBIS", "handleDisplayDevice::Removed()");
+        Slog.d("RUBIS", "  L device=" + device);
+        Slog.d("RUBIS", "  L layerStack=" + device.getLayerStack());
+        Slog.d("RUBIS", "  L TODO: migrate apps to default display");
+        if(mDisplayDevices.size() == 1 && mWindowManagerInternal != null) {
+            mWindowManagerInternal.setForcedRotation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        }
+        // END
+
     }
 
     private void handleDisplayDeviceRemovedLocked(DisplayDevice device) {
@@ -953,7 +1003,16 @@ public final class DisplayManagerService extends SystemService {
             if (display != null && !display.hasContentLocked()) {
                 // If the display does not have any content of its own, then
                 // automatically mirror the default logical display contents.
-                display = null;
+
+                /**
+                 * Date: Jul 21, 2017
+                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+                 *
+                 * Even if there is no content to display on the display device,
+                 * display device will not mirror the default display.
+                 */
+                // display = null;
+                // END
             }
             if (display == null) {
                 display = mLogicalDisplays.get(Display.DEFAULT_DISPLAY);
@@ -1106,6 +1165,28 @@ public final class DisplayManagerService extends SystemService {
             mPersistentDataStore.dump(pw);
         }
     }
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the display layerStack.
+     *
+     * @param displayId, layerStack.
+     * @return void
+     */
+    private void setDisplayLayerStackInternal(int displayId, int layerStack) {
+        Slog.d("RUBIS", "DisplayManagerService:: setDisplayLayerStackInternal()");
+        Slog.d("RUBIS", "  L displayId=" + displayId);
+        Slog.d("RUBIS", "  L layerStack=" + layerStack);
+        LogicalDisplay logicalDisplay = mLogicalDisplays.get(displayId);
+        if (logicalDisplay != null) {
+            Slog.i(TAG, "  logicalDisplay=" + logicalDisplay.getDisplayInfoLocked());
+            logicalDisplay.setDisplayLayerStack(layerStack);
+            configureDisplayInTransactionLocked(logicalDisplay.getPrimaryDisplayDeviceLocked());
+        }
+    }
+    // END
 
     /**
      * This is the object that everything in the display manager locks on.
@@ -1517,6 +1598,26 @@ public final class DisplayManagerService extends SystemService {
                 Binder.restoreCallingIdentity(token);
             }
         }
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Binder call of setDisplayLayerStack.
+         *
+         * @param displayId, layerStack
+         * @return void
+         */
+        @Override
+        public void setDisplayLayerStack(int displayId, int layerStack) {
+            final long token = Binder.clearCallingIdentity();
+            try {
+                setDisplayLayerStackInternal(displayId, layerStack);
+            } finally {
+                Binder.restoreCallingIdentity(token);
+            }
+        }
+        // END
 
         private boolean validatePackageName(int uid, String packageName) {
             if (packageName != null) {

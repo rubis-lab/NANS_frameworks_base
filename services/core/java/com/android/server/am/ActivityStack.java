@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,6 +87,14 @@ import static com.android.server.wm.AppTransition.TRANSIT_TASK_OPEN_BEHIND;
 import static com.android.server.wm.AppTransition.TRANSIT_TASK_TO_BACK;
 import static com.android.server.wm.AppTransition.TRANSIT_TASK_TO_FRONT;
 
+/**
+ * Date: Jul 26, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * import DEBUG_NANS variable
+ */
+import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
@@ -143,6 +152,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+/**
+ * Date: Jul 20, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add ActivityDisplay class.
+ */
+import com.android.server.am.ActivityStackSupervisor.ActivityDisplay;
+// END
 
 /**
  * State and management of a single stack of activities.
@@ -711,6 +729,7 @@ final class ActivityStack {
         if (isOnHomeDisplay()) {
             mStackSupervisor.setFocusStackUnchecked(reason, this);
         }
+
         if (task != null) {
             insertTaskAtTop(task, null);
         } else {
@@ -1599,11 +1618,46 @@ final class ActivityStack {
      * @param starting The currently starting activity or null if there is none.
      */
     int getStackVisibilityLocked(ActivityRecord starting) {
+
+        /**
+         * Date: Jul 26, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * getStackVisibilityLocked debug log
+         */
+        if (DEBUG_NANS) {
+            Slog.d("RUBIS", "ActivityStack::getStackVisibilityLocked()");
+            Slog.d("RUBIS", "  L displayId=" + mActivityContainer.mActivityDisplay.mDisplayId);
+        }
+        // END
+
         if (!isAttached()) {
             return STACK_INVISIBLE;
         }
+        
+        /**
+         * Date: Jul 26, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * if display mode is nans, it have to be STACK_VISIBLE.
+         * TODO: MIRRORING and BLANK is also 'STACK_VISIBLE'?
+         */
+        if (mActivityContainer.mActivityDisplay.mDisplayMode == ActivityDisplay.NANS ||
+                mActivityContainer.mActivityDisplay.mDisplayMode == ActivityDisplay.MIRRORING) {
+            Slog.d("RUBIS", "  L return visible because this stack is NANS mode");
+            return STACK_VISIBLE;
+        }
+        // END
 
         if (mStackSupervisor.isFrontStack(this) || mStackSupervisor.isFocusedStack(this)) {
+            /**
+             * Date: Jul 26, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * getStackVisibilityLocked debug log
+             */
+            Slog.d("RUBIS", "  L return visible because this stack is front/focus mode");
+            // END
             return STACK_VISIBLE;
         }
 
@@ -2162,6 +2216,31 @@ final class ActivityStack {
         // Find the first activity that is not finishing.
         final ActivityRecord next = topRunningActivityLocked();
 
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * if prev.task is not equal to next.stak, set prev.task to NANS mode.
+         */
+        Slog.d("RUBIS", "ActivityStack::resumeTopActivityInnerLocked(), StackId=" + mStackId);
+        Slog.d("RUBIS", "----------------------------------------------------------");
+        if (prev != null) {
+            Slog.d("RUBIS", "  prev=" + prev);
+        }
+        if (next != null) {
+            Slog.d("RUBIS", "  next=" + next);
+        }
+        Slog.d("RUBIS", "----------------------------------------------------------");
+
+        if (prev != null && next != null && prev.task != next.task && prev.task.displayId != 0) {
+            ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prev.task.displayId);
+            Slog.d("RUBIS", "  L prev.displayId=" + prev.task.displayId + ", mDisplayMode=" + ac.mDisplayMode);
+            if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
+                mStackSupervisor.setExternalDisplayLocked(prev.task.taskId, prev.task.displayId);
+            }
+        }
+        // END
+
         // Remember how we'll process this pause/resume situation, and ensure
         // that the state is reset however we wind up proceeding.
         final boolean userLeaving = mStackSupervisor.mUserLeaving;
@@ -2173,6 +2252,21 @@ final class ActivityStack {
             final String reason = "noMoreActivities";
             final int returnTaskType = prevTask == null || !prevTask.isOverHomeStack()
                     ? HOME_ACTIVITY_TYPE : prevTask.getTaskToReturnTo();
+
+            /**
+             * Date: Jul 20, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Do nothing for the closed NANS task on resumeTopActivity
+             */
+            if (prevTask != null) {
+                ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prevTask.displayId);
+                if (ac.mDisplayMode == ActivityDisplay.NANS) {
+                    Slog.d("RUBIS", "  L closed task was NANS task, so do nothing!");
+                }
+            }
+            // END
+
             if (!mFullscreen && adjustFocusToNextFocusableStackLocked(returnTaskType, reason)) {
                 // Try to move focus to the next visible stack with a running activity if this
                 // stack is not covering the entire screen.
@@ -2645,7 +2739,14 @@ final class ActivityStack {
         updateTaskMovement(task, true);
     }
 
-    private void insertTaskAtTop(TaskRecord task, ActivityRecord newActivity) {
+    /**
+     * Date: Jul 26, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * access modifier change (private ==> public)
+     */
+    // private void insertTaskAtTop(TaskRecord task, ActivityRecord newActivity) {
+    public void insertTaskAtTop(TaskRecord task, ActivityRecord newActivity) {
         boolean isLastTaskOverHome = false;
         // If the moving task is over home stack, transfer its return type to next task
         if (task.isOverHomeStack()) {
@@ -3294,7 +3395,24 @@ final class ActivityStack {
             }
         }
 
-        mService.setFocusedActivityLocked(mStackSupervisor.topRunningActivityLocked(), myReason);
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         */
+        ActivityRecord top = null;
+        ActivityStack nextStack = r.task.stack;
+        if (nextStack.mStackId > 1 && nextStack.mStackId == mStackId) {
+            top = topActivity();
+        } else {
+            top = mStackSupervisor.topRunningActivityLocked();
+        }
+
+        if (top != null) {
+            mService.setFocusedActivityLocked(top, myReason);
+        }
+        // mService.setFocusedActivityLocked(mStackSupervisor.topRunningActivityLocked(), myReason);
+        // END
     }
 
     private boolean adjustFocusToNextFocusableStackLocked(int taskToReturnTo, String reason) {
@@ -4358,6 +4476,42 @@ final class ActivityStack {
 
     final void moveTaskToFrontLocked(TaskRecord tr, boolean noAnimation, ActivityOptions options,
             AppTimeTracker timeTracker, String reason) {
+
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * If the prev task moving to bask is on MIRRORED mode, prev task has to be changed to NANS mode, and
+         * if the next task moving to front is on NANS mode, it has to be changed to MIRRORED mode.
+         */
+        Slog.d("RUBIS", "ActivityStack::moveTaskToFrontLocked()");
+        Slog.d("RUBIS", "  L task=" + tr);
+        Slog.d("RUBIS", "  L stackId=" + mStackId);
+        if (reason != null) {
+            Slog.d("RUBIS", "  L reason=" + reason);
+        }
+
+        ActivityStack lastStack = mStackSupervisor.getLastStack();
+        TaskRecord lastTask = lastStack.topTask();
+        Slog.d("RUBIS", "  L lastStack=" + lastStack);
+        Slog.d("RUBIS", "  L lastTask=" + lastTask);
+        Slog.d("RUBIS", "  L lastTask.displayId=" + lastTask.displayId);
+        Slog.d("RUBIS", "  L lastTask.isOverHomeStack=" + lastTask.isOverHomeStack());
+        if (lastStack != null && lastTask != null && lastTask.displayId != 0) {
+            ActivityDisplay ac = mStackSupervisor.getActivityDisplay(lastTask.displayId);
+            if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
+                mStackSupervisor.setExternalDisplayLocked(lastTask.taskId, lastTask.displayId);
+            }
+        }
+
+        if (tr != null && tr.displayId != 0) {
+            ActivityDisplay ac = mStackSupervisor.getActivityDisplay(tr.displayId);
+            if (ac != null && ac.mDisplayMode == ActivityDisplay.NANS) {
+                mStackSupervisor.setExternalDisplayLocked(tr.taskId, 0);
+            }
+        }
+        // END
+
         if (DEBUG_SWITCH) Slog.v(TAG_SWITCH, "moveTaskToFront: " + tr);
 
         final int numTasks = mTaskHistory.size();
@@ -5038,6 +5192,28 @@ final class ActivityStack {
      * @return result from removeHistoryRecordsForAppLocked.
      */
     boolean handleAppDiedLocked(ProcessRecord app) {
+
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * If the task on NANS mode is died, the activity display has to be changed to BLANK mode.
+         */
+        if (mLastPausedActivity != null && mLastPausedActivity.finishing) {
+            Slog.d("RUBIS", "ActivityStack::handleAppDiedLocked()");
+            Slog.d("RUBIS", "  L mLastPausedActivity=" + mLastPausedActivity);
+            TaskRecord tr = mLastPausedActivity.task;
+            if (tr != null && tr.displayId != 0) {
+                ActivityDisplay ac = mStackSupervisor.getActivityDisplay(tr.displayId);
+                if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
+                    mStackSupervisor.setDisplayLayerStack(tr.displayId, tr.displayId);
+                    ac.mDisplayMode = ActivityDisplay.BLANK;
+                    tr.displayId = 0;
+                }
+            }
+        }
+        // END
+
         if (mPausingActivity != null && mPausingActivity.app == app) {
             if (DEBUG_PAUSE || DEBUG_CLEANUP) Slog.v(TAG_PAUSE,
                     "App died while pausing: " + mPausingActivity);
@@ -5367,6 +5543,32 @@ final class ActivityStack {
     public int getStackId() {
         return mStackId;
     }
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Gets the integer array of taskIds.
+     */
+    public int[] getTaskIds() {
+        int[] taskIds = new int[mTaskHistory.size()];
+        for (int taskNdx = mTaskHistory.size() - 1; taskNdx >= 0; --taskNdx) {
+            taskIds[taskNdx] = mTaskHistory.get(taskNdx).taskId;
+        }
+        return taskIds;
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Gets the task history of this activity stack.
+     */
+    public ArrayList<TaskRecord> getTaskHistory() {
+        return mTaskHistory;
+    }
+    // END
 
     @Override
     public String toString() {

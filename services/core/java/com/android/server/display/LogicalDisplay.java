@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +62,17 @@ final class LogicalDisplay {
     private static final int BLANK_LAYER_STACK = -1;
 
     private final int mDisplayId;
-    private final int mLayerStack;
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Remove final keyword of mLayerStack in order to modify on run-time.
+     */
+    // private final int mLayerStack;
+    private int mLayerStack;
+    // END
+
     private DisplayInfo mOverrideDisplayInfo; // set by the window manager
     private DisplayInfo mInfo;
 
@@ -422,6 +433,21 @@ final class LogicalDisplay {
         mDisplayOffsetX = x;
         mDisplayOffsetY = y;
     }
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the layerStack which display device has to display.
+     *
+     * @param layerStack The layerStack identifier.
+     */
+    public void setDisplayLayerStack(int layerStack) {
+        if (mLayerStack != layerStack) {
+            mLayerStack = layerStack;
+        }
+    }
+    // END
 
     public void dumpLocked(PrintWriter pw) {
         pw.println("mDisplayId=" + mDisplayId);

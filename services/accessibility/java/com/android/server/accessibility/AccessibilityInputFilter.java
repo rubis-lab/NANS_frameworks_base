@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +42,13 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
     private static final String TAG = AccessibilityInputFilter.class.getSimpleName();
 
     private static final boolean DEBUG = false;
+    /**
+     * Date: Jul 26, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * add static final boolean for DEBUG_NANS
+     */
+    private static final boolean DEBUG_NANS = false;
 
     /**
      * Flag for enabling the screen magnification feature.
@@ -77,9 +85,20 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
      */
     static final int FLAG_FEATURE_INJECT_MOTION_EVENTS = 0x00000010;
 
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Flag for enabling the swipe gesture control feature.
+     */
+    static final int FLAG_FEATURE_SCREEN_SWIPER = 0x00000020;
+
     static final int FEATURES_AFFECTING_MOTION_EVENTS = FLAG_FEATURE_INJECT_MOTION_EVENTS
             | FLAG_FEATURE_AUTOCLICK | FLAG_FEATURE_TOUCH_EXPLORATION
-            | FLAG_FEATURE_SCREEN_MAGNIFIER;
+            | FLAG_FEATURE_SCREEN_MAGNIFIER
+            | FLAG_FEATURE_SCREEN_SWIPER; // added
+    // END
+
     /**
      * Flag for enabling the feature to control the screen magnifier. If
      * {@link #FLAG_FEATURE_SCREEN_MAGNIFIER} is set this flag is ignored
@@ -140,6 +159,15 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
     private EventStreamState mTouchScreenStreamState;
 
     private EventStreamState mKeyboardStreamState;
+    
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Added the swipe gesture handler.
+     */
+    private SwipeGestureHandler mSwipeGestureHandler;
+    // END
 
     AccessibilityInputFilter(Context context, AccessibilityManagerService service) {
         super(context.getMainLooper());
@@ -411,6 +439,21 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
             mKeyboardInterceptor = new KeyboardInterceptor(mAms);
             addFirstEventHandler(mKeyboardInterceptor);
         }
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Handler for enabling the swipe gesture control.
+         */
+        Slog.d(TAG, "enableFeatures()");
+        if ((mEnabledFeatures & FLAG_FEATURE_SCREEN_SWIPER) != 0) {
+            mSwipeGestureHandler = new SwipeGestureHandler(mContext);
+            addFirstEventHandler(mSwipeGestureHandler);
+            //if (DEBUG_NANS) 
+            Slog.d(TAG, " L FLAG_FEATURE_SCREEN_SWIPER");
+        }
+        // END
     }
 
     /**
@@ -453,6 +496,20 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
             mKeyboardInterceptor.onDestroy();
             mKeyboardInterceptor = null;
         }
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Handler for disabling the swipe gesture control.
+         */
+        Slog.d(TAG, "enableFeatures()");
+        if (mSwipeGestureHandler != null) {
+            mSwipeGestureHandler.onDestroy();
+            mSwipeGestureHandler = null;
+            Slog.d(TAG, " L FLAG_FEATURE_SCREEN_SWIPER");
+        }
+        // END
 
         mEventHandler = null;
         resetStreamState();

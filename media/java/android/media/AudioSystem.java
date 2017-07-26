@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -661,7 +662,16 @@ public class AudioSystem
     public static final int FORCE_HDMI_SYSTEM_AUDIO_ENFORCED = 12;
     public static final int FORCE_ENCODED_SURROUND_NEVER = 13;
     public static final int FORCE_ENCODED_SURROUND_ALWAYS = 14;
-    public static final int NUM_FORCE_CONFIG = 15;
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add a device category for miracast
+     */
+    public static final int FORCE_WIFI_SYSTEM_AUDIO_ENFORCED = 15;
+    // public static final int NUM_FORCE_CONFIG = 15;
+    public static final int NUM_FORCE_CONFIG = 16;
+    // END
     public static final int FORCE_DEFAULT = FORCE_NONE;
 
     // usage for setForceUse, must match audio_policy_force_use_t

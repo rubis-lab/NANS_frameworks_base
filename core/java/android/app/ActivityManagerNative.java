@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3025,6 +3026,89 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             reply.writeInt(result ? 1 : 0);
             return true;
         }
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add NANS transaction handler SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME case
+         */
+        case SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME: {
+            data.enforceInterface(IActivityManager.descriptor);
+            String packageName = data.readString();
+            int displayId = data.readInt();
+            int flag = data.readInt();
+            final boolean success = setExternalDisplay(packageName, displayId, flag);
+            reply.writeNoException();
+            reply.writeInt(success ? 1 : 0);
+            return true;
+        }
+        // END
+
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add NANS transaction handler SET_EXTERNAL_DISPLAY_BY_TASK_ID case
+         */
+        case SET_EXTERNAL_DISPLAY_BY_TASK_ID: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int taskId = data.readInt();
+            int displayId = data.readInt();
+            int flag = data.readInt();
+            final boolean success = setExternalDisplay(taskId, displayId, flag);
+            reply.writeNoException();
+            reply.writeInt(success ? 1 : 0);
+            return true;
+        }
+        // END
+
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add NANS transaction handler GET_TASK_ID_BY_DISPLAY_ID case
+         */
+        case GET_TASK_ID_BY_DISPLAY_ID: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int displayId = data.readInt();
+            final int res = getTaskIdByDisplayId(displayId);
+            reply.writeNoException();
+            reply.writeInt(res);
+            return true;
+        }
+        // END
+
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add NANS transaction handler GET_DISPLAY_ID_BY_TASK_ID case
+         */
+        case GET_DISPLAY_ID_BY_TASK_ID: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int taskId = data.readInt();
+            final int res = getDisplayIdByTaskId(taskId);
+            reply.writeNoException();
+            reply.writeInt(res);
+            return true;
+        }
+        // END
+
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add NANS transaction handler GET_DISPLAY_ID_OF_FOCUSED_STACK case
+         */
+        case GET_DISPLAY_ID_OF_FOCUSED_STACK: {
+            data.enforceInterface(IActivityManager.descriptor);
+            final int res = getDisplayIdOfFocusedStack();
+            reply.writeNoException();
+            reply.writeInt(res);
+            return true;
+        }
+        // END
+
         }
 
         return super.onTransact(code, data, reply, flags);
@@ -7113,6 +7197,119 @@ class ActivityManagerProxy implements IActivityManager
         reply.recycle();
         return result != 0;
     }
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add NANS transaction handler set external display by package name
+     */
+    @Override
+    public boolean setExternalDisplay(String packageName, int displayId, int flag)
+            throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeString(packageName);
+        data.writeInt(displayId);
+        data.writeInt(flag);
+        mRemote.transact(SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME, data, reply, 0);
+        reply.readException();
+        boolean success = reply.readInt() > 0;
+        data.recycle();
+        reply.recycle();
+        return success;
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add NANS transaction handler set external display by task id
+     */
+    @Override
+    public boolean setExternalDisplay(int taskId, int displayId, int flag)
+            throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(taskId);
+        data.writeInt(displayId);
+        data.writeInt(flag);
+        mRemote.transact(SET_EXTERNAL_DISPLAY_BY_TASK_ID, data, reply, 0);
+        reply.readException();
+        boolean success = reply.readInt() > 0;
+        data.recycle();
+        reply.recycle();
+        return success;
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add NANS transaction handler get task id by display id
+     */
+    @Override
+    public int getTaskIdByDisplayId(int displayId)
+            throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(displayId);
+        mRemote.transact(GET_TASK_ID_BY_DISPLAY_ID, data, reply, 0);
+        reply.readException();
+        int res = reply.readInt();
+        data.recycle();
+        reply.recycle();
+        return res;
+    }
+    // END
+
+    /**
+     * Data: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add NANS transaction handler get display id by task id
+     */
+    @Override
+    public int getDisplayIdByTaskId(int taskId)
+            throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(taskId);
+        mRemote.transact(GET_DISPLAY_ID_BY_TASK_ID, data, reply, 0);
+        reply.readException();
+        int res = reply.readInt();
+        data.recycle();
+        reply.recycle();
+        return res;
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add NANS transaction handler get display id of focused stack
+     */
+    @Override
+    public int getDisplayIdOfFocusedStack()
+            throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        mRemote.transact(GET_DISPLAY_ID_OF_FOCUSED_STACK, data, reply, 0);
+        reply.readException();
+        int res = reply.readInt();
+        data.recycle();
+        reply.recycle();
+        return res;
+    }
+    // END
 
     private IBinder mRemote;
 }
