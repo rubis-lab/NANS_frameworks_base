@@ -723,7 +723,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
         // Only resume home activity if isn't finishing.
         if (r != null && !r.finishing) {
             mService.setFocusedActivityLocked(r, myReason);
-            Slog.d("RUBIS", "a");
             return resumeFocusedStackTopActivityLocked(mHomeStack, prev, null);
         }
         return mService.startHomeActivityLocked(mCurrentUser, myReason);
@@ -1785,7 +1784,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
         //mWindowManager.dump();
 
         if (activityRemoved) {
-            Slog.d("RUBIS", "b");
             resumeFocusedStackTopActivityLocked();
         }
 
@@ -2250,7 +2248,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 }
 
                 ensureActivitiesVisibleLocked(null, 0, PRESERVE_WINDOWS);
-                Slog.d("RUBIS", "c");
                 resumeFocusedStackTopActivityLocked();
             } else {
                 for (int i = size - 1; i >= 0; i--) {
@@ -2432,7 +2429,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     // All other activities must be made visible with their correct configuration.
                     ensureActivitiesVisibleLocked(r, 0, !PRESERVE_WINDOWS);
                     if (!kept) {
-            Slog.d("RUBIS", "d");
                         resumeFocusedStackTopActivityLocked();
                     }
                 }
@@ -2673,7 +2669,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
             // The task might have already been running and its visibility needs to be synchronized with
             // the visibility of the stack / windows.
             ensureActivitiesVisibleLocked(null, 0, !mightReplaceWindow);
-            Slog.d("RUBIS", "e");
             resumeFocusedStackTopActivityLocked();
         }
 
@@ -2748,7 +2743,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
         // The task might have already been running and its visibility needs to be synchronized
         // with the visibility of the stack / windows.
         ensureActivitiesVisibleLocked(null, 0, !PRESERVE_WINDOWS);
-            Slog.d("RUBIS", "f");
         resumeFocusedStackTopActivityLocked();
 
         mWindowManager.animateResizePinnedStack(bounds, -1);
@@ -2771,7 +2765,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
         // The task might have already been running and its visibility needs to be synchronized with
         // the visibility of the stack / windows.
         stack.ensureActivitiesVisibleLocked(null, 0, !PRESERVE_WINDOWS);
-            Slog.d("RUBIS", "g");
         resumeFocusedStackTopActivityLocked();
     }
 
@@ -4863,7 +4856,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
             mSurface = surface;
             if (surface != null) {
-                Slog.d("RUBIS", "h");
                 resumeFocusedStackTopActivityLocked();
             } else {
                 mContainerState = CONTAINER_STATE_NO_SURFACE;

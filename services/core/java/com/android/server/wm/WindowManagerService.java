@@ -4667,12 +4667,6 @@ public class WindowManagerService extends IWindowManager.Stub
 
     @Override
     public void setAppVisibility(IBinder token, boolean visible) {
-        // RUBIS gyKim
-        Slog.d(TAG, "WindowManagerService::setAppVisibility");
-        Slog.d(TAG, "  L token=" + token);
-        Slog.d(TAG, "  L visible=" + visible);
-        Slog.d(TAG, "  L callers=" + Debug.getCallers(10) );
-        // END
         if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
                 "setAppVisibility()")) {
             throw new SecurityException("Requires MANAGE_APP_TOKENS permission");

@@ -1430,7 +1430,7 @@ public final class SystemServer {
             // TODO: use boot phase and communicate these flags some other way
             /**
              * Date: Aug 1, 2017
-             * Copyright (C) RUBIS Laboratory at Seoul National University
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
              */
             Settings.Global.putString(mContentResolver, Settings.Global.OVERLAY_DISPLAY_DEVICES, "");
             // END

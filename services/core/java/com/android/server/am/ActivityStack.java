@@ -1147,7 +1147,6 @@ final class ActivityStack {
         if (prev == null) {
             if (resuming == null) {
                 Slog.wtf(TAG, "Trying to pause when nothing is resumed");
-        Slog.d("RUBIS", "8");
                 mStackSupervisor.resumeFocusedStackTopActivityLocked();
             }
             return false;
@@ -1239,7 +1238,6 @@ final class ActivityStack {
             // pause, so just treat it as being paused now.
             if (DEBUG_PAUSE) Slog.v(TAG_PAUSE, "Activity not running, resuming next.");
             if (resuming == null) {
-        Slog.d("RUBIS", "9");
                 mStackSupervisor.resumeFocusedStackTopActivityLocked();
             }
             return false;
@@ -1319,7 +1317,6 @@ final class ActivityStack {
             } else {
                 if (r.deferRelaunchUntilPaused) {
                     destroyActivityLocked(r, true, "stop-config");
-                    Slog.d("RUBIS", "1, r="+r);
                     mStackSupervisor.resumeFocusedStackTopActivityLocked();
                 } else {
                     mStackSupervisor.updatePreviousProcessLocked(r);
@@ -1377,7 +1374,6 @@ final class ActivityStack {
         if (resumeNext) {
             final ActivityStack topStack = mStackSupervisor.getFocusedStack();
             if (!mService.isSleepingOrShuttingDownLocked()) {
-                Slog.d("RUBIS", "2, resumeNext="+resumeNext);
                 mStackSupervisor.resumeFocusedStackTopActivityLocked(topStack, prev, null);
             } else {
                 mStackSupervisor.checkReadyForSleepLocked();
@@ -1387,7 +1383,6 @@ final class ActivityStack {
                     // something. Also if the top activity on the stack is not the just paused
                     // activity, we need to go ahead and resume it to ensure we complete an
                     // in-flight app switch.
-                    Slog.d("RUBIS", "3");
                     mStackSupervisor.resumeFocusedStackTopActivityLocked();
                 }
             }
@@ -1502,9 +1497,6 @@ final class ActivityStack {
     }
 
     private void setVisible(ActivityRecord r, boolean visible) {
-        // RUBIS ockwon
-        Slog.d(TAG_NANS, "setVisible(), r="+r+", by caller = "+Debug.getCallers(10));
-        // END
         r.visible = visible;
         if (!visible && r.mUpdateTaskThumbnailWhenHidden) {
             r.updateThumbnailLocked(r.task.stack.screenshotActivitiesLocked(r), null);
@@ -1815,19 +1807,11 @@ final class ActivityStack {
         boolean behindTranslucentActivity = false;
         final ActivityRecord visibleBehind = getVisibleBehindActivity();
 
-        // RUBIS ockwon
-        Slog.d(TAG_NANS, "ensure...(), stack="+this);
-        Slog.d(TAG_NANS, " L stackVisibility = " + stackVisibility);
-        Slog.d(TAG_NANS, " L starting = " + starting);
-        // END
         for (int taskNdx = mTaskHistory.size() - 1; taskNdx >= 0; --taskNdx) {
             final TaskRecord task = mTaskHistory.get(taskNdx);
             final ArrayList<ActivityRecord> activities = task.mActivities;
             for (int activityNdx = activities.size() - 1; activityNdx >= 0; --activityNdx) {
                 final ActivityRecord r = activities.get(activityNdx);
-                // RUBIS ockwon
-                Slog.d(TAG_NANS, " ["+taskNdx+"-"+activityNdx+"] " + r);
-                // END
                 if (r.finishing) {
                     // Normally the screenshot will be taken in makeInvisible(). When an activity
                     // is finishing, we no longer change its visibility, but we still need to take
@@ -1873,9 +1857,6 @@ final class ActivityStack {
                             resumeNextActivity = false;
                         }
                     } else {
-                        // RUBIS ockwon
-                        Slog.d(TAG_NANS, " !!!!!! makeVisibleIfNeeded!!!!!");
-                        // END
                         makeVisibleIfNeeded(starting, r);
                     }
                     // Aggregate current change flags.
@@ -1977,9 +1958,6 @@ final class ActivityStack {
 
     private boolean makeVisibleAndRestartIfNeeded(ActivityRecord starting, int configChanges,
             boolean isTop, boolean andResume, ActivityRecord r) {
-        // RUBIS ockwon
-        Slog.d(TAG_NANS, "makeVisibleAndRestartIfNeeded(), starting="+starting);
-        // END
         
         // We need to make sure the app is running if it's the top, or it is just made visible from
         // invisible. If the app is already visible, it must have died while it was visible. In this
@@ -2005,9 +1983,6 @@ final class ActivityStack {
     }
 
     private void makeInvisible(ActivityRecord r, ActivityRecord visibleBehind) {
-
-        // RUBIS ockwon
-        Slog.d(TAG_NANS, "makeInvisible(), r="+r);
 
         if (!r.visible) {
             if (DEBUG_VISIBILITY) Slog.v(TAG_VISIBILITY, "Already invisible: " + r);
@@ -2222,11 +2197,6 @@ final class ActivityStack {
      *       right activity for the current system state.
      */
     boolean resumeTopActivityUncheckedLocked(ActivityRecord prev, ActivityOptions options) {
-        // RUBIS ockwon
-        if (prev != null)
-            Slog.d(TAG, "resumeTopActivityUncheckLocked(), prev = " + prev);
-        // END
-
         if (mStackSupervisor.inResumeTopActivity) {
             // Don't even start recursing.
             return false;
@@ -4636,7 +4606,6 @@ final class ActivityStack {
             updateTransitLocked(TRANSIT_TASK_TO_FRONT, options);
         }
         
-        Slog.d("RUBIS", "4");
         mStackSupervisor.resumeFocusedStackTopActivityLocked();
         EventLog.writeEvent(EventLogTags.AM_TASK_TO_FRONT, tr.userId, tr.taskId);
 
@@ -4700,7 +4669,6 @@ final class ActivityStack {
             if (fullscreenStack != null && fullscreenStack.hasVisibleBehindActivity()) {
                 final ActivityRecord visibleBehind = fullscreenStack.getVisibleBehindActivity();
                 mService.setFocusedActivityLocked(visibleBehind, "moveHomeTaskToBack");
-        Slog.d("RUBIS", "5");
                 mStackSupervisor.resumeFocusedStackTopActivityLocked();
                 return true;
             }
@@ -4760,7 +4728,6 @@ final class ActivityStack {
         // Using currently focused activity value from service instead of mResumedActivity,
         // because if this happens when device is locked the mResumedActivity will be null.
         adjustFocusedActivityLocked(mService.mFocusedActivity, "moveTaskToBack");
-        Slog.d("RUBIS", "6");
         mStackSupervisor.resumeFocusedStackTopActivityLocked();
         return true;
     }
@@ -4780,10 +4747,6 @@ final class ActivityStack {
      * Ensures all visible activities at or below the input activity have the right configuration.
      */
     void ensureVisibleActivitiesConfigurationLocked(ActivityRecord start, boolean preserveWindow) {
-        // RUBIS gyKim
-        Slog.d(TAG, "ActivityStack::ensureVisibleActivitiesConfigurationLocked");
-        Slog.d(TAG, "  L start=" + start);
-        // END
         if (start == null || !start.visible) {
             return;
         }
@@ -4812,7 +4775,6 @@ final class ActivityStack {
         if (updatedConfig) {
             // Ensure the resumed state of the focus activity if we updated the configuration of
             // any activity.
-        Slog.d("RUBIS", "7");
             mStackSupervisor.resumeFocusedStackTopActivityLocked();
         }
     }
@@ -5085,10 +5047,6 @@ final class ActivityStack {
             // but not yet visible (or stopped). We need to complete the resume here as the
             // code in resumeTopActivityInnerLocked to complete the resume might be skipped.
             if (!r.visible || r.stopped) {
-                // RUBIS gyKim
-                Slog.d(TAG, "ActivityStack::relaunchActivityLocked()");
-                Slog.d(TAG, "  L r=" + r);
-                // END
                 mWindowManager.setAppVisibility(r.appToken, true);
                 completeResumeLocked(r);
             } else {

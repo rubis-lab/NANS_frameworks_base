@@ -1235,7 +1235,6 @@ class ActivityStarter {
             // For paranoia, make sure we have correctly resumed the top activity.
             topStack.mLastPausedActivity = null;
             if (mDoResume) {
-                Slog.d("RUBIS", "A");
                 mSupervisor.resumeFocusedStackTopActivityLocked();
             }
             ActivityOptions.abort(mOptions);
@@ -1343,7 +1342,6 @@ class ActivityStarter {
                 // since the app transition will not be triggered through the resume channel.
                 mWindowManager.executeAppTransition();
             } else {
-            Slog.d("RUBIS", "B");
                 mSupervisor.resumeFocusedStackTopActivityLocked(mTargetStack, mStartActivity,
                         mOptions);
             }
@@ -1837,7 +1835,6 @@ class ActivityStarter {
     // private void resumeTargetStackIfNeeded() {
     void resumeTargetStackIfNeeded() {
         if (mDoResume) {
-            Slog.d("RUBIS", "C");
             mSupervisor.resumeFocusedStackTopActivityLocked(mTargetStack, null, mOptions);
             if (!mMovedToFront) {
                 // Make sure to notify Keyguard as well if we are not running an app transition
@@ -1914,7 +1911,6 @@ class ActivityStarter {
                 // For paranoia, make sure we have correctly resumed the top activity.
                 mTargetStack.mLastPausedActivity = null;
                 if (mDoResume) {
-            Slog.d("RUBIS", "D");
                     mSupervisor.resumeFocusedStackTopActivityLocked();
                 }
                 ActivityOptions.abort(mOptions);
@@ -1933,7 +1929,6 @@ class ActivityStarter {
                 top.deliverNewIntentLocked(mCallingUid, mStartActivity.intent, mStartActivity.launchedFromPackage);
                 mTargetStack.mLastPausedActivity = null;
                 if (mDoResume) {
-            Slog.d("RUBIS", "E");
                     mSupervisor.resumeFocusedStackTopActivityLocked();
                 }
                 return START_DELIVERED_TO_TOP;
