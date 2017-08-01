@@ -92,7 +92,6 @@ class ActivityManagerDebugConfig {
     static final boolean DEBUG_USAGE_STATS = DEBUG_ALL || false;
     static final boolean DEBUG_PERMISSIONS_REVIEW = DEBUG_ALL || false;
     static final boolean DEBUG_WHITELISTS = DEBUG_ALL || false;
-
     /**
      * Date: Jul 26, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -143,5 +142,11 @@ class ActivityManagerDebugConfig {
     static final String POSTFIX_USER_LEAVING = (APPEND_CATEGORY_NAME) ? "_UserLeaving" : "";
     static final String POSTFIX_VISIBILITY = (APPEND_CATEGORY_NAME) ? "_Visibility" : "";
     static final String POSTFIX_VISIBLE_BEHIND = (APPEND_CATEGORY_NAME) ? "_VisibleBehind" : "";
+    /**
+     * Date: Jul 28, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     */
+    static final String POSTFIX_NANS = (APPEND_CATEGORY_NAME) ? "_NANS" : "";
 
 }

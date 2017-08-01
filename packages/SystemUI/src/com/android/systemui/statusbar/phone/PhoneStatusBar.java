@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -5245,6 +5246,31 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private boolean handleLongPressRecents() {
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Added a handler for toggling the overlay display device.
+         */
+        try {
+            int enabled = Settings.Secure.getInt(mContext.getContentResolver(),
+                    Settings.Secure.TOGGLE_OVERLAY_DISPLAY_DEVICE_ENABLED);
+            if (enabled == 1) {
+                String value = Settings.Global.getString(mContext.getContentResolver(),
+                        Settings.Global.OVERLAY_DISPLAY_DEVICES);
+                if (value.equals("1920x1080/320")) {
+                    Settings.Global.putString(mContext.getContentResolver(),
+                            Settings.Global.OVERLAY_DISPLAY_DEVICES, "");
+                } else {
+                    Settings.Global.putString(mContext.getContentResolver(),
+                            Settings.Global.OVERLAY_DISPLAY_DEVICES, "1920x1080/320");
+                }
+            }
+        } catch (Exception e) {
+        
+        }
+        return false;
+        /* 
         if (mRecents == null || !ActivityManager.supportsMultiWindow()
                 || !getComponent(Divider.class).getView().getSnapAlgorithm()
                 .isSplitScreenFeasible()) {
@@ -5254,6 +5280,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         toggleSplitScreenMode(MetricsEvent.ACTION_WINDOW_DOCK_LONGPRESS,
                 MetricsEvent.ACTION_WINDOW_UNDOCK_LONGPRESS);
         return true;
+        */
+        // END
     }
 
     @Override

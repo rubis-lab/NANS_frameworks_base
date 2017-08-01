@@ -93,10 +93,10 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
      */
     static final int FLAG_FEATURE_SCREEN_SWIPER = 0x00000020;
 
-    static final int FEATURES_AFFECTING_MOTION_EVENTS = FLAG_FEATURE_INJECT_MOTION_EVENTS
+    static final int FEATURES_AFFECTING_MOTION_EVENTS = FLAG_FEATURE_SCREEN_SWIPER // added
+            | FLAG_FEATURE_INJECT_MOTION_EVENTS
             | FLAG_FEATURE_AUTOCLICK | FLAG_FEATURE_TOUCH_EXPLORATION
-            | FLAG_FEATURE_SCREEN_MAGNIFIER
-            | FLAG_FEATURE_SCREEN_SWIPER; // added
+            | FLAG_FEATURE_SCREEN_MAGNIFIER;
     // END
 
     /**
@@ -107,7 +107,7 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
      *
      * @see #setUserAndEnabledFeatures(int, int)
      */
-    static final int FLAG_FEATURE_CONTROL_SCREEN_MAGNIFIER = 0x00000020;
+    static final int FLAG_FEATURE_CONTROL_SCREEN_MAGNIFIER = 0x00000040;
 
     private final Runnable mProcessBatchedEventsRunnable = new Runnable() {
         @Override
@@ -446,12 +446,10 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
          *
          * Handler for enabling the swipe gesture control.
          */
-        Slog.d(TAG, "enableFeatures()");
         if ((mEnabledFeatures & FLAG_FEATURE_SCREEN_SWIPER) != 0) {
             mSwipeGestureHandler = new SwipeGestureHandler(mContext);
             addFirstEventHandler(mSwipeGestureHandler);
-            //if (DEBUG_NANS) 
-            Slog.d(TAG, " L FLAG_FEATURE_SCREEN_SWIPER");
+            if (DEBUG_NANS) Slog.d(TAG, "enableFeature(), FEATURE_SCREEN_SWIPER");
         }
         // END
     }
@@ -503,11 +501,10 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
          *
          * Handler for disabling the swipe gesture control.
          */
-        Slog.d(TAG, "enableFeatures()");
         if (mSwipeGestureHandler != null) {
             mSwipeGestureHandler.onDestroy();
             mSwipeGestureHandler = null;
-            Slog.d(TAG, " L FLAG_FEATURE_SCREEN_SWIPER");
+            if (DEBUG_NANS) Slog.d(TAG, "disableFeature(), FEATURE_SCREEN_SWIPER");
         }
         // END
 

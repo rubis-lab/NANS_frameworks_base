@@ -18,6 +18,7 @@
 package com.android.server.accessibility;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.MathUtils;
@@ -45,7 +46,6 @@ import android.app.ActivityManager.RunningTaskInfo;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.hardware.display.DisplayManager;
 import android.os.RemoteException;
-import android.util.Slog;
 import android.view.Display;
 import android.view.WindowManager;
 import android.view.WindowManagerInternal;
@@ -70,9 +70,14 @@ class SwipeGestureHandler implements EventStreamTransformation {
     private static final String TAG = "SwipeEventHandler";
     private EventStreamTransformation mNext;
 
-    int GLOBAL_TOUCH_POSITION_X = 0;
+    static final int FIRST_EXTERNAL_DISPLAY     = 1;
+    static final int SECOND_EXTERNAL_DISPLAY    = 2;
+    static final int THIRD_EXTERNAL_DISPLAY     = 3;
+    static final int FOURTH_EXTERNAL_DISPLAY    = 4;
+
+    int GLOBAL_TOUCH_POSITION_X         = 0;
     int GLOBAL_TOUCH_CURRENT_POSITION_X = 0;
-    int GLOBAL_TOUCH_POSITION_Y = 0;
+    int GLOBAL_TOUCH_POSITION_Y         = 0;
     int GLOBAL_TOUCH_CURRENT_POSITION_Y = 0;
 
     private Context mContext;
@@ -82,7 +87,6 @@ class SwipeGestureHandler implements EventStreamTransformation {
     private DisplayManager dm;    
 
     public SwipeGestureHandler(Context context) {
-        Slog.d(TAG, "SwipeGestureHandler()");
         mContext = context;
         iam = (IActivityManager)ActivityManagerNative.getDefault();
         am = (ActivityManager)mContext.getSystemService(Context.ACTIVITY_SERVICE);
@@ -92,7 +96,6 @@ class SwipeGestureHandler implements EventStreamTransformation {
 
     @Override
     public void onMotionEvent(MotionEvent m, MotionEvent rawEvent, int policyFlags) {
-        Slog.d(TAG, "onMotionEvent(), m=" + m);
         if (!m.isFromSource(InputDevice.SOURCE_TOUCHSCREEN)) {
             if (mNext != null) {
                 mNext.onMotionEvent(m, rawEvent, policyFlags);
@@ -100,7 +103,6 @@ class SwipeGestureHandler implements EventStreamTransformation {
             return;
         }
         int pointerCount = m.getPointerCount();
-        Slog.d(TAG, " L pointer = "+ pointerCount);
         if (pointerCount == 3){
             int action = m.getActionMasked();
             int actionIndex = m.getActionIndex();
@@ -118,7 +120,6 @@ class SwipeGestureHandler implements EventStreamTransformation {
             int RIGHT_BOUND = (int)(0.6*width);
 
             String actionString;
-            Slog.d(TAG, " L width="+width+", height="+height);
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     GLOBAL_TOUCH_POSITION_X = (int) m.getX(1);
@@ -149,37 +150,39 @@ class SwipeGestureHandler implements EventStreamTransformation {
                     int dif_y = GLOBAL_TOUCH_POSITION_Y-GLOBAL_TOUCH_CURRENT_POSITION_Y;
                     Slog.d(TAG, "Pointer UP: Diff " + dif_x + "/" + dif_y + ", pc=" + pointerCount);
 
-                    if (GLOBAL_TOUCH_POSITION_X <= LEFT_BOUND && GLOBAL_TOUCH_CURRENT_POSITION_X >= RIGHT_BOUND
-                            && dif_x <= -MIN_HORIZONTAL_DIFF) {
+                    if (GLOBAL_TOUCH_POSITION_X <= LEFT_BOUND && 
+                            GLOBAL_TOUCH_CURRENT_POSITION_X >= RIGHT_BOUND && 
+                            dif_x <= -MIN_HORIZONTAL_DIFF) {
                         Slog.d(TAG, "--Left to Right--");
                         traverseTasksOnDisplays(true);
                         break;
-                    } else if (GLOBAL_TOUCH_POSITION_X >= RIGHT_BOUND && GLOBAL_TOUCH_CURRENT_POSITION_X <= LEFT_BOUND
-                            && dif_x >= MIN_HORIZONTAL_DIFF) {
+                    } else if (GLOBAL_TOUCH_POSITION_X >= RIGHT_BOUND && 
+                            GLOBAL_TOUCH_CURRENT_POSITION_X <= LEFT_BOUND && 
+                            dif_x >= MIN_HORIZONTAL_DIFF) {
                         Slog.d(TAG, "--Right to Left--");
                         traverseTasksOnDisplays(false);
                         break;
-                            }
+                    }
 
-                    if (GLOBAL_TOUCH_POSITION_Y >= MID_UPPER_BOUND 
-                            && GLOBAL_TOUCH_POSITION_Y <= MID_LOWER_BOUND) {
+                    if (GLOBAL_TOUCH_POSITION_Y >= MID_UPPER_BOUND && 
+                            GLOBAL_TOUCH_POSITION_Y <= MID_LOWER_BOUND) {
                         if (dif_y >= MIN_DIFF && GLOBAL_TOUCH_CURRENT_POSITION_Y <= TOP_BOUND) {
                             Slog.d(TAG, "--Mid to Top--");
-                            setExternalCurrentTask(Display.TYPE_WIFI);
+                            sendTaskToExternalDisplay(FIRST_EXTERNAL_DISPLAY);
                         } else if (dif_y <= -MIN_DIFF && GLOBAL_TOUCH_CURRENT_POSITION_Y >= BOTTOM_BOUND){
                             Slog.d(TAG, "--Mid to Bottom--");
-                            setExternalCurrentTask(Display.TYPE_HDMI);
+                            sendTaskToExternalDisplay(SECOND_EXTERNAL_DISPLAY);
                         }
                     } else if( GLOBAL_TOUCH_CURRENT_POSITION_Y >= MID_UPPER_BOUND &&
                             GLOBAL_TOUCH_CURRENT_POSITION_Y <= MID_LOWER_BOUND ){
                         if (GLOBAL_TOUCH_POSITION_Y <= TOP_BOUND && dif_y <= -MIN_DIFF) {
                             Slog.d(TAG, "Top to Mid");
-                            setInternalCurrentTask(Display.TYPE_WIFI);
+                            bringTaskToDefaultDisplay(FIRST_EXTERNAL_DISPLAY);
                         } else if (GLOBAL_TOUCH_POSITION_Y >= BOTTOM_BOUND && dif_y >= MIN_DIFF) {
                             Slog.d(TAG, "Bottom to Mid");
-                            setInternalCurrentTask(Display.TYPE_HDMI);
+                            bringTaskToDefaultDisplay(SECOND_EXTERNAL_DISPLAY);
                         }
-                            }
+                    }
                     break;
                 default:
                     actionString = "";
@@ -189,49 +192,46 @@ class SwipeGestureHandler implements EventStreamTransformation {
             GLOBAL_TOUCH_POSITION_X = 0;
             GLOBAL_TOUCH_CURRENT_POSITION_X = 0;
         }
+        mNext.onMotionEvent(m, rawEvent, policyFlags);
     }
 
-    private void setExternalCurrentTask(int type) {
-        Slog.d(TAG, "setExternalCurrentTask(), type="+type);
+    private void sendTaskToExternalDisplay(int index) {
+        Slog.d(TAG, "setExternalCurrentTask(), index=" + index);
         try {
             final List<RunningTaskInfo> tasks = iam.getTasks(2, 0);
             Display[] displays = dm.getDisplays();
-            if (displays.length > 1) {
-                for (int i=1; i<displays.length; i++) {
-                    if (displays[i].getType() == type) {
-                        final RunningTaskInfo task = tasks.get(0);
-                        if (!isHomeActivity(task))
-                            iam.setExternalDisplay(task.id, displays[i].getLayerStack(),
-                                    ActivityManager.SET_EXTERNAL_DISPLAY_AND_GO_HOME);
-                        return;
-                    }
+            if (displays.length > index && displays[index] != null) {
+                Slog.d(TAG, " L display[" + index +"] = " + displays[index]);
+                final RunningTaskInfo task = tasks.get(0);
+                Slog.d(TAG, " L target task=" + task);
+                if (!isHomeActivity(task)) {
+                    iam.setExternalDisplay(task.id, displays[index].getLayerStack(), 
+                            ActivityManager.SET_EXTERNAL_DISPLAY_AND_GO_HOME);
+                    Slog.d(TAG, " L success!");
                 }
             }
-        } catch (RemoteException e) {}
+        } catch (RemoteException e) {
+
+        }
     }
 
-    private void setInternalCurrentTask(int type) {
-        Slog.d(TAG, "setInternalCurrentTask(), type="+type);
-        Display[] displays = dm.getDisplays();
-        if(displays.length > 1) {
-            for(int i=1; i<displays.length; i++) {
-                Display display = displays[i];
-                Slog.d(TAG, "  display.type="+display.getType());
-                Slog.d(TAG, "  type=" + type);
-                if(display.getType() == type) {
-                    int displayId = display.getLayerStack();
-                    try {
-                        int taskId = iam.getTaskIdByDisplayId(displayId);
-                        Slog.d(TAG, "  taskId="+taskId);
-                        if (taskId != -1) {
-                            iam.setExternalDisplay(taskId, 0,
-                                    ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
-                            Slog.d(TAG, "  success!");
-                            return;
-                        }
-                    } catch (RemoteException e) {}
-                }
+    private void bringTaskToDefaultDisplay(int index) {
+        Slog.d(TAG, "bringTaskToDefaultDisplay(), index=" + index);
+        try {
+            Display[] displays = dm.getDisplays();
+            if (displays.length > index && displays[index] != null) {
+                Slog.d(TAG, " L display[" + index + "]=" + displays[index]);
+                int displayId = displays[index].getLayerStack();
+                int taskId = iam.getTaskIdByDisplayId(displayId);
+                Slog.d(TAG, " L taskId="+taskId);
+                if (taskId != -1) {
+                    //iam.setExternalDisplay(taskId, 0, ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
+                    am.moveTaskToFront(taskId, ActivityManager.MOVE_TASK_NO_USER_ACTION);
+                    Slog.d(TAG, " L success!");
+                }   
             }
+        } catch (RemoteException e) {
+    
         }
     }
 

@@ -378,9 +378,12 @@ import static org.xmlpull.v1.XmlPullParser.START_TAG;
  * Date: Jul 26, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * import DEBUG_NANS variable
+ * import DEBUG_NANS, POSTFIX_NANS String.
  */
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
+import static com.android.server.am.ActivityManagerDebugConfig.POSTFIX_NANS;
+import com.android.server.am.ActivityStackSupervisor.ActivityDisplay;
+// END
 
 public final class ActivityManagerService extends ActivityManagerNative
         implements Watchdog.Monitor, BatteryStatsImpl.BatteryCallback {
@@ -410,6 +413,14 @@ public final class ActivityManagerService extends ActivityManagerNative
     private static final String TAG_URI_PERMISSION = TAG + POSTFIX_URI_PERMISSION;
     private static final String TAG_VISIBILITY = TAG + POSTFIX_VISIBILITY;
     private static final String TAG_VISIBLE_BEHIND = TAG + POSTFIX_VISIBLE_BEHIND;
+    /**
+     * Date: Jul 28, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * add static final String TAG_NANS
+     */
+    private static final String TAG_NANS = TAG + POSTFIX_NANS;
+    // END
 
     // Mock "pretend we're idle now" broadcast action to the job scheduler; declared
     // here so that while the job scheduler can depend on AMS, the other way around
@@ -3155,14 +3166,54 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     boolean setFocusedActivityLocked(ActivityRecord r, String reason) {
 
-        // RUBIS gyKim
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * NANS debug log.
+         */
         if (DEBUG_NANS) {
-            Slog.d("RUBIS", "ActivityManagerService::setFocusedActivityLocked()");
-            Slog.d("RUBIS", "  L r=" + r);
-            Slog.d("RUBIS", "  L mFocusedActivity=" + mFocusedActivity);
+            Slog.d(TAG_NANS, "ActivityManagerService::setFocusedActivityLocked()");
+            Slog.d(TAG_NANS, "  L r=" + r);
+            Slog.d(TAG_NANS, "  L mFocusedActivity=" + mFocusedActivity);
+            Slog.d(TAG_NANS, "  L reason=" + reason);
+        }
+        try {
+            ActivityRecord prev = mFocusedActivity;
+            ActivityRecord next = r;
+        
+            ActivityDisplay prevDisplay = mStackSupervisor.getActivityDisplay(prev.task.displayId);
+            ActivityDisplay nextDisplay = mStackSupervisor.getActivityDisplay(next.task.displayId);
+
+            if (prev != null && next != null 
+                    && prev.task.taskId != next.task.taskId 
+                    && !reason.equals("setFocusedTask")) {
+                Slog.d(TAG_NANS, " L prev = " + prev);
+                Slog.d(TAG_NANS, " L next = " + next);
+
+                if (prev.task.displayId != 0 && prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                    if (reason.contains("finishActivity")) {
+                        Slog.d(TAG_NANS, "---------Case 1--------");
+                        setExternalDisplay(prev.task.taskId, Display.DEFAULT_DISPLAY, 
+                                ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
+                    } else {
+                        Slog.d(TAG_NANS, "---------Case 2--------");
+                        setExternalDisplay(prev.task.taskId, prev.task.displayId,
+                                ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
+                    }
+                } 
+                if (next.task.displayId != 0 
+                        && (nextDisplay.mDisplayMode == ActivityDisplay.NANS 
+                        || nextDisplay.mDisplayMode == ActivityDisplay.MIRRORED) ) {
+                    Slog.d(TAG_NANS, "---------Case 3--------");
+                    setExternalDisplay(next.task.taskId, Display.DEFAULT_DISPLAY, 
+                            ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
+                }
+            }
+        } catch (Exception e) {
+        
         }
         // END
-
         if (r == null || mFocusedActivity == r) {
             return false;
         }
@@ -3218,12 +3269,8 @@ public final class ActivityManagerService extends ActivityManagerNative
                 finishVoiceTask(session);
             }
         }
+
         if (mStackSupervisor.moveActivityStackToFront(r, reason + " setFocusedActivity")) {
-
-            // RUBIS gyKim
-            if (DEBUG_NANS) Slog.d("RUBIS", "  L called move ActivityStackToFront");
-            // END
-
             mWindowManager.setFocusedApp(r.appToken, true);
         }
         applyUpdateLockStateLocked(r);
@@ -9949,8 +9996,16 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     void moveTaskToFrontLocked(int taskId, int flags, Bundle bOptions) {
 
-        // RUBIS gyKim
-        if (DEBUG_NANS) Slog.d("RUBIS", "ActivityManagerService::moveTaskToFrontLocked(), taskId=" + taskId);
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * NANS debug log.
+         */
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "ActivityManagerService::moveTaskToFrontLocked()");
+            Slog.d(TAG_NANS, "taskId=" + taskId);
+        }
         // END
 
         ActivityOptions options = ActivityOptions.fromBundle(bOptions);

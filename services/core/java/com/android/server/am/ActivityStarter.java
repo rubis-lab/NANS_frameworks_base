@@ -86,6 +86,8 @@ import static com.android.server.am.EventLogTags.AM_NEW_INTENT;
  * import DEBUG_NANS variable
  */
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
+import static com.android.server.am.ActivityManagerDebugConfig.POSTFIX_NANS;
+// END
 
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
@@ -143,6 +145,13 @@ class ActivityStarter {
     private static final String TAG_FOCUS = TAG + POSTFIX_FOCUS;
     private static final String TAG_CONFIGURATION = TAG + POSTFIX_CONFIGURATION;
     private static final String TAG_USER_LEAVING = TAG + POSTFIX_USER_LEAVING;
+    /**
+     * Date: Jul 28, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * add static final String TAG_NANS.
+     */
+    private static final String TAG_NANS = TAG + POSTFIX_NANS;
 
     // TODO b/30204367 remove when the platform fully supports ephemeral applications
     private static final boolean USE_DEFAULT_EPHEMERAL_LAUNCHER = false;
@@ -1086,12 +1095,12 @@ class ActivityStarter {
          * Date: Jul 20, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * nans debug log
+         * NANS debug log.
          */
         if (DEBUG_NANS && sourceRecord != null) {
-            Slog.d("RUBIS", "ActivityStarter::startActivityUnchecked()");
-            Slog.d("RUBIS", "  L sourceRecord=" + sourceRecord.task);
-            Slog.d("RUBIS", "  L displayId=" + sourceRecord.task.displayId);
+            Slog.d(TAG_NANS, "ActivityStarter::startActivityUnchecked()");
+            Slog.d(TAG_NANS, "  L sourceRecord=" + sourceRecord.task);
+            Slog.d(TAG_NANS, "  L displayId=" + sourceRecord.task.displayId);
         }
         // END
 
@@ -1226,6 +1235,7 @@ class ActivityStarter {
             // For paranoia, make sure we have correctly resumed the top activity.
             topStack.mLastPausedActivity = null;
             if (mDoResume) {
+                Slog.d("RUBIS", "A");
                 mSupervisor.resumeFocusedStackTopActivityLocked();
             }
             ActivityOptions.abort(mOptions);
@@ -1333,6 +1343,7 @@ class ActivityStarter {
                 // since the app transition will not be triggered through the resume channel.
                 mWindowManager.executeAppTransition();
             } else {
+            Slog.d("RUBIS", "B");
                 mSupervisor.resumeFocusedStackTopActivityLocked(mTargetStack, mStartActivity,
                         mOptions);
             }
@@ -1658,20 +1669,19 @@ class ActivityStarter {
                          *
                          * Conditional call of moveTaskToFrontLocked.
                          */
+                        mTargetStack.moveTaskToFrontLocked(
+                                intentActivity.task, mNoAnimation, mOptions,
+                                mStartActivity.appTimeTracker, "bringingFoundTaskToFront");
+                        
                         /*
-                         * mTargetStack.moveTaskToFrontLocked(
-                         *         intentActivity.task, mNoAnimation, mOptions,
-                         *         mStartActivity.appTimeTracker, "bringingFoundTaskToFront");
-                         */
-
-                        Slog.d("RUBIS", "ActivityStarter::setTargetStackAndMoveToFrontIfNeeded()");
-                        Slog.d("RUBIS", "  L mFocusedStack=" + mSupervisor.mFocusedStack);
-                        Slog.d("RUBIS", "  L mFocusedActivity=" + mService.mFocusedActivity);
+                        Slog.d(TAG_NANS, "ActivityStarter::setTargetStackAndMoveToFrontIfNeeded()");
+                        Slog.d(TAG_NANS, "  L mFocusedStack=" + mSupervisor.mFocusedStack);
+                        Slog.d(TAG_NANS, "  L mFocusedActivity=" + mService.mFocusedActivity);
                         if (mSourceRecord != null) {
-                            Slog.d("RUBIS", "  L mSourceRecord=" + mSourceRecord);
+                            Slog.d(TAG_NANS, "  L mSourceRecord=" + mSourceRecord);
                         }
                         if (intentActivity != null) {
-                            Slog.d("RUBIS", "  L intentActivity=" + intentActivity);
+                            Slog.d(TAG_NANS, "  L intentActivity=" + intentActivity);
                         }
 
                         ActivityStackSupervisor.ActivityDisplay ac = mSupervisor.getActivityDisplay(mStartActivity.task.displayId);
@@ -1685,6 +1695,7 @@ class ActivityStarter {
                         if (intentActivity.task.displayId != 0) {
                             mTargetStack = intentActivity.task.stack;
                         }
+                        */
                         // END
 
                         mMovedToFront = true;
@@ -1817,8 +1828,16 @@ class ActivityStarter {
         }
     }
 
-    private void resumeTargetStackIfNeeded() {
+    /**
+     * Date: Jul 28, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * private -> default
+     */
+    // private void resumeTargetStackIfNeeded() {
+    void resumeTargetStackIfNeeded() {
         if (mDoResume) {
+            Slog.d("RUBIS", "C");
             mSupervisor.resumeFocusedStackTopActivityLocked(mTargetStack, null, mOptions);
             if (!mMovedToFront) {
                 // Make sure to notify Keyguard as well if we are not running an app transition
@@ -1895,6 +1914,7 @@ class ActivityStarter {
                 // For paranoia, make sure we have correctly resumed the top activity.
                 mTargetStack.mLastPausedActivity = null;
                 if (mDoResume) {
+            Slog.d("RUBIS", "D");
                     mSupervisor.resumeFocusedStackTopActivityLocked();
                 }
                 ActivityOptions.abort(mOptions);
@@ -1913,6 +1933,7 @@ class ActivityStarter {
                 top.deliverNewIntentLocked(mCallingUid, mStartActivity.intent, mStartActivity.launchedFromPackage);
                 mTargetStack.mLastPausedActivity = null;
                 if (mDoResume) {
+            Slog.d("RUBIS", "E");
                     mSupervisor.resumeFocusedStackTopActivityLocked();
                 }
                 return START_DELIVERED_TO_TOP;

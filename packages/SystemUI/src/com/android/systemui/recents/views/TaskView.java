@@ -681,8 +681,6 @@ public class TaskView extends FixedSizeFrameLayout implements Task.TaskCallbacks
         }).setPositiveButton("OK",
             new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    Slog.d("RUBIS", "TaskView::setExternalDisplay()");
-                    Slog.d("RUBIS", "  L index=" + index);
                     final TaskView tv = TaskView.this;
                     tv.onClick(mHeaderView);
                     ActivityManager am = (ActivityManager)mContext.getSystemService(Context.ACTIVITY_SERVICE);

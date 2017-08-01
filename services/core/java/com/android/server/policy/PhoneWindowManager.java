@@ -6332,9 +6332,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
      */
     @Override
     public void setForcedRotation(int rotation) {
-        Slog.d("RUBIS", "PhoneWindowManager::setForcedRotation()");
-        Slog.d("RUBIS", "  L mForcedRotation=" + mForcedRotation);
-        Slog.d("RUBIS", "  L rotation=" + rotation);
+        Slog.d(TAG, "PhoneWindowManager::setForcedRotation()");
+        Slog.d(TAG, "  L mForcedRotation=" + mForcedRotation);
+        Slog.d(TAG, "  L rotation=" + rotation);
         if (mForcedRotation != rotation) {
             mForcedRotation = rotation;
             updateRotation(false);
@@ -7832,8 +7832,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
              * mForcedRotation has the highest priority
              * and modify next line if -> else if
              */
-            Slog.d("RUBIS", "PhoneWindowManager::rotationForOrientationLw()");
-            Slog.d("RUBIS", "  L mForcedRotation=" + mForcedRotation);
+            Slog.d(TAG, "PhoneWindowManager::rotationForOrientationLw()");
+            Slog.d(TAG, "  L mForcedRotation=" + mForcedRotation);
             if (mForcedRotation >= 0) {
                 preferredRotation = mForcedRotation;
                 return Surface.ROTATION_90;

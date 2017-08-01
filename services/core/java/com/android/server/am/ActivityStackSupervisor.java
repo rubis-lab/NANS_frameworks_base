@@ -194,6 +194,8 @@ import static com.android.server.wm.AppTransition.TRANSIT_DOCK_TASK_FROM_RECENTS
  * import DEBUG_NANS variable
  */
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
+import static com.android.server.am.ActivityManagerDebugConfig.POSTFIX_NANS;
+// END
 
 public final class ActivityStackSupervisor implements DisplayListener {
     private static final String TAG = TAG_WITH_CLASS_NAME ? "ActivityStackSupervisor" : TAG_AM;
@@ -208,6 +210,14 @@ public final class ActivityStackSupervisor implements DisplayListener {
     private static final String TAG_SWITCH = TAG + POSTFIX_SWITCH;
     static final String TAG_TASKS = TAG + POSTFIX_TASKS;
     private static final String TAG_VISIBLE_BEHIND = TAG + POSTFIX_VISIBLE_BEHIND;
+    /**
+     * Date: Jul 28, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * add static final String TAG_NANS.
+     */
+    private static final String TAG_NANS = TAG + POSTFIX_NANS;
+    // END
 
     /** How long we wait until giving up on the last activity telling us it is idle. */
     static final int IDLE_TIMEOUT = 10 * 1000;
@@ -628,13 +638,13 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
         /**
          * Date: Jul 26, 2017
-         * Copyright (C) 2017 RUBIS Laboratory at Seoul Natioanl University
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
          * nans debug log, check focus candidate and focused stack.
          */
         if (DEBUG_NANS) {
-            Slog.d("RUBIS", "ActivityStackSupervisor::setFocusStackUnchecked()");
-            Slog.d("RUBIS", "  L[Before] focusCandidate=" + focusCandidate + ", mFocusedStack=" + mFocusedStack);
+            //Slog.d(TAG_NANS, "ActivityStackSupervisor::setFocusStackUnchecked()");
+            //Slog.d(TAG_NANS, "  L[Before] focusCandidate=" + focusCandidate + ", mFocusedStack=" + mFocusedStack);
         }
         // END
 
@@ -653,7 +663,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
          *
          * nans debug log, check focus candidate and focused stack.
          */
-        if (DEBUG_NANS) Slog.d("RUBIS", "  L[After]  focusCandidate=" + focusCandidate + ", mFocusedStack=" + mFocusedStack);
+        //if (DEBUG_NANS) Slog.d(TAG_NANS, "  L[After]  focusCandidate=" + focusCandidate + ", mFocusedStack=" + mFocusedStack);
         // END
 
         final ActivityRecord r = topRunningActivityLocked();
@@ -713,6 +723,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         // Only resume home activity if isn't finishing.
         if (r != null && !r.finishing) {
             mService.setFocusedActivityLocked(r, myReason);
+            Slog.d("RUBIS", "a");
             return resumeFocusedStackTopActivityLocked(mHomeStack, prev, null);
         }
         return mService.startHomeActivityLocked(mCurrentUser, myReason);
@@ -1616,6 +1627,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     boolean moveActivityStackToFront(ActivityRecord r, String reason) {
+        // RUBIS
+        Slog.d(TAG_NANS, "moveActivityStackToFront(), r = " + r);
+        // END
 
         if (r == null) {
             // Not sure what you are trying to do, but it is not going to work...
@@ -1771,6 +1785,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         //mWindowManager.dump();
 
         if (activityRemoved) {
+            Slog.d("RUBIS", "b");
             resumeFocusedStackTopActivityLocked();
         }
 
@@ -1870,13 +1885,29 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
     boolean resumeFocusedStackTopActivityLocked(
             ActivityStack targetStack, ActivityRecord target, ActivityOptions targetOptions) {
+        Slog.d(TAG_NANS, "resumeFocusedStackTopActivityLocked()");
         if (targetStack != null && isFocusedStack(targetStack)) {
+            Slog.d(TAG_NANS, " L targetStack = "+targetStack +", focued="+isFocusedStack(targetStack));
+            if(target != null)
+                Slog.d(TAG_NANS, " L target = "+target);
             return targetStack.resumeTopActivityUncheckedLocked(target, targetOptions);
         }
         final ActivityRecord r = mFocusedStack.topRunningActivityLocked();
-        if (r == null || r.state != RESUMED) {
+        
+        // RUBIS ockwon
+        boolean needResume = false;
+        if (r != null) {
+            Slog.d(TAG_NANS, " L r = " + r + ", r.state = " + r.state);
+            ActivityDisplay prevDisplay = getActivityDisplay(r.task.displayId);
+            if (r.task.displayId != 0 && prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                needResume = true;
+            }
+        }
+
+        if (r == null || r.state != RESUMED || needResume) {
             mFocusedStack.resumeTopActivityUncheckedLocked(null, null);
         }
+        // END
         return false;
     }
 
@@ -2219,6 +2250,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 }
 
                 ensureActivitiesVisibleLocked(null, 0, PRESERVE_WINDOWS);
+                Slog.d("RUBIS", "c");
                 resumeFocusedStackTopActivityLocked();
             } else {
                 for (int i = size - 1; i >= 0; i--) {
@@ -2400,6 +2432,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     // All other activities must be made visible with their correct configuration.
                     ensureActivitiesVisibleLocked(r, 0, !PRESERVE_WINDOWS);
                     if (!kept) {
+            Slog.d("RUBIS", "d");
                         resumeFocusedStackTopActivityLocked();
                     }
                 }
@@ -2499,6 +2532,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
      */
     ActivityStack moveTaskToStackUncheckedLocked(
             TaskRecord task, int stackId, boolean toTop, boolean forceFocus, String reason) {
+
+        // RUBIS ockwon
+        Slog.d(TAG_NANS, "moveTaskToStackUncheckedLocked(), task="+task);
+        // END
 
         if (StackId.isMultiWindowStack(stackId) && !mService.mSupportsMultiWindow) {
             throw new IllegalStateException("moveTaskToStackUncheckedLocked: Device doesn't "
@@ -2636,6 +2673,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             // The task might have already been running and its visibility needs to be synchronized with
             // the visibility of the stack / windows.
             ensureActivitiesVisibleLocked(null, 0, !mightReplaceWindow);
+            Slog.d("RUBIS", "e");
             resumeFocusedStackTopActivityLocked();
         }
 
@@ -2710,6 +2748,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         // The task might have already been running and its visibility needs to be synchronized
         // with the visibility of the stack / windows.
         ensureActivitiesVisibleLocked(null, 0, !PRESERVE_WINDOWS);
+            Slog.d("RUBIS", "f");
         resumeFocusedStackTopActivityLocked();
 
         mWindowManager.animateResizePinnedStack(bounds, -1);
@@ -2732,6 +2771,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         // The task might have already been running and its visibility needs to be synchronized with
         // the visibility of the stack / windows.
         stack.ensureActivitiesVisibleLocked(null, 0, !PRESERVE_WINDOWS);
+            Slog.d("RUBIS", "g");
         resumeFocusedStackTopActivityLocked();
     }
 
@@ -3942,8 +3982,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
      * @return boolean
      */
     public boolean setExternalDisplayLocked(int taskId, int displayId, int flag) {
-        Slog.d("RUBIS", "ActivityStackSupervisor::setExternalDsplayLocked()");
-        Slog.d("RUBIS", "  L displayId=" + displayId);
+        Slog.d(TAG_NANS, "ActivityStackSupervisor::setExternalDisplayLocked()");
+        Slog.d(TAG_NANS, "  L displayId=" + displayId);
 
         final TaskRecord task = anyTaskForIdLocked(taskId);
         if (task == null) {
@@ -3956,8 +3996,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
             return false;
         }
 
-        ActivityDisplay prevDisplay = mActivityDisplays.get(task.displayId);
-        ActivityDisplay nextDisplay = mActivityDisplays.get(displayId);
+        ActivityDisplay prevDisplay = getActivityDisplay(task.displayId);
+        ActivityDisplay nextDisplay = getActivityDisplay(displayId);
         if (prevDisplay == null) {
             prevDisplay = mActivityDisplays.get(0);
         }
@@ -3977,7 +4017,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         ActivityStack prevStack = task.stack;
         ActivityStack nextStack = stacks.get(topNdx);
         if (nextStack.isHomeStack()) {
-            if (DEBUG_NANS) Slog.d("RUBIS", "  L nextDisplay Activity Size=" + stacks.size() + ", topNdx=" + topNdx);
+            if (DEBUG_NANS) Slog.d(TAG_NANS, "  L nextDisplay Activity Size=" + stacks.size() + ", topNdx=" + topNdx);
             nextStack = stacks.get(topNdx - 1);
         }
 
@@ -4017,7 +4057,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
                 setDisplayLayerStack(prevDisplayId, 0);
                 moveTaskToOtherStackLocked(task, nextStack, 0);
-                mService.moveTaskToFront(task.taskId, ActivityManager.MOVE_TASK_NO_USER_ACTION, null);
+                //mService.moveTaskToFront(task.taskId, ActivityManager.MOVE_TASK_NO_USER_ACTION, null);
                 Slog.d(TAG, "  MIRRORING --> MIRRORED");
                 prevDisplay.mDisplayMode = ActivityDisplay.MIRRORED;
 
@@ -4049,7 +4089,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     moveTaskToOtherStackLocked(task, nextStack, displayId);
 
                     if (flag == ActivityManager.SET_EXTERNAL_DISPLAY_AND_GO_HOME) {
-                        resumeHomeStackTask(HOME_ACTIVITY_TYPE, prevStack.topActivity(), "setExternalDisplay by NANS");
+                        resumeHomeStackTask(HOME_ACTIVITY_TYPE, prevStack.topActivity(), 
+                                "setExternalDisplay by NANS");
                     }
 
                     if (isWifiDisplay(displayId)) {
@@ -4099,8 +4140,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
      * @return void
      */
     private void moveTaskToOtherStackLocked(TaskRecord task, ActivityStack targetStack, int displayId) {
-        Slog.d("RUBIS", "ActivityStackSupervisor::moveTaskToOtherStackLocked()");
-        Slog.d("RUBIS", "  L task=" + task + ", displayId=" + displayId);
+        Slog.d(TAG_NANS, "ActivityStackSupervisor::moveTaskToOtherStackLocked()");
+        Slog.d(TAG_NANS, "  L task=" + task + ", target-displayId=" + displayId);
 
         final ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
         if (activityDisplay == null) {
@@ -4110,8 +4151,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
         synchronized (mService) {
             if (DEBUG_NANS) {
-                Slog.d("RUBIS", "---------------------------------");
-                Slog.d("RUBIS", "before call setLayerStackLocked()");
+                Slog.d(TAG_NANS, "[BEFORE] call setLayerStackLocked()");
                 dumpActivityStack();
             }
 
@@ -4119,19 +4159,20 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 ActivityRecord r = task.mActivities.get(i);
                 setLayerStackLocked(r, displayId);
             }
+
+            // TODO: below two function is core part of NANS framework.
             // moveTaskToOtherStackInnerLocked(task, targetStack);
             mWindowManager.moveTaskToOtherStack(task.taskId, targetStack.mStackId);
             moveTaskToOtherStackInnerLocked(task, targetStack);
 
             if (DEBUG_NANS) {
-                Slog.d("RUBIS", "after call setLayerStackLocked()");
-                Slog.d("RUBIS", "--------------------------------");
+                Slog.d(TAG_NANS, "[AFTER] call setLayerStackLocked()");
                 dumpActivityStack();
             }
         }
 
         activityDisplay.mDisplay.getDisplayInfo(activityDisplay.mDisplayInfo);
-        Slog.d("RUBIS", "  L x=" + activityDisplay.mDisplayInfo.appWidth + ", y=" + activityDisplay.mDisplayInfo.appHeight);
+        Slog.d(TAG_NANS, "  L x=" + activityDisplay.mDisplayInfo.appWidth + ", y=" + activityDisplay.mDisplayInfo.appHeight);
         if (displayId != 0) {
             resizeStackLocked(targetStack.mStackId, null, null, null, PRESERVE_WINDOWS,
                     true /* allowResizeInDockedMode */, DEFER_RESUME);
@@ -4149,11 +4190,11 @@ public final class ActivityStackSupervisor implements DisplayListener {
      * @return void
      */
     private void setLayerStackLocked(ActivityRecord r, int displayId) {
-        Slog.d("RUBIS", "ActivityStackSupervisor::setLayerStackLocked()");
-        Slog.d("RUBIS", "  L displayId=" + displayId);
+        Slog.d(TAG_NANS, "ActivityStackSupervisor::setLayerStackLocked()");
+        Slog.d(TAG_NANS, "  L displayId=" + displayId);
 
         if (r != null) {
-            Slog.d("RUBIS", " r=" + r + ", r.visible=" + r.visible);
+            Slog.d(TAG_NANS, " r=" + r + ", r.visible=" + r.visible);
 
             try {
                 mWindowManager.setLayerStack(r.appToken, displayId);
@@ -4172,8 +4213,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
      * @return void
      */
     private void moveTaskToOtherStackInnerLocked(TaskRecord task, ActivityStack targetStack) {
-        Slog.d("RUBIS", "ActivityStackSupervisor::moveTaskToOtherStackInnerLocked()");
-        Slog.d("RUBIS", "  L task=" + task);
+        Slog.d(TAG_NANS, "ActivityStackSupervisor::moveTaskToOtherStackInnerLocked()");
+        Slog.d(TAG_NANS, "  L task=" + task);
 
         // Remove Task
         removeLockedTaskLocked(task);
@@ -4367,7 +4408,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
      * @param
      * @return void
      */
-    private void dumpActivityStack() {
+    public void dumpActivityStack() {
         Slog.d(TAG, "dumpActivityStack()");
         for (int displayNdx = mActivityDisplays.size() - 1; displayNdx >= 0; --displayNdx) {
             ActivityDisplay ad = mActivityDisplays.valueAt(displayNdx);
@@ -4758,12 +4799,16 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
 
         void onTaskListEmptyLocked() {
-            // RUBIS gyKim 2017_07_25
-            /*
-            detachLocked();
-            deleteActivityContainer(this);
-            mHandler.obtainMessage(CONTAINER_CALLBACK_TASK_LIST_EMPTY, this).sendToTarget();
-            */
+            /**
+             * Date: Jul 28, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * prohibit removing empty task list, activity container.
+             */
+            // detachLocked();
+            // deleteActivityContainer(this);
+            // mHandler.obtainMessage(CONTAINER_CALLBACK_TASK_LIST_EMPTY, this).sendToTarget();
+            // END
         }
 
         @Override
@@ -4818,6 +4863,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
             mSurface = surface;
             if (surface != null) {
+                Slog.d("RUBIS", "h");
                 resumeFocusedStackTopActivityLocked();
             } else {
                 mContainerState = CONTAINER_STATE_NO_SURFACE;

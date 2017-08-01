@@ -799,10 +799,10 @@ public final class DisplayManagerService extends SystemService {
          *
          * If there is no connected external displays, set the rotation to default value.
          */
-        Slog.d("RUBIS", "handleDisplayDevice::Removed()");
-        Slog.d("RUBIS", "  L device=" + device);
-        Slog.d("RUBIS", "  L layerStack=" + device.getLayerStack());
-        Slog.d("RUBIS", "  L TODO: migrate apps to default display");
+        Slog.d(TAG, "handleDisplayDevice::Removed()");
+        Slog.d(TAG, "  L device=" + device);
+        Slog.d(TAG, "  L layerStack=" + device.getLayerStack());
+        Slog.d(TAG, "  L TODO: migrate apps to default display");
         if(mDisplayDevices.size() == 1 && mWindowManagerInternal != null) {
             mWindowManagerInternal.setForcedRotation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
@@ -1176,9 +1176,9 @@ public final class DisplayManagerService extends SystemService {
      * @return void
      */
     private void setDisplayLayerStackInternal(int displayId, int layerStack) {
-        Slog.d("RUBIS", "DisplayManagerService:: setDisplayLayerStackInternal()");
-        Slog.d("RUBIS", "  L displayId=" + displayId);
-        Slog.d("RUBIS", "  L layerStack=" + layerStack);
+        Slog.d(TAG, "DisplayManagerService:: setDisplayLayerStackInternal()");
+        Slog.d(TAG, "  L displayId=" + displayId);
+        Slog.d(TAG, "  L layerStack=" + layerStack);
         LogicalDisplay logicalDisplay = mLogicalDisplays.get(displayId);
         if (logicalDisplay != null) {
             Slog.i(TAG, "  logicalDisplay=" + logicalDisplay.getDisplayInfoLocked());

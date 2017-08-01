@@ -94,6 +94,8 @@ import static com.android.server.wm.AppTransition.TRANSIT_TASK_TO_FRONT;
  * import DEBUG_NANS variable
  */
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
+import static com.android.server.am.ActivityManagerDebugConfig.POSTFIX_NANS;
+// END
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -185,6 +187,13 @@ final class ActivityStack {
     private static final String TAG_TRANSITION = TAG + POSTFIX_TRANSITION;
     private static final String TAG_USER_LEAVING = TAG + POSTFIX_USER_LEAVING;
     private static final String TAG_VISIBILITY = TAG + POSTFIX_VISIBILITY;
+    /**
+     * Date: Jul 28, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * add static final String TAG_NANS.
+     */
+    private static final String TAG_NANS = TAG + POSTFIX_NANS;
 
     private static final boolean VALIDATE_TOKENS = false;
 
@@ -708,6 +717,11 @@ final class ActivityStack {
      * @param task If non-null, the task will be moved to the top of the stack.
      * */
     void moveToFront(String reason, TaskRecord task) {
+
+        // RUBIS ockwon
+        Slog.d(TAG_NANS, "moveToFront(), tr = " + task);
+        // END
+
         if (!isAttached()) {
             return;
         }
@@ -722,6 +736,11 @@ final class ActivityStack {
                 addIndex--;
             }
         }
+
+        // RUBIS ockwon
+        Slog.d(TAG_NANS, " L addIndex = "+addIndex);
+        Slog.d(TAG_NANS, " L isOnHomeDisplay = "+isOnHomeDisplay());
+        // END
 
         mStacks.add(addIndex, this);
 
@@ -1128,6 +1147,7 @@ final class ActivityStack {
         if (prev == null) {
             if (resuming == null) {
                 Slog.wtf(TAG, "Trying to pause when nothing is resumed");
+        Slog.d("RUBIS", "8");
                 mStackSupervisor.resumeFocusedStackTopActivityLocked();
             }
             return false;
@@ -1219,6 +1239,7 @@ final class ActivityStack {
             // pause, so just treat it as being paused now.
             if (DEBUG_PAUSE) Slog.v(TAG_PAUSE, "Activity not running, resuming next.");
             if (resuming == null) {
+        Slog.d("RUBIS", "9");
                 mStackSupervisor.resumeFocusedStackTopActivityLocked();
             }
             return false;
@@ -1298,6 +1319,7 @@ final class ActivityStack {
             } else {
                 if (r.deferRelaunchUntilPaused) {
                     destroyActivityLocked(r, true, "stop-config");
+                    Slog.d("RUBIS", "1, r="+r);
                     mStackSupervisor.resumeFocusedStackTopActivityLocked();
                 } else {
                     mStackSupervisor.updatePreviousProcessLocked(r);
@@ -1355,6 +1377,7 @@ final class ActivityStack {
         if (resumeNext) {
             final ActivityStack topStack = mStackSupervisor.getFocusedStack();
             if (!mService.isSleepingOrShuttingDownLocked()) {
+                Slog.d("RUBIS", "2, resumeNext="+resumeNext);
                 mStackSupervisor.resumeFocusedStackTopActivityLocked(topStack, prev, null);
             } else {
                 mStackSupervisor.checkReadyForSleepLocked();
@@ -1364,6 +1387,7 @@ final class ActivityStack {
                     // something. Also if the top activity on the stack is not the just paused
                     // activity, we need to go ahead and resume it to ensure we complete an
                     // in-flight app switch.
+                    Slog.d("RUBIS", "3");
                     mStackSupervisor.resumeFocusedStackTopActivityLocked();
                 }
             }
@@ -1478,6 +1502,9 @@ final class ActivityStack {
     }
 
     private void setVisible(ActivityRecord r, boolean visible) {
+        // RUBIS ockwon
+        Slog.d(TAG_NANS, "setVisible(), r="+r+", by caller = "+Debug.getCallers(10));
+        // END
         r.visible = visible;
         if (!visible && r.mUpdateTaskThumbnailWhenHidden) {
             r.updateThumbnailLocked(r.task.stack.screenshotActivitiesLocked(r), null);
@@ -1623,11 +1650,11 @@ final class ActivityStack {
          * Date: Jul 26, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * getStackVisibilityLocked debug log
+         * NANS debug log.
          */
         if (DEBUG_NANS) {
-            Slog.d("RUBIS", "ActivityStack::getStackVisibilityLocked()");
-            Slog.d("RUBIS", "  L displayId=" + mActivityContainer.mActivityDisplay.mDisplayId);
+            //Slog.d(TAG_NANS, "ActivityStack::getStackVisibilityLocked()");
+            //Slog.d(TAG_NANS, "  L displayId=" + mActivityContainer.mActivityDisplay.mDisplayId);
         }
         // END
 
@@ -1639,12 +1666,12 @@ final class ActivityStack {
          * Date: Jul 26, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * if display mode is nans, it have to be STACK_VISIBLE.
+         * if display mode is NANS, it have to be STACK_VISIBLE.
          * TODO: MIRRORING and BLANK is also 'STACK_VISIBLE'?
          */
         if (mActivityContainer.mActivityDisplay.mDisplayMode == ActivityDisplay.NANS ||
                 mActivityContainer.mActivityDisplay.mDisplayMode == ActivityDisplay.MIRRORING) {
-            Slog.d("RUBIS", "  L return visible because this stack is NANS mode");
+            //Slog.d(TAG_NANS, "  L return visible because this stack is NANS mode");
             return STACK_VISIBLE;
         }
         // END
@@ -1656,7 +1683,7 @@ final class ActivityStack {
              *
              * getStackVisibilityLocked debug log
              */
-            Slog.d("RUBIS", "  L return visible because this stack is front/focus mode");
+            Slog.d(TAG_NANS, "  L return visible because this stack is front/focus mode");
             // END
             return STACK_VISIBLE;
         }
@@ -1787,11 +1814,20 @@ final class ActivityStack {
                 && (isInStackLocked(starting) == null);
         boolean behindTranslucentActivity = false;
         final ActivityRecord visibleBehind = getVisibleBehindActivity();
+
+        // RUBIS ockwon
+        Slog.d(TAG_NANS, "ensure...(), stack="+this);
+        Slog.d(TAG_NANS, " L stackVisibility = " + stackVisibility);
+        Slog.d(TAG_NANS, " L starting = " + starting);
+        // END
         for (int taskNdx = mTaskHistory.size() - 1; taskNdx >= 0; --taskNdx) {
             final TaskRecord task = mTaskHistory.get(taskNdx);
             final ArrayList<ActivityRecord> activities = task.mActivities;
             for (int activityNdx = activities.size() - 1; activityNdx >= 0; --activityNdx) {
                 final ActivityRecord r = activities.get(activityNdx);
+                // RUBIS ockwon
+                Slog.d(TAG_NANS, " ["+taskNdx+"-"+activityNdx+"] " + r);
+                // END
                 if (r.finishing) {
                     // Normally the screenshot will be taken in makeInvisible(). When an activity
                     // is finishing, we no longer change its visibility, but we still need to take
@@ -1837,6 +1873,9 @@ final class ActivityStack {
                             resumeNextActivity = false;
                         }
                     } else {
+                        // RUBIS ockwon
+                        Slog.d(TAG_NANS, " !!!!!! makeVisibleIfNeeded!!!!!");
+                        // END
                         makeVisibleIfNeeded(starting, r);
                     }
                     // Aggregate current change flags.
@@ -1938,6 +1977,10 @@ final class ActivityStack {
 
     private boolean makeVisibleAndRestartIfNeeded(ActivityRecord starting, int configChanges,
             boolean isTop, boolean andResume, ActivityRecord r) {
+        // RUBIS ockwon
+        Slog.d(TAG_NANS, "makeVisibleAndRestartIfNeeded(), starting="+starting);
+        // END
+        
         // We need to make sure the app is running if it's the top, or it is just made visible from
         // invisible. If the app is already visible, it must have died while it was visible. In this
         // case, we'll show the dead window but will not restart the app. Otherwise we could end up
@@ -1962,6 +2005,10 @@ final class ActivityStack {
     }
 
     private void makeInvisible(ActivityRecord r, ActivityRecord visibleBehind) {
+
+        // RUBIS ockwon
+        Slog.d(TAG_NANS, "makeInvisible(), r="+r);
+
         if (!r.visible) {
             if (DEBUG_VISIBILITY) Slog.v(TAG_VISIBILITY, "Already invisible: " + r);
             return;
@@ -2175,6 +2222,11 @@ final class ActivityStack {
      *       right activity for the current system state.
      */
     boolean resumeTopActivityUncheckedLocked(ActivityRecord prev, ActivityOptions options) {
+        // RUBIS ockwon
+        if (prev != null)
+            Slog.d(TAG, "resumeTopActivityUncheckLocked(), prev = " + prev);
+        // END
+
         if (mStackSupervisor.inResumeTopActivity) {
             // Don't even start recursing.
             return false;
@@ -2196,6 +2248,11 @@ final class ActivityStack {
     }
 
     private boolean resumeTopActivityInnerLocked(ActivityRecord prev, ActivityOptions options) {
+        // RUBIS ockwon
+        if (prev != null)
+            Slog.d(TAG, "resumeTopActivityInnerLocked(), prev = " + prev);
+        // END
+
         if (DEBUG_LOCKSCREEN) mService.logLockScreen("");
 
         if (!mService.mBooting && !mService.mBooted) {
@@ -2222,21 +2279,38 @@ final class ActivityStack {
          *
          * if prev.task is not equal to next.stak, set prev.task to NANS mode.
          */
-        Slog.d("RUBIS", "ActivityStack::resumeTopActivityInnerLocked(), StackId=" + mStackId);
-        Slog.d("RUBIS", "----------------------------------------------------------");
+        Slog.d(TAG_NANS, "ActivityStack::resumeTopActivityInnerLocked(), StackId=" + mStackId);
+        Slog.d(TAG_NANS, "----------------------------------------------------------");
         if (prev != null) {
-            Slog.d("RUBIS", "  prev=" + prev);
+            Slog.d(TAG_NANS, "  prev=" + prev);
         }
         if (next != null) {
-            Slog.d("RUBIS", "  next=" + next);
+            Slog.d(TAG_NANS, "  next=" + next);
         }
-        Slog.d("RUBIS", "----------------------------------------------------------");
+        Slog.d(TAG_NANS, "----------------------------------------------------------");
 
-        if (prev != null && next != null && prev.task != next.task && prev.task.displayId != 0) {
+        /*if (prev != null && next != null && prev.task != next.task && prev.task.displayId != 0) {
             ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prev.task.displayId);
-            Slog.d("RUBIS", "  L prev.displayId=" + prev.task.displayId + ", mDisplayMode=" + ac.mDisplayMode);
+            Slog.d(TAG_NANS, "  L prev.displayId=" + prev.task.displayId + ", mDisplayMode=" + ac.mDisplayMode);
             if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
                 mStackSupervisor.setExternalDisplayLocked(prev.task.taskId, prev.task.displayId);
+            }
+        }*/
+        
+        if (prev != null && next != null && prev.task != next.task) {
+            if (prev.task.displayId != 0) {
+                ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prev.task.displayId);
+                Slog.d(TAG_NANS, "  L prev.displayId=" + prev.task.displayId + ", mDisplayMode=" + ac.mDisplayMode);
+                if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
+                    mStackSupervisor.setExternalDisplayLocked(prev.task.taskId, prev.task.displayId);
+                }
+            }
+            if (next.task.displayId != 0) {
+                ActivityDisplay ac = mStackSupervisor.getActivityDisplay(next.task.displayId);
+                Slog.d(TAG_NANS, "  L next.displayId=" + next.task.displayId + ", mDisplayMode=" + ac.mDisplayMode);
+                if (ac != null && ac.mDisplayMode == ActivityDisplay.NANS) {
+                    mStackSupervisor.setExternalDisplayLocked(next.task.taskId, 0);
+                }
             }
         }
         // END
@@ -2262,7 +2336,7 @@ final class ActivityStack {
             if (prevTask != null) {
                 ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prevTask.displayId);
                 if (ac.mDisplayMode == ActivityDisplay.NANS) {
-                    Slog.d("RUBIS", "  L closed task was NANS task, so do nothing!");
+                    Slog.d(TAG_NANS, "  L closed task was NANS task, so do nothing!");
                 }
             }
             // END
@@ -4484,19 +4558,20 @@ final class ActivityStack {
          * If the prev task moving to bask is on MIRRORED mode, prev task has to be changed to NANS mode, and
          * if the next task moving to front is on NANS mode, it has to be changed to MIRRORED mode.
          */
-        Slog.d("RUBIS", "ActivityStack::moveTaskToFrontLocked()");
-        Slog.d("RUBIS", "  L task=" + tr);
-        Slog.d("RUBIS", "  L stackId=" + mStackId);
+        Slog.d(TAG_NANS, "ActivityStack::moveTaskToFrontLocked()");
+        Slog.d(TAG_NANS, "  L task=" + tr);
+        Slog.d(TAG_NANS, "  L stackId=" + mStackId);
         if (reason != null) {
-            Slog.d("RUBIS", "  L reason=" + reason);
+            Slog.d(TAG_NANS, "  L reason=" + reason);
         }
 
         ActivityStack lastStack = mStackSupervisor.getLastStack();
         TaskRecord lastTask = lastStack.topTask();
-        Slog.d("RUBIS", "  L lastStack=" + lastStack);
-        Slog.d("RUBIS", "  L lastTask=" + lastTask);
-        Slog.d("RUBIS", "  L lastTask.displayId=" + lastTask.displayId);
-        Slog.d("RUBIS", "  L lastTask.isOverHomeStack=" + lastTask.isOverHomeStack());
+        Slog.d(TAG_NANS, "  L lastStack=" + lastStack);
+        Slog.d(TAG_NANS, "  L lastTask=" + lastTask);
+        Slog.d(TAG_NANS, "  L lastTask.displayId=" + lastTask.displayId);
+        Slog.d(TAG_NANS, "  L lastTask.isOverHomeStack=" + lastTask.isOverHomeStack());
+        /*
         if (lastStack != null && lastTask != null && lastTask.displayId != 0) {
             ActivityDisplay ac = mStackSupervisor.getActivityDisplay(lastTask.displayId);
             if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
@@ -4510,6 +4585,7 @@ final class ActivityStack {
                 mStackSupervisor.setExternalDisplayLocked(tr.taskId, 0);
             }
         }
+        */
         // END
 
         if (DEBUG_SWITCH) Slog.v(TAG_SWITCH, "moveTaskToFront: " + tr);
@@ -4559,7 +4635,8 @@ final class ActivityStack {
         } else {
             updateTransitLocked(TRANSIT_TASK_TO_FRONT, options);
         }
-
+        
+        Slog.d("RUBIS", "4");
         mStackSupervisor.resumeFocusedStackTopActivityLocked();
         EventLog.writeEvent(EventLogTags.AM_TASK_TO_FRONT, tr.userId, tr.taskId);
 
@@ -4623,6 +4700,7 @@ final class ActivityStack {
             if (fullscreenStack != null && fullscreenStack.hasVisibleBehindActivity()) {
                 final ActivityRecord visibleBehind = fullscreenStack.getVisibleBehindActivity();
                 mService.setFocusedActivityLocked(visibleBehind, "moveHomeTaskToBack");
+        Slog.d("RUBIS", "5");
                 mStackSupervisor.resumeFocusedStackTopActivityLocked();
                 return true;
             }
@@ -4682,6 +4760,7 @@ final class ActivityStack {
         // Using currently focused activity value from service instead of mResumedActivity,
         // because if this happens when device is locked the mResumedActivity will be null.
         adjustFocusedActivityLocked(mService.mFocusedActivity, "moveTaskToBack");
+        Slog.d("RUBIS", "6");
         mStackSupervisor.resumeFocusedStackTopActivityLocked();
         return true;
     }
@@ -4701,6 +4780,10 @@ final class ActivityStack {
      * Ensures all visible activities at or below the input activity have the right configuration.
      */
     void ensureVisibleActivitiesConfigurationLocked(ActivityRecord start, boolean preserveWindow) {
+        // RUBIS gyKim
+        Slog.d(TAG, "ActivityStack::ensureVisibleActivitiesConfigurationLocked");
+        Slog.d(TAG, "  L start=" + start);
+        // END
         if (start == null || !start.visible) {
             return;
         }
@@ -4729,6 +4812,7 @@ final class ActivityStack {
         if (updatedConfig) {
             // Ensure the resumed state of the focus activity if we updated the configuration of
             // any activity.
+        Slog.d("RUBIS", "7");
             mStackSupervisor.resumeFocusedStackTopActivityLocked();
         }
     }
@@ -5001,6 +5085,10 @@ final class ActivityStack {
             // but not yet visible (or stopped). We need to complete the resume here as the
             // code in resumeTopActivityInnerLocked to complete the resume might be skipped.
             if (!r.visible || r.stopped) {
+                // RUBIS gyKim
+                Slog.d(TAG, "ActivityStack::relaunchActivityLocked()");
+                Slog.d(TAG, "  L r=" + r);
+                // END
                 mWindowManager.setAppVisibility(r.appToken, true);
                 completeResumeLocked(r);
             } else {
@@ -5200,8 +5288,8 @@ final class ActivityStack {
          * If the task on NANS mode is died, the activity display has to be changed to BLANK mode.
          */
         if (mLastPausedActivity != null && mLastPausedActivity.finishing) {
-            Slog.d("RUBIS", "ActivityStack::handleAppDiedLocked()");
-            Slog.d("RUBIS", "  L mLastPausedActivity=" + mLastPausedActivity);
+            Slog.d(TAG_NANS, "ActivityStack::handleAppDiedLocked()");
+            Slog.d(TAG_NANS, "  L mLastPausedActivity=" + mLastPausedActivity);
             TaskRecord tr = mLastPausedActivity.task;
             if (tr != null && tr.displayId != 0) {
                 ActivityDisplay ac = mStackSupervisor.getActivityDisplay(tr.displayId);
@@ -5510,6 +5598,10 @@ final class ActivityStack {
      * created on this stack which the activity is added to.
      * */
     void moveActivityToStack(ActivityRecord r) {
+        // RUBIS ockwon
+        Slog.d(TAG_NANS, "moveActivityToStack(), r="+r);
+        // END
+
         final ActivityStack prevStack = r.task.stack;
         if (prevStack.mStackId == mStackId) {
             // You are already in the right stack silly...

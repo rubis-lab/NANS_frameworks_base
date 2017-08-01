@@ -2042,6 +2042,10 @@ final class WindowState implements WindowManagerPolicy.WindowState {
     }
 
     public void setVisibleBeforeClientHidden() {
+        // RUBIS gyKim
+        Slog.d(TAG, "WindowState::setVisibleBeforeClientHidden()");
+        Slog.d(TAG, "  L window state=" + this);
+        // END
         mWasVisibleBeforeClientHidden |=
                 (mViewVisibility == View.VISIBLE || mAnimatingWithSavedSurface);
     }

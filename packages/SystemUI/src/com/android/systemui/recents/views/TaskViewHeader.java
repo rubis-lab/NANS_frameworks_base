@@ -284,7 +284,6 @@ public class TaskViewHeader extends FrameLayout
         mDarkExternalDisplayDrawable = context.getDrawable(R.drawable.ic_media_route_off_holo_dark);
         mContext = context;
         // END
-
     }
 
     /**
@@ -386,7 +385,12 @@ public class TaskViewHeader extends FrameLayout
         if (headerBarHeight != mHeaderBarHeight || headerButtonPadding != mHeaderButtonPadding) {
             mHeaderBarHeight = headerBarHeight;
             mHeaderButtonPadding = headerButtonPadding;
-            // RUBIS ockwon
+            /**
+             * Date: Jul 28, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * replace LockTaskButton with ExternalDisplayButton.
+             */
             // updateLayoutParams(mIconView, mTitleView, mLockTaskButton, mMoveTaskButton,
             //         mDismissButton);
             updateLayoutParams(mIconView, mTitleView, mExternalDisplayButton, mMoveTaskButton,
@@ -450,7 +454,12 @@ public class TaskViewHeader extends FrameLayout
         // END
         mDismissButton.setVisibility(showDismissIcon ? View.VISIBLE : View.INVISIBLE);
         mDismissButton.setTranslationX(rightInset);
-        // RUBIS ockwon
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * make LockTaskButton INVISIBLE.
+         */
         // mLockTaskButton.setVisibility(showDismissIcon ? View.VISIBLE : View.INVISIBLE);
         // END
         setLeftTopRightBottom(0, 0, width, getMeasuredHeight());
@@ -548,7 +557,12 @@ public class TaskViewHeader extends FrameLayout
     }
 
     private void updateLockTaskDrawable() {
-        // RUBIS ockwon
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * make lock task button disabled.
+         */
         /*
         mLockTaskButton.setImageDrawable(mTask.useLightOnPrimaryColor ?
                 (Recents.sLockedTasks.contains(mTask) ? mLightLockedDrawable : mLightUnlockedDrawable) :
@@ -583,12 +597,15 @@ public class TaskViewHeader extends FrameLayout
         mDismissButton.setClickable(false);
         ((RippleDrawable) mDismissButton.getBackground()).setForceSoftware(true);
         updateLockTaskDrawable();
-        // RUBIS ockwon
-        /*
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * make lock task button disabled.
+         */
         mLockTaskButton.setOnClickListener(this);
         mLockTaskButton.setClickable(false);
         ((RippleDrawable) mLockTaskButton.getBackground()).setForceSoftware(true);
-        */
         // END
 
         /**
@@ -676,7 +693,12 @@ public class TaskViewHeader extends FrameLayout
         } else {
             mDismissButton.setAlpha(1f);
         }
-        // RUBIS ockwon
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * make lock task button disabled.
+         */
         /*
         mLockTaskButton.setVisibility(View.VISIBLE);
         mLockTaskButton.setClickable(true);
@@ -698,7 +720,7 @@ public class TaskViewHeader extends FrameLayout
          * If NANS mode is enabled, show or hide the external display button.
          */
         int value = Settings.Secure.getInt(mContext.getContentResolver(), NANS_MODE_ENABLED, 0);
-        if (value == 0) {
+        if (value == 1) {
             mExternalDisplayButton.setVisibility(View.VISIBLE);
             mExternalDisplayButton.setClickable(true);
             if (mExternalDisplayButton.getVisibility() == VISIBLE) {
@@ -737,7 +759,12 @@ public class TaskViewHeader extends FrameLayout
         mDismissButton.animate().cancel();
         mDismissButton.setAlpha(1f);
         mDismissButton.setClickable(true);
-        // RUBIS ockwon
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * make lock task button disabled.
+         */
         /*
         mLockTaskButton.setVisibility(View.VISIBLE);
         mLockTaskButton.animate().cancel();
@@ -753,7 +780,7 @@ public class TaskViewHeader extends FrameLayout
          * If NANS mode is enabled, show or hide the external display button.
          */
         int value = Settings.Secure.getInt(mContext.getContentResolver(), NANS_MODE_ENABLED, 0);
-        if (value == 0) {
+        if (value == 1) {
             mExternalDisplayButton.setVisibility(View.VISIBLE);
             mExternalDisplayButton.animate().cancel();
             mExternalDisplayButton.setAlpha(1f);
@@ -777,7 +804,12 @@ public class TaskViewHeader extends FrameLayout
         mDismissButton.setVisibility(View.INVISIBLE);
         mDismissButton.setAlpha(0f);
         mDismissButton.setClickable(false);
-        // RUBIS ockwon
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * make lock task button disabled.
+         */
         /*
         mLockTaskButton.setVisibility(View.INVISIBLE);
         mLockTaskButton.setAlpha(0f);
@@ -792,7 +824,7 @@ public class TaskViewHeader extends FrameLayout
          * If NANS mode is enabled, show or hide the external display button.
          */
         int value = Settings.Secure.getInt(mContext.getContentResolver(), NANS_MODE_ENABLED, 0);
-        if (value == 0) {
+        if (value == 1) {
             mExternalDisplayButton.setVisibility(View.INVISIBLE);
             mExternalDisplayButton.setAlpha(0f);
             mExternalDisplayButton.setClickable(false);
@@ -848,8 +880,13 @@ public class TaskViewHeader extends FrameLayout
             EventBus.getDefault().send(new ShowApplicationInfoEvent(mTask));
         } else if (v == mAppIconView) {
             hideAppOverlay(false /* immediate */);
-        } 
-        // RUBIS ockwon
+        }
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * make lock task button disabled.
+         */
         /*
         else if (v == mLockTaskButton) {
             if (Recents.sLockedTasks.contains(mTask)) {

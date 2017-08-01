@@ -81,7 +81,7 @@ public class WindowManagerDebugConfig {
      *
      * add static final boolean variable DEBUG_NANS
      */
-    static final boolean DEBUG_NANS = true;
+    static final boolean DEBUG_NANS = false;
 
     static final String TAG_KEEP_SCREEN_ON = "DebugKeepScreenOn";
     static final boolean DEBUG_KEEP_SCREEN_ON = false;
