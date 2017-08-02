@@ -1427,13 +1427,16 @@ public final class SystemServer {
 
         Trace.traceBegin(Trace.TRACE_TAG_SYSTEM_SERVER, "MakeDisplayManagerServiceReady");
         try {
-            // TODO: use boot phase and communicate these flags some other way
             /**
-             * Date: Aug 1, 2017
+             * Date: Aug 2, 2017
              * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Initialize OVERLAY_DISPLAY_DEVICE setting.
              */
             Settings.Global.putString(mContentResolver, Settings.Global.OVERLAY_DISPLAY_DEVICES, "");
             // END
+
+            // TODO: use boot phase and communicate these flags some other way
             mDisplayManagerService.systemReady(safeMode, mOnlyCore);
         } catch (Throwable e) {
             reportWtf("making Display Manager Service ready", e);

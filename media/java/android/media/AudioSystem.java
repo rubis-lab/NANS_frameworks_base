@@ -666,7 +666,7 @@ public class AudioSystem
      * Date: Jul 21, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add a device category for miracast
+     * Add a device category for miracast, and change the number of force config (15->16).
      */
     public static final int FORCE_WIFI_SYSTEM_AUDIO_ENFORCED = 15;
     // public static final int NUM_FORCE_CONFIG = 15;

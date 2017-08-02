@@ -79,9 +79,10 @@ public class WindowManagerDebugConfig {
      * Date: Jul 26, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * add static final boolean variable DEBUG_NANS
+     * Add DEBUG_NANS for NANS feature.
      */
     static final boolean DEBUG_NANS = false;
+    // END
 
     static final String TAG_KEEP_SCREEN_ON = "DebugKeepScreenOn";
     static final boolean DEBUG_KEEP_SCREEN_ON = false;

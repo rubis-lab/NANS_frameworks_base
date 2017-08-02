@@ -261,7 +261,7 @@ import static com.android.server.wm.WindowStateAnimator.STACK_CLIP_NONE;
  * Date: Jul 26, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * import DEBUG_NANS variable to conditionally log.
+ * Add DEBUG_NANS variable for NANS feature.
  */
 import static com.android.server.wm.WindowManagerDebugConfig.DEBUG_NANS;
 // END
@@ -387,7 +387,7 @@ public class WindowManagerService extends IWindowManager.Stub
      * Date: Jul 21, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * set mWindowPlacerLocked as public
+     * Change access and final modifier of mWindowPlacerLocked.
      */
     // final WindowSurfacePlacer mWindowPlacerLocked;
     public WindowSurfacePlacer mWindowPlacerLocked;
@@ -1009,15 +1009,6 @@ public class WindowManagerService extends IWindowManager.Stub
         mDisplays = mDisplayManager.getDisplays();
         for (Display display : mDisplays) {
             createDisplayContentLocked(display);
-        }
-
-        /**
-         * Date: Jul 31, 2017
-         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-         *
-         */
-        if (mDisplays.length > 1) {
-            setForcedRotation(Surface.ROTATION_90);
         }
 
         mKeyguardDisableHandler = new KeyguardDisableHandler(mContext, mPolicy);
@@ -5018,18 +5009,8 @@ public class WindowManagerService extends IWindowManager.Stub
             final DisplayContent displayContent = mDisplayContents.valueAt(displayNdx);
             Slog.v(TAG_WM, " Display #" + displayContent.getDisplayId());
             final WindowList windows = displayContent.getWindowList();
-            WindowState win = null;
             for (int winNdx = windows.size() - 1; winNdx >= 0; --winNdx) {
-                /**
-                 * Date: Aug 1, 2017
-                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-                 *
-                 * log visibility.
-                 */
-                // Slog.v(TAG_WM, "  #" + winNdx + ": " + windows.get(winNdx));
-                win = windows.get(winNdx);
-                Slog.v(TAG_WM, "  #" + winNdx + ": " + win + " (" + win.isVisibleNow() + ")");
-                // END
+                Slog.v(TAG_WM, "  #" + winNdx + ": " + windows.get(winNdx));
             }
         }
     }
@@ -5038,14 +5019,12 @@ public class WindowManagerService extends IWindowManager.Stub
      * Date: Jul 21, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Dump windows for given window list
+     * Dump windows for given window list.
      *
      * @param windows
      * @return void
      */
     public void dumpWindowList(WindowList windows) {
-        Slog.d(TAG_WM, "WindowManagerService::dumpWindowList()");
-        Slog.d(TAG_WM, "  L windows.size()=" + windows.size());
         WindowState win = null;
         for (int winNdx = windows.size() - 1; winNdx >= 0; --winNdx) {
             win = windows.get(winNdx);
@@ -5064,14 +5043,6 @@ public class WindowManagerService extends IWindowManager.Stub
             if (!winAdded && cwin.mSubLayer >= 0) {
                 if (DEBUG_WINDOW_MOVEMENT) Slog.v(TAG_WM, "Re-adding child window at "
                         + index + ": " + cwin);
-                /**
-                 * Date: Jul 28, 2017
-                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-                 *
-                 * NANS debug log.
-                 */
-                if (DEBUG_NANS) Slog.d(TAG_WM, "        ==> re-adding child window at " + index + ": " + cwin);
-                // END
                 win.mRebuilding = false;
                 windows.add(index, win);
                 index++;
@@ -5079,14 +5050,6 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             if (DEBUG_WINDOW_MOVEMENT) Slog.v(TAG_WM, "Re-adding window at "
                     + index + ": " + cwin);
-            /**
-             * Date: Jul 28, 2017
-             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-             *
-             * NANS debug log.
-             */
-            if (DEBUG_NANS) Slog.d(TAG_WM, "        ==> re-adding child window at " + index + ": " + cwin);
-            // END
             cwin.mRebuilding = false;
             windows.add(index, cwin);
             index++;
@@ -5094,14 +5057,6 @@ public class WindowManagerService extends IWindowManager.Stub
         if (!winAdded) {
             if (DEBUG_WINDOW_MOVEMENT) Slog.v(TAG_WM, "Re-adding window at "
                     + index + ": " + win);
-            /**
-             * Date: Jul 28, 2017
-             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-             *
-             * NANS debug log.
-             */
-            if (DEBUG_NANS) Slog.d(TAG_WM, "        ==> re-adding child window at " + index + ": " + win);
-            // END
             win.mRebuilding = false;
             windows.add(index, win);
             index++;
@@ -5115,14 +5070,6 @@ public class WindowManagerService extends IWindowManager.Stub
         final int NW = token.windows.size();
         for (int i=0; i<NW; i++) {
             final WindowState win = token.windows.get(i);
-            /**
-             * Date: Jul 28, 2017
-             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-             *
-             * NANS debug log.
-             */
-            if (DEBUG_NANS) Slog.d(TAG_WM, "        L window state=" + win);
-            // END
             final DisplayContent winDisplayContent = win.getDisplayContent();
             if (winDisplayContent == displayContent || winDisplayContent == null) {
                 win.mDisplayContent = displayContent;
@@ -9610,14 +9557,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 mRebuildTmp[numRemoved] = win;
                 mWindowsChanged = true;
                 if (DEBUG_WINDOW_MOVEMENT) Slog.v(TAG_WM, "Rebuild removing window: " + win);
-                /**
-                 * Date: Jul 28, 2017
-                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-                 *
-                 * NANS debug log.
-                 */
-                if (DEBUG_NANS) Slog.d(TAG_WM, "  L Rebuild removing window: " + win);
-                // END
                 NW--;
                 numRemoved++;
                 continue;
@@ -9652,35 +9591,11 @@ public class WindowManagerService extends IWindowManager.Stub
         for (int stackNdx = 0; stackNdx < numStacks; ++stackNdx) {
             final ArrayList<Task> tasks = stacks.get(stackNdx).getTasks();
             final int numTasks = tasks.size();
-            /**
-             * Date: Jul 28, 2017
-             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-             *
-             * NANS debug log.
-             */
-            if (DEBUG_NANS) Slog.d(TAG_WM, "  L stack=" + stacks.get(stackNdx));
-            // END
             for (int taskNdx = 0; taskNdx < numTasks; ++taskNdx) {
                 final AppTokenList tokens = tasks.get(taskNdx).mAppTokens;
                 final int numTokens = tokens.size();
-                /**
-                 * Date: Jul 28, 2017
-                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-                 *
-                 * NANS debug log.
-                 */
-                if (DEBUG_NANS) Slog.d(TAG_WM, "    L task=" + tasks.get(taskNdx));
-                // END
                 for (int tokenNdx = 0; tokenNdx < numTokens; ++tokenNdx) {
                     final AppWindowToken wtoken = tokens.get(tokenNdx);
-                    /**
-                     * Date: Jul 28, 2017
-                     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-                     *
-                     * NANS debug log.
-                     */
-                    if (DEBUG_NANS) Slog.d(TAG_WM, "      L app window token=" + tokens.get(tokenNdx));
-                    // END
                     if (wtoken.mIsExiting && !wtoken.waitingForReplacement()) {
                         continue;
                     }
@@ -11251,7 +11166,7 @@ public class WindowManagerService extends IWindowManager.Stub
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * TODO: All display has same event listener.
+         * Register PointerEventListener for all kind of display. 
          */
         /*
          * if (displayId == Display.DEFAULT_DISPLAY) {
@@ -11781,28 +11696,21 @@ public class WindowManagerService extends IWindowManager.Stub
      * @return void
      */
     public void setLayerStackLocked(AppWindowToken wtoken, int layerStack) {
-        Slog.d(TAG_WM, "WindowManagerService::setLayerStackLocked()");
-        Slog.d(TAG_WM, "  L wtoken=" + wtoken);
-        Slog.d(TAG_WM, "  L layerStack=" + layerStack);
         if (DEBUG_NANS) {
-            Slog.d(TAG_WM, "  ========== App Tokens Dump ==========  ");
-            dumpAppTokensLocked();
+            Slog.d(TAG_WM, "WindowManagerService::setLayerStackLocked()");
+            if (wtoken != null) Slog.d(TAG_WM, " [wtoken] " + wtoken);
+            Slog.d(TAG_WM, " [layerStack] " + layerStack);
+            Slog.d(TAG_WM, " ==========  Windows Dump   ========== ");
+            dumpWindowsLocked();
+            Slog.d(TAG_WM, " ===================================== ");
         }
-        Slog.d(TAG_WM, "  ==========  Windows Dump   ==========  ");
-        dumpWindowsLocked();
         DisplayContent displayContent = getDisplayContentLocked(layerStack);
-        if (DEBUG_NANS) {
-            if (wtoken != null) {
-                Slog.d(TAG_WM, "  L [Before]   app window token=" + wtoken);
-                Slog.d(TAG_WM, "  L [Before]   windows=" + wtoken.windows);
-            }
-        }
         final WindowList nextList = displayContent.getWindowList();
         if (wtoken != null) {
             for (int i = 0; i < wtoken.allAppWindows.size(); ++i) {
                 WindowState win = wtoken.allAppWindows.get(i);
                 final WindowList prevList = win.getWindowList();
-                Slog.d(TAG_WM, "  L win["+i+"]=" + win.getWindowTag());
+                if (DEBUG_NANS) Slog.d(TAG_WM, " [win["+i+"]]" + win.getWindowTag());
                 SurfaceControl surfaceControl = win.mWinAnimator.mSurfaceController.mSurfaceControl;
                 SurfaceControl.openTransaction();
                 try {
@@ -11816,7 +11724,7 @@ public class WindowManagerService extends IWindowManager.Stub
                     win.mDisplayContent = displayContent;
                     win.layerStack = layerStack;
                     int newIdx = findIdxBasedOnAppTokens(win);
-                    Slog.d(TAG_WM, "  L newIdx=" + newIdx + "/" + nextList.size());
+                    if (DEBUG_NANS) Slog.d(TAG_WM, " [newIdx] " + newIdx + "/" + nextList.size());
                     nextList.add(newIdx + 1, win);
                 } else {
                     getDefaultWindowListLocked().remove(win);
@@ -11830,15 +11738,10 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
         if (DEBUG_NANS) {
-            if (wtoken != null) {
-                Slog.d(TAG_WM, "  L [After]    app window token=" + wtoken);
-                Slog.d(TAG_WM, "  L [After]    windows=" + wtoken.windows);
-                Slog.d(TAG_WM, "  ========== App Tokens Dump ==========  ");
-            }
-            dumpAppTokensLocked();
+            Slog.d(TAG_WM, " ==========  Windows Dump   ========== ");
+            dumpWindowsLocked();
+            Slog.d(TAG_WM, " ===================================== ");
         }
-        Slog.d(TAG_WM, "  ==========  Windows Dump   ==========  ");
-        dumpWindowsLocked();
     }
     // END
 
@@ -11852,46 +11755,23 @@ public class WindowManagerService extends IWindowManager.Stub
      * @return void
      */
     public void moveTaskToOtherStack(int taskId, int stackId) {
-        Slog.d(TAG_WM, "WindowManagerService::moveTaskToOtherStack()");
-        Slog.d(TAG_WM, "  L taskId=" + taskId);
-        Slog.d(TAG_WM, "  L stackId=" + stackId);
+        if (DEBUG_NANS) {
+            Slog.d(TAG_WM, "WindowManagerService::moveTaskToOtherStack()");
+            Slog.d(TAG_WM, " [taskId] " + taskId);
+            Slog.d(TAG_WM, " [stackId] " + stackId);
+        }
         Task task = mTaskIdToTask.get(taskId);
         TaskStack prevStack = task.mStack;
         TaskStack nextStack = mStackIdToStack.get(stackId);
-        Slog.d(TAG_WM, "  L prevStack=" + prevStack);
-
-        if (DEBUG_NANS) {
-            ArrayList<Task> tasks = prevStack.getTasks();
-            int numTasks = tasks.size();
-            for (int taskNdx = 0; taskNdx < numTasks; ++taskNdx) {
-                Task wtask = tasks.get(taskNdx);
-                AppTokenList tokens = wtask.mAppTokens;
-                int numTokens = tokens.size();
-                for (int tokenNdx = 0; tokenNdx < numTokens; ++tokenNdx) {
-                    Slog.d(TAG_WM, "  L app token=" + tokens.get(tokenNdx));
-                    Slog.d(TAG_WM, "  L windows=" + tokens.get(tokenNdx).windows);
-                }
-            }
-        }
 
         if (task != null && prevStack != null && nextStack != null) {
+            if (DEBUG_NANS) Slog.d(TAG_WM, " [prevStack] " + prevStack);
             prevStack.removeTask(task);
             nextStack.addTask(task, true);
 
-            Slog.d(TAG_WM, "  L successfully move task to other stack!");
-            Slog.d(TAG_WM, "  L stack=" + nextStack);
             if (DEBUG_NANS) {
-                ArrayList<Task> tasks = nextStack.getTasks();
-                int numTasks = tasks.size();
-                for (int taskNdx = 0; taskNdx < numTasks; ++taskNdx) {
-                    Task wtask = tasks.get(taskNdx);
-                    AppTokenList tokens = wtask.mAppTokens;
-                    int numTokens = tokens.size();
-                    for (int tokenNdx = 0; tokenNdx < numTokens; ++tokenNdx) {
-                        Slog.d(TAG_WM, "  L app token=" + tokens.get(tokenNdx));
-                        Slog.d(TAG_WM, "  L windows=" + tokens.get(tokenNdx).windows);
-                    }
-                }
+                Slog.d(TAG_WM, " === Successfully move task to other stack === ");
+                Slog.d(TAG_WM, " [nextStack] " + nextStack);
             }
         }
     }
@@ -11911,7 +11791,7 @@ public class WindowManagerService extends IWindowManager.Stub
         for (int i = 0; i < mTaskIdToTask.size() - 1; ++i) {
             Task task = mTaskIdToTask.valueAt(i);
             if (task != null) {
-                Slog.d(TAG_WM, "  L" + task);
+                Slog.d(TAG_WM, " [tasks[" + i + "]] " + task);
             }
         }
     }
@@ -11931,7 +11811,7 @@ public class WindowManagerService extends IWindowManager.Stub
         for (int i = 0; i < mStackIdToStack.size() - 1; ++i) {
             TaskStack stack = mStackIdToStack.valueAt(i);
             if (stack != null) {
-                Slog.d(TAG_WM, "  L" + stack);
+                Slog.d(TAG_WM, " [stacks[" + i + "]] " + stack);
             }
         }
     }

@@ -93,7 +93,7 @@ public final class InputWindowHandle {
      * Date: Jul 21, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Remove the final keyword of displayId to modify on run-time.
+     * Remove final modifier to change on run-time.
      */
     // public final int displayId;
     public int displayId;

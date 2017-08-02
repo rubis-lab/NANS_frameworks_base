@@ -79,7 +79,7 @@ import java.util.List;
  * Date: Jul 20, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * Add android.view.Display
+ * Add Display class for NANS feature.
  */
 import android.view.Display;
 // END
@@ -3866,7 +3866,7 @@ public class ActivityManager {
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Set the external display, then do action depending on the flag
+     * Set the external display, then do action depending on the flag.
      */
     public boolean setExternalDisplay(String packageName, Display display, int flag) {
         try {
@@ -3885,7 +3885,7 @@ public class ActivityManager {
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Set the external display, then do action depending on the flag
+     * Set the external display, then do action depending on the flag.
      */
     public boolean setExternalDisplay(int taskId, Display display, int flag) {
         try {

@@ -504,13 +504,13 @@ public final class DisplayManagerGlobal {
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Set the display device's layerStack
+     * Set the display device's layerStack.
      */
     public void setDisplayLayerStack(int displayId, int layerStack) {
         try {
             mDm.setDisplayLayerStack(displayId, layerStack);
-        } catch (RemoteException ex) {
-            Log.e(TAG, "Failed to set LayerStack of Display Device.", ex);
+        } catch (RemoteException e) {
+            Log.e(TAG, "Failed to set LayerStack of Display Device", e);
         }
     }
     // END

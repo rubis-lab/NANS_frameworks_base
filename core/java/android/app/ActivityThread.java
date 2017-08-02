@@ -2708,7 +2708,7 @@ public final class ActivityThread {
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Disable the presentation API and debug.use-second-display for NANS service.
+         * Disable the presentation API and debug.use-second-display for NANS feature.
          */
         /*
 

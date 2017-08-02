@@ -672,7 +672,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Set the initial value of layerStack.
+         * Initialize layerStack variable.
          */
         layerStack = 0;
         // END

@@ -255,6 +255,15 @@ import cyanogenmod.power.PerformanceManagerInternal;
 import libcore.io.IoUtils;
 import libcore.util.EmptyArray;
 
+/**
+ * Date: Aug 2, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add ActivityDisplay class for NANS feature.
+ */
+import com.android.server.am.ActivityStackSupervisor.ActivityDisplay;
+// END
+
 import static android.Manifest.permission.INTERACT_ACROSS_USERS;
 import static android.Manifest.permission.INTERACT_ACROSS_USERS_FULL;
 import static android.Manifest.permission.MANAGE_ACTIVITY_STACKS;
@@ -375,14 +384,13 @@ import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
 /**
- * Date: Jul 26, 2017
+ * Date: Aug 2, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * import DEBUG_NANS, POSTFIX_NANS String.
+ * Add DEBUG_NANS and POSTFIX_NANS settings for NANS feature.
  */
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
 import static com.android.server.am.ActivityManagerDebugConfig.POSTFIX_NANS;
-import com.android.server.am.ActivityStackSupervisor.ActivityDisplay;
 // END
 
 public final class ActivityManagerService extends ActivityManagerNative
@@ -417,7 +425,7 @@ public final class ActivityManagerService extends ActivityManagerNative
      * Date: Jul 28, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * add static final String TAG_NANS
+     * Add TAG_NANS combined TAG and POSTFIX_NANS.
      */
     private static final String TAG_NANS = TAG + POSTFIX_NANS;
     // END
@@ -3167,16 +3175,16 @@ public final class ActivityManagerService extends ActivityManagerNative
     boolean setFocusedActivityLocked(ActivityRecord r, String reason) {
 
         /**
-         * Date: Jul 28, 2017
+         * Date: Aug 2, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * NANS debug log.
+         * Print logs for debugging NANS feature.
          */
         if (DEBUG_NANS) {
             Slog.d(TAG_NANS, "ActivityManagerService::setFocusedActivityLocked()");
-            Slog.d(TAG_NANS, "  L r=" + r);
-            Slog.d(TAG_NANS, "  L mFocusedActivity=" + mFocusedActivity);
-            Slog.d(TAG_NANS, "  L reason=" + reason);
+            Slog.d(TAG_NANS, " [activity]" + r);
+            Slog.d(TAG_NANS, " [mFocusedActivity] " + mFocusedActivity);
+            Slog.d(TAG_NANS, " [reason] " + reason);
         }
         try {
             ActivityRecord prev = mFocusedActivity;
@@ -3188,16 +3196,14 @@ public final class ActivityManagerService extends ActivityManagerNative
             if (prev != null && next != null 
                     && prev.task.taskId != next.task.taskId 
                     && !reason.equals("setFocusedTask")) {
-                Slog.d(TAG_NANS, " L prev = " + prev);
-                Slog.d(TAG_NANS, " L next = " + next);
+                Slog.d(TAG_NANS, " [prev] " + prev);
+                Slog.d(TAG_NANS, " [next] " + next);
 
                 if (prev.task.displayId != 0 && prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
                     if (reason.contains("finishActivity")) {
-                        Slog.d(TAG_NANS, "---------Case 1--------");
                         setExternalDisplay(prev.task.taskId, Display.DEFAULT_DISPLAY, 
                                 ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
                     } else {
-                        Slog.d(TAG_NANS, "---------Case 2--------");
                         setExternalDisplay(prev.task.taskId, prev.task.displayId,
                                 ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
                     }
@@ -3205,7 +3211,6 @@ public final class ActivityManagerService extends ActivityManagerNative
                 if (next.task.displayId != 0 
                         && (nextDisplay.mDisplayMode == ActivityDisplay.NANS 
                         || nextDisplay.mDisplayMode == ActivityDisplay.MIRRORED) ) {
-                    Slog.d(TAG_NANS, "---------Case 3--------");
                     setExternalDisplay(next.task.taskId, Display.DEFAULT_DISPLAY, 
                             ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
                 }
@@ -10000,11 +10005,11 @@ public final class ActivityManagerService extends ActivityManagerNative
          * Date: Jul 28, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * NANS debug log.
+         * Print logs for debugging NANS feature.
          */
         if (DEBUG_NANS) {
-            Slog.d(TAG_NANS, "ActivityManagerService::moveTaskToFrontLocked()");
-            Slog.d(TAG_NANS, "taskId=" + taskId);
+            Slog.d(TAG_NANS, "moveTaskToFrontLocked()");
+            Slog.d(TAG_NANS, " [taskId] " + taskId);
         }
         // END
 
@@ -22286,74 +22291,43 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     /**
-     * Date: Jul 20, 2017
+     * Date: Aug 2, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add a function to call the same function of ActivityStackSupervisor.
+     * Add override functions to call the same functions of ActivityStackSupervisor.
      */
     @Override
-    public boolean setExternalDisplay(String packageName, int displayId, int flag)
+    public boolean setExternalDisplay(String packageName, int displayId, int flag) 
             throws RemoteException {
         synchronized (this) {
             return mStackSupervisor.setExternalDisplayLocked(packageName, displayId, flag);
         }
     }
-    // END
-
-    /**
-     * Date: Jul 20, 2017
-     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-     *
-     * Add a function to call the same function of ActivityStackSupervisor.
-     */
+    
     @Override
-    public boolean setExternalDisplay(int taskId, int displayId, int flag)
+    public boolean setExternalDisplay(int taskId, int displayId, int flag) 
             throws RemoteException {
         synchronized (this) {
             return mStackSupervisor.setExternalDisplayLocked(taskId, displayId, flag);
         }
     }
-    // END
-
-    /**
-     * Date: Jul 20, 2017
-     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-     *
-     * Add a function to call the same function of ActivityStackSupervisor
-     */
+    
     @Override
-    public int getTaskIdByDisplayId(int displayId)
-            throws RemoteException {
+    public int getTaskIdByDisplayId(int displayId) {
         synchronized (this) {
             return mStackSupervisor.getTaskIdByDisplayId(displayId);
         }
     }
-    // END
 
-    /**
-     * Date: Jul 20, 2017
-     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-     *
-     * Add a function to call the same function of ActivityStackSupervisor
-     */
     @Override
-    public int getDisplayIdByTaskId(int taskId)
-            throws RemoteException {
+    public int getDisplayIdByTaskId(int taskId) {
         synchronized (this) {
             return mStackSupervisor.getDisplayIdByTaskId(taskId);
         }
     }
-    // END
 
-    /**
-     * Date: Jul 20, 2017
-     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-     *
-     * Return the displayId of current focused stack.
-     */
     @Override
-    public int getDisplayIdOfFocusedStack()
-            throws RemoteException {
+    public int getDisplayIdOfFocusedStack() {
         synchronized (this) {
             final TaskRecord top = getFocusedStack().topTask();
             return top.displayId;

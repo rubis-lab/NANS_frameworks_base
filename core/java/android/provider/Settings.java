@@ -6608,10 +6608,10 @@ public final class Settings {
         public static final String DEVICE_PAIRED = "device_paired";
 
         /**
-         * Date: Jul 21, 2017
+         * Date: Aug 2, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Setting that specifies whether the NANS mode and the swipe gesture control are enabled.
+         * Add settings about NANS feature.
          * @hide
          */
         public static final String NANS_MODE_ENABLED = "nans_mode_enabled";
@@ -6724,7 +6724,7 @@ public final class Settings {
              * Date: Jul 21, 2017
              * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
              *
-             * Setting that specifies whether the NANS mode and the swipe gesture control are enabled.
+             * Add settings about NANS feature.
              */
             NANS_MODE_ENABLED,
             SWIPE_GESTURE_ENABLED,

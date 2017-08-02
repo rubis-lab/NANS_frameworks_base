@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-
-
 package com.android.server.wm;
 
 import static android.app.ActivityManagerInternal.APP_TRANSITION_SAVED_SURFACE;
@@ -106,7 +104,7 @@ import java.util.ArrayList;
  * Date: Jul 21, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * Set WindowSurfacePlacer as public class.
+ * Change access modifier of WindowSurfacePlacer to public.
  */
 // class WindowSurfacePlacer {
 public class WindowSurfacePlacer {
@@ -204,7 +202,7 @@ public class WindowSurfacePlacer {
      * Date: Jul 21, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Change the private function to public function.
+     * Change access modifier of performSurfacePlacement to public.
      */
     // final void performSurfacePlacement() {
     public final void performSurfacePlacement() {

@@ -91,7 +91,7 @@ import static com.android.server.wm.AppTransition.TRANSIT_TASK_TO_FRONT;
  * Date: Jul 26, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * import DEBUG_NANS variable
+ * Add DEBUG_NANS and POSTFIX_NANS variables for NANS feature.
  */
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
 import static com.android.server.am.ActivityManagerDebugConfig.POSTFIX_NANS;
@@ -159,7 +159,7 @@ import java.util.Set;
  * Date: Jul 20, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * Add ActivityDisplay class.
+ * Add ActivityDisplay class for NANS feature.
  */
 import com.android.server.am.ActivityStackSupervisor.ActivityDisplay;
 // END
@@ -191,10 +191,10 @@ final class ActivityStack {
      * Date: Jul 28, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * add static final String TAG_NANS.
+     * Add TAG_NANS combined TAG and POSTFIX_NANS.
      */
     private static final String TAG_NANS = TAG + POSTFIX_NANS;
-
+    //END
     private static final boolean VALIDATE_TOKENS = false;
 
     // Ticks during which we check progress while waiting for an app to launch.
@@ -718,10 +718,6 @@ final class ActivityStack {
      * */
     void moveToFront(String reason, TaskRecord task) {
 
-        // RUBIS ockwon
-        Slog.d(TAG_NANS, "moveToFront(), tr = " + task);
-        // END
-
         if (!isAttached()) {
             return;
         }
@@ -736,11 +732,6 @@ final class ActivityStack {
                 addIndex--;
             }
         }
-
-        // RUBIS ockwon
-        Slog.d(TAG_NANS, " L addIndex = "+addIndex);
-        Slog.d(TAG_NANS, " L isOnHomeDisplay = "+isOnHomeDisplay());
-        // END
 
         mStacks.add(addIndex, this);
 
@@ -1494,6 +1485,7 @@ final class ActivityStack {
 
         updatePrivacyGuardNotificationLocked(next);
         updateProtectedAppNotificationLocked(next);
+        
     }
 
     private void setVisible(ActivityRecord r, boolean visible) {
@@ -1637,19 +1629,6 @@ final class ActivityStack {
      * @param starting The currently starting activity or null if there is none.
      */
     int getStackVisibilityLocked(ActivityRecord starting) {
-
-        /**
-         * Date: Jul 26, 2017
-         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-         *
-         * NANS debug log.
-         */
-        if (DEBUG_NANS) {
-            //Slog.d(TAG_NANS, "ActivityStack::getStackVisibilityLocked()");
-            //Slog.d(TAG_NANS, "  L displayId=" + mActivityContainer.mActivityDisplay.mDisplayId);
-        }
-        // END
-
         if (!isAttached()) {
             return STACK_INVISIBLE;
         }
@@ -1658,25 +1637,16 @@ final class ActivityStack {
          * Date: Jul 26, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * if display mode is NANS, it have to be STACK_VISIBLE.
+         * Make this stack visible if display mode is "ActivityDisplay.NANS".
          * TODO: MIRRORING and BLANK is also 'STACK_VISIBLE'?
          */
         if (mActivityContainer.mActivityDisplay.mDisplayMode == ActivityDisplay.NANS ||
                 mActivityContainer.mActivityDisplay.mDisplayMode == ActivityDisplay.MIRRORING) {
-            //Slog.d(TAG_NANS, "  L return visible because this stack is NANS mode");
             return STACK_VISIBLE;
         }
         // END
 
         if (mStackSupervisor.isFrontStack(this) || mStackSupervisor.isFocusedStack(this)) {
-            /**
-             * Date: Jul 26, 2017
-             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-             *
-             * getStackVisibilityLocked debug log
-             */
-            Slog.d(TAG_NANS, "  L return visible because this stack is front/focus mode");
-            // END
             return STACK_VISIBLE;
         }
 
@@ -2218,10 +2188,6 @@ final class ActivityStack {
     }
 
     private boolean resumeTopActivityInnerLocked(ActivityRecord prev, ActivityOptions options) {
-        // RUBIS ockwon
-        if (prev != null)
-            Slog.d(TAG, "resumeTopActivityInnerLocked(), prev = " + prev);
-        // END
 
         if (DEBUG_LOCKSCREEN) mService.logLockScreen("");
 
@@ -2244,42 +2210,34 @@ final class ActivityStack {
         final ActivityRecord next = topRunningActivityLocked();
 
         /**
-         * Date: Jul 20, 2017
+         * Date: Aug 2, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * if prev.task is not equal to next.stak, set prev.task to NANS mode.
+         * Call setExternalDisplay function depending on each case.
          */
-        Slog.d(TAG_NANS, "ActivityStack::resumeTopActivityInnerLocked(), StackId=" + mStackId);
-        Slog.d(TAG_NANS, "----------------------------------------------------------");
-        if (prev != null) {
-            Slog.d(TAG_NANS, "  prev=" + prev);
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "resumeTopActivityInnerLocked(), mStackId=" + mStackId);
+            if (prev != null) Slog.d(TAG_NANS, " [prev] " + prev);
+            if (next != null) Slog.d(TAG_NANS, " [next] " + next);
         }
-        if (next != null) {
-            Slog.d(TAG_NANS, "  next=" + next);
-        }
-        Slog.d(TAG_NANS, "----------------------------------------------------------");
 
-        /*if (prev != null && next != null && prev.task != next.task && prev.task.displayId != 0) {
-            ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prev.task.displayId);
-            Slog.d(TAG_NANS, "  L prev.displayId=" + prev.task.displayId + ", mDisplayMode=" + ac.mDisplayMode);
-            if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
-                mStackSupervisor.setExternalDisplayLocked(prev.task.taskId, prev.task.displayId);
-            }
-        }*/
-        
         if (prev != null && next != null && prev.task != next.task) {
             if (prev.task.displayId != 0) {
-                ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prev.task.displayId);
-                Slog.d(TAG_NANS, "  L prev.displayId=" + prev.task.displayId + ", mDisplayMode=" + ac.mDisplayMode);
-                if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
-                    mStackSupervisor.setExternalDisplayLocked(prev.task.taskId, prev.task.displayId);
+                ActivityDisplay prevDisplay = mStackSupervisor.getActivityDisplay(prev.task.displayId);
+                if (prevDisplay != null && prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                    try {
+                        mStackSupervisor.setExternalDisplayLocked(prev.task.taskId, prev.task.displayId);
+                    } catch (RemoteException e) {
+                    }
                 }
             }
             if (next.task.displayId != 0) {
-                ActivityDisplay ac = mStackSupervisor.getActivityDisplay(next.task.displayId);
-                Slog.d(TAG_NANS, "  L next.displayId=" + next.task.displayId + ", mDisplayMode=" + ac.mDisplayMode);
-                if (ac != null && ac.mDisplayMode == ActivityDisplay.NANS) {
-                    mStackSupervisor.setExternalDisplayLocked(next.task.taskId, 0);
+                ActivityDisplay nextDisplay = mStackSupervisor.getActivityDisplay(next.task.displayId);
+                if (nextDisplay != null && nextDisplay.mDisplayMode == ActivityDisplay.NANS) {
+                    try {
+                        mStackSupervisor.setExternalDisplayLocked(next.task.taskId, 0);
+                    } catch (RemoteException e) {
+                    }
                 }
             }
         }
@@ -2296,20 +2254,6 @@ final class ActivityStack {
             final String reason = "noMoreActivities";
             final int returnTaskType = prevTask == null || !prevTask.isOverHomeStack()
                     ? HOME_ACTIVITY_TYPE : prevTask.getTaskToReturnTo();
-
-            /**
-             * Date: Jul 20, 2017
-             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-             *
-             * Do nothing for the closed NANS task on resumeTopActivity
-             */
-            if (prevTask != null) {
-                ActivityDisplay ac = mStackSupervisor.getActivityDisplay(prevTask.displayId);
-                if (ac.mDisplayMode == ActivityDisplay.NANS) {
-                    Slog.d(TAG_NANS, "  L closed task was NANS task, so do nothing!");
-                }
-            }
-            // END
 
             if (!mFullscreen && adjustFocusToNextFocusableStackLocked(returnTaskType, reason)) {
                 // Try to move focus to the next visible stack with a running activity if this
@@ -2787,7 +2731,7 @@ final class ActivityStack {
      * Date: Jul 26, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * access modifier change (private ==> public)
+     * Change access modifier of insertTaskAtTop function (private -> public).
      */
     // private void insertTaskAtTop(TaskRecord task, ActivityRecord newActivity) {
     public void insertTaskAtTop(TaskRecord task, ActivityRecord newActivity) {
@@ -3443,19 +3387,18 @@ final class ActivityStack {
          * Date: Jul 20, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
+         * Adjust focused activity launched by an activity on external display.
          */
+        // mService.setFocusedActivityLocked(mStackSupervisor.topRunningActivityLocked(), myReason);
         ActivityRecord top = null;
         ActivityStack nextStack = r.task.stack;
-        if (nextStack.mStackId > 1 && nextStack.mStackId == mStackId) {
+        if (nextStack.mStackId > 1 && nextStack.mStackId == mStackId)
             top = topActivity();
-        } else {
+        else
             top = mStackSupervisor.topRunningActivityLocked();
-        }
 
-        if (top != null) {
+        if (top != null)
             mService.setFocusedActivityLocked(top, myReason);
-        }
-        // mService.setFocusedActivityLocked(mStackSupervisor.topRunningActivityLocked(), myReason);
         // END
     }
 
@@ -4520,42 +4463,30 @@ final class ActivityStack {
 
     final void moveTaskToFrontLocked(TaskRecord tr, boolean noAnimation, ActivityOptions options,
             AppTimeTracker timeTracker, String reason) {
-
-        /**
-         * Date: Jul 20, 2017
-         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-         *
-         * If the prev task moving to bask is on MIRRORED mode, prev task has to be changed to NANS mode, and
-         * if the next task moving to front is on NANS mode, it has to be changed to MIRRORED mode.
-         */
-        Slog.d(TAG_NANS, "ActivityStack::moveTaskToFrontLocked()");
-        Slog.d(TAG_NANS, "  L task=" + tr);
-        Slog.d(TAG_NANS, "  L stackId=" + mStackId);
-        if (reason != null) {
-            Slog.d(TAG_NANS, "  L reason=" + reason);
-        }
-
+        
         ActivityStack lastStack = mStackSupervisor.getLastStack();
         TaskRecord lastTask = lastStack.topTask();
-        Slog.d(TAG_NANS, "  L lastStack=" + lastStack);
-        Slog.d(TAG_NANS, "  L lastTask=" + lastTask);
-        Slog.d(TAG_NANS, "  L lastTask.displayId=" + lastTask.displayId);
-        Slog.d(TAG_NANS, "  L lastTask.isOverHomeStack=" + lastTask.isOverHomeStack());
-        /*
-        if (lastStack != null && lastTask != null && lastTask.displayId != 0) {
-            ActivityDisplay ac = mStackSupervisor.getActivityDisplay(lastTask.displayId);
-            if (ac != null && ac.mDisplayMode == ActivityDisplay.MIRRORED) {
-                mStackSupervisor.setExternalDisplayLocked(lastTask.taskId, lastTask.displayId);
-            }
-        }
 
-        if (tr != null && tr.displayId != 0) {
-            ActivityDisplay ac = mStackSupervisor.getActivityDisplay(tr.displayId);
-            if (ac != null && ac.mDisplayMode == ActivityDisplay.NANS) {
-                mStackSupervisor.setExternalDisplayLocked(tr.taskId, 0);
+        /**
+         * Date: Aug 2, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Print logs for debugging NANS feature.
+         */
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "ActivityStack::moveTaskToFrontLocked(), mStackId = " + mStackId);
+            if (tr != null)
+                Slog.d(TAG_NANS, " [task] " + tr);
+            if (reason != null)
+                Slog.d(TAG_NANS, " [reason] " + reason);
+            if (lastStack != null)
+                Slog.d(TAG_NANS, " [lastStack] " + lastStack);
+            if (lastTask != null) {
+                Slog.d(TAG_NANS, " [lastTask]" + lastTask);
+                Slog.d(TAG_NANS, " [lastTask.displayId] " + lastTask.displayId);
+                Slog.d(TAG_NANS, " [lastTask.isOverHomeStack] " + lastTask.isOverHomeStack());
             }
         }
-        */
         // END
 
         if (DEBUG_SWITCH) Slog.v(TAG_SWITCH, "moveTaskToFront: " + tr);
@@ -5240,14 +5171,16 @@ final class ActivityStack {
     boolean handleAppDiedLocked(ProcessRecord app) {
 
         /**
-         * Date: Jul 20, 2017
+         * Date: Aug 2, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * If the task on NANS mode is died, the activity display has to be changed to BLANK mode.
+         * Change display mode to "ActivityDisplay.BLANK" if the task on this display is died.
          */
         if (mLastPausedActivity != null && mLastPausedActivity.finishing) {
-            Slog.d(TAG_NANS, "ActivityStack::handleAppDiedLocked()");
-            Slog.d(TAG_NANS, "  L mLastPausedActivity=" + mLastPausedActivity);
+            if (DEBUG_NANS) {
+                Slog.d(TAG_NANS, "ActivityStack::handleAppDiedLocked()");
+                Slog.d(TAG_NANS, " [mLastPausedActivity] " + mLastPausedActivity);
+            }
             TaskRecord tr = mLastPausedActivity.task;
             if (tr != null && tr.displayId != 0) {
                 ActivityDisplay ac = mStackSupervisor.getActivityDisplay(tr.displayId);
@@ -5556,9 +5489,6 @@ final class ActivityStack {
      * created on this stack which the activity is added to.
      * */
     void moveActivityToStack(ActivityRecord r) {
-        // RUBIS ockwon
-        Slog.d(TAG_NANS, "moveActivityToStack(), r="+r);
-        // END
 
         final ActivityStack prevStack = r.task.stack;
         if (prevStack.mStackId == mStackId) {
@@ -5598,7 +5528,7 @@ final class ActivityStack {
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Gets the integer array of taskIds.
+     * Get the integer array of taskIds.
      */
     public int[] getTaskIds() {
         int[] taskIds = new int[mTaskHistory.size()];
@@ -5613,7 +5543,7 @@ final class ActivityStack {
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Gets the task history of this activity stack.
+     * Get the task history of this activity stack.
      */
     public ArrayList<TaskRecord> getTaskHistory() {
         return mTaskHistory;

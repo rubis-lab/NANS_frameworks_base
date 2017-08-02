@@ -688,7 +688,7 @@ public interface IActivityManager extends IInterface {
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add NANS interface functions
+     * Add NANS interface functions.
      */
     public boolean setExternalDisplay(String packageName, int displayId, int flag) throws RemoteException;
     public boolean setExternalDisplay(int taskId, int displayId, int flag) throws RemoteException;
@@ -1094,7 +1094,7 @@ public interface IActivityManager extends IInterface {
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add NANS API transaction codes
+     * Add NANS API transaction variable.
      */
     // NANS transactions
     int SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME = IBinder.FIRST_CALL_TRANSACTION + 381;

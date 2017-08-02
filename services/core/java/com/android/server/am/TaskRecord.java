@@ -275,7 +275,7 @@ final class TaskRecord {
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add a display identification
+     * Add a display identification.
      */
     int displayId = 0;
     // END

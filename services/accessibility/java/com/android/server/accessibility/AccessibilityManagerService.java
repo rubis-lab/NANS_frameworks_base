@@ -705,7 +705,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
                  * Date: Jul 21, 2017
                  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
                  *
-                 * Set the temporary state of swipe gesture.
+                 * Set the temporary state of swipe gesture feature.
                  */
                 userState.mIsSwipeGestureEnabled = false;
                 // END
@@ -763,7 +763,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
              * Date: Jul 21, 2017
              * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
              *
-             * Set the temporary state of swipe gesture.
+             * Set the temporary state of swipe gesture feature.
              */
             userState.mIsSwipeGestureEnabled = false;
             // END
@@ -1389,7 +1389,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
              * Date: Jul 21, 2017
              * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
              *
-             * Set the flag for the screen swiper.
+             * Set the flag for swipe gesture feature.
              */
             if (userState.mIsSwipeGestureEnabled) {
                 flags |= AccessibilityInputFilter.FLAG_FEATURE_SCREEN_SWIPER;
@@ -1616,7 +1616,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Read the configuration of swipe gesture.
+         * Read the configuration of swipe gesture feature.
          */
         somethingChanged |= readSwipeGestureEnabledSettingLocked(userState);
         // END
@@ -1710,7 +1710,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
      * Date: Jul 21, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Read the configuration of swipe gesture.
+     * Read the configuration of swipe gesture feature.
      */
     private boolean readSwipeGestureEnabledSettingLocked(UserState userState) {
         final boolean swipeGestureEnabled = Settings.Secure.getIntForUser(
@@ -4304,12 +4304,11 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
         public boolean mIsPerformGesturesEnabled;
         public boolean mIsFilterKeyEventsEnabled;
         public boolean mAccessibilityFocusOnlyInActiveWindow;
-
         /**
          * Date: Jul 10, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Add a variable of swipe gesture.
+         * Add a variable of swipe gesture feature.
          */
         public boolean mIsSwipeGestureEnabled;
         // END
@@ -4378,12 +4377,11 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
             mIsEnhancedWebAccessibilityEnabled = false;
             mIsDisplayMagnificationEnabled = false;
             mIsAutoclickEnabled = false;
-
             /**
              * Date: Jul 21, 2017
              * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
              *
-             * Set the initial value of mIsSwipeGestureEnabled.
+             * Initialize mIsSwipeGestureEnabled variable to false.
              */
             mIsSwipeGestureEnabled = false;
             // END
@@ -4447,7 +4445,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Add a uri variable for the mSwipeGestureEnabled.
+         * Add an uri variable for the mSwipeGestureEnabled.
          */
         private final Uri mSwipeGestureEnabledUri = Settings.Secure.getUriFor(
                 Settings.Secure.SWIPE_GESTURE_ENABLED);
@@ -4485,7 +4483,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
              * Date: Jul 27, 2017
              * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
              *
-             * Register a ContentObserver for Screen Swiper.
+             * Register a ContentObserver for swipe gesture feature.
              */
             contentResolver.registerContentObserver(
                     mSwipeGestureEnabledUri, false, this, UserHandle.USER_ALL);
@@ -4520,7 +4518,7 @@ public class AccessibilityManagerService extends IAccessibilityManager.Stub {
                  * Date: Jul 21, 2017
                  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
                  *
-                 * Read and handle for the changed swipe gesture configuration.
+                 * Read and call handler of swipe gesture feature.
                  */
                 } else if (mSwipeGestureEnabledUri.equals(uri)) {
                     if (readSwipeGestureEnabledSettingLocked(userState)) {

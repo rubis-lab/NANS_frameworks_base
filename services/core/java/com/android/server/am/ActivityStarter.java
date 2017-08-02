@@ -83,7 +83,7 @@ import static com.android.server.am.EventLogTags.AM_NEW_INTENT;
  * Date: Jul 26, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * import DEBUG_NANS variable
+ * Add DEBUG_NANS, POSTFIX_NANS variable for NANS feature.
  */
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
 import static com.android.server.am.ActivityManagerDebugConfig.POSTFIX_NANS;
@@ -149,9 +149,10 @@ class ActivityStarter {
      * Date: Jul 28, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * add static final String TAG_NANS.
+     * Add TAG_NANS combined TAG and POSTFIX_NANS.
      */
     private static final String TAG_NANS = TAG + POSTFIX_NANS;
+    // END
 
     // TODO b/30204367 remove when the platform fully supports ephemeral applications
     private static final boolean USE_DEFAULT_EPHEMERAL_LAUNCHER = false;
@@ -1095,12 +1096,14 @@ class ActivityStarter {
          * Date: Jul 20, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * NANS debug log.
+         * Print log for debugging NANS feature.
          */
-        if (DEBUG_NANS && sourceRecord != null) {
-            Slog.d(TAG_NANS, "ActivityStarter::startActivityUnchecked()");
-            Slog.d(TAG_NANS, "  L sourceRecord=" + sourceRecord.task);
-            Slog.d(TAG_NANS, "  L displayId=" + sourceRecord.task.displayId);
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "startActivityUnchecked()");
+            if(sourceRecord != null && sourceRecord.task != null) {
+                Slog.d(TAG_NANS, " [sourceRecord] " + sourceRecord.task);
+                Slog.d(TAG_NANS, " [displayId] " + sourceRecord.task.displayId);
+            }
         }
         // END
 
@@ -1661,40 +1664,9 @@ class ActivityStarter {
                         // different stack. If we launch on a different stack, we will put the
                         // task on top there.
 
-                        /**
-                         * Date: Jul 21, 2017
-                         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-                         *
-                         * Conditional call of moveTaskToFrontLocked.
-                         */
                         mTargetStack.moveTaskToFrontLocked(
                                 intentActivity.task, mNoAnimation, mOptions,
                                 mStartActivity.appTimeTracker, "bringingFoundTaskToFront");
-                        
-                        /*
-                        Slog.d(TAG_NANS, "ActivityStarter::setTargetStackAndMoveToFrontIfNeeded()");
-                        Slog.d(TAG_NANS, "  L mFocusedStack=" + mSupervisor.mFocusedStack);
-                        Slog.d(TAG_NANS, "  L mFocusedActivity=" + mService.mFocusedActivity);
-                        if (mSourceRecord != null) {
-                            Slog.d(TAG_NANS, "  L mSourceRecord=" + mSourceRecord);
-                        }
-                        if (intentActivity != null) {
-                            Slog.d(TAG_NANS, "  L intentActivity=" + intentActivity);
-                        }
-
-                        ActivityStackSupervisor.ActivityDisplay ac = mSupervisor.getActivityDisplay(mStartActivity.task.displayId);
-                        if (intentActivity.task.displayId == 0 || ac.mDisplayMode != ActivityStackSupervisor.ActivityDisplay.NANS ||
-                                (mSourceRecord != null && intentActivity.task != mSourceRecord.task)) {
-                            mTargetStack.moveTaskToFrontLocked(
-                                    intentActivity.task, mNoAnimation, mOptions,
-                                    mStartActivity.appTimeTracker, "bringingFoundTaskToFront");
-                        }
-
-                        if (intentActivity.task.displayId != 0) {
-                            mTargetStack = intentActivity.task.stack;
-                        }
-                        */
-                        // END
 
                         mMovedToFront = true;
 
@@ -1826,14 +1798,7 @@ class ActivityStarter {
         }
     }
 
-    /**
-     * Date: Jul 28, 2017
-     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-     *
-     * private -> default
-     */
-    // private void resumeTargetStackIfNeeded() {
-    void resumeTargetStackIfNeeded() {
+    private void resumeTargetStackIfNeeded() {
         if (mDoResume) {
             mSupervisor.resumeFocusedStackTopActivityLocked(mTargetStack, null, mOptions);
             if (!mMovedToFront) {

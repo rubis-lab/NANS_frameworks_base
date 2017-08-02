@@ -5247,10 +5247,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private boolean handleLongPressRecents() {
         /**
-         * Date: Jul 28, 2017
+         * Date: Aug 2, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Added a handler for toggling the overlay display device.
+         * Disable toggling split screen mode for toggling overlay display device.
+         */
+        /* 
+        if (mRecents == null || !ActivityManager.supportsMultiWindow()
+                || !getComponent(Divider.class).getView().getSnapAlgorithm()
+                .isSplitScreenFeasible()) {
+            return false;
+        }
+
+        toggleSplitScreenMode(MetricsEvent.ACTION_WINDOW_DOCK_LONGPRESS,
+                MetricsEvent.ACTION_WINDOW_UNDOCK_LONGPRESS);
+        return true;
+        */
+        // END
+        
+        /**
+         * Date: Aug 2, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Toggle overlay display device feature.
          */
         try {
             int enabled = Settings.Secure.getInt(mContext.getContentResolver(),
@@ -5270,17 +5289,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         
         }
         return false;
-        /* 
-        if (mRecents == null || !ActivityManager.supportsMultiWindow()
-                || !getComponent(Divider.class).getView().getSnapAlgorithm()
-                .isSplitScreenFeasible()) {
-            return false;
-        }
-
-        toggleSplitScreenMode(MetricsEvent.ACTION_WINDOW_DOCK_LONGPRESS,
-                MetricsEvent.ACTION_WINDOW_UNDOCK_LONGPRESS);
-        return true;
-        */
         // END
     }
 

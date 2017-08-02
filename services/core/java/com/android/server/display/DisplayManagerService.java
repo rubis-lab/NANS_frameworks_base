@@ -60,7 +60,7 @@ import android.view.WindowManagerInternal;
  * Date: Jul 20, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * Add ActivityInfo package for NANS.
+ * Add ActivityInfo class for NANS feature.
  */
 import android.content.pm.ActivityInfo;
 // END
@@ -335,7 +335,7 @@ public final class DisplayManagerService extends SystemService {
                  * Date: Jul 21, 2017
                  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
                  *
-                 * If the display is not the default display, get and overwrite the default display info.
+                 * Get and Overwrite the default DisplayInfo if the display is not the default display.
                  */
                 if (displayId != Display.DEFAULT_DISPLAY) {
                     info = mLogicalDisplays.get(Display.DEFAULT_DISPLAY).getDisplayInfoLocked();
@@ -717,7 +717,7 @@ public final class DisplayManagerService extends SystemService {
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * If the external display is connected, set the rotation to landscape.
+         * Set the rotation to landscape if the external display is connected.
          */
         if(mDisplayDevices.size() > 1 && mWindowManagerInternal != null) {
             mWindowManagerInternal.setForcedRotation(Surface.ROTATION_90);
@@ -797,12 +797,8 @@ public final class DisplayManagerService extends SystemService {
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * If there is no connected external displays, set the rotation to default value.
+         * Set the rotation to default value if there is no connected external display.
          */
-        Slog.d(TAG, "handleDisplayDevice::Removed()");
-        Slog.d(TAG, "  L device=" + device);
-        Slog.d(TAG, "  L layerStack=" + device.getLayerStack());
-        Slog.d(TAG, "  L TODO: migrate apps to default display");
         if(mDisplayDevices.size() == 1 && mWindowManagerInternal != null) {
             mWindowManagerInternal.setForcedRotation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
@@ -1008,8 +1004,8 @@ public final class DisplayManagerService extends SystemService {
                  * Date: Jul 21, 2017
                  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
                  *
-                 * Even if there is no content to display on the display device,
-                 * display device will not mirror the default display.
+                 * Make display device not to mirror the default display, 
+                 * even if there is no content to display on the display device.
                  */
                 // display = null;
                 // END
@@ -1176,12 +1172,8 @@ public final class DisplayManagerService extends SystemService {
      * @return void
      */
     private void setDisplayLayerStackInternal(int displayId, int layerStack) {
-        Slog.d(TAG, "DisplayManagerService:: setDisplayLayerStackInternal()");
-        Slog.d(TAG, "  L displayId=" + displayId);
-        Slog.d(TAG, "  L layerStack=" + layerStack);
         LogicalDisplay logicalDisplay = mLogicalDisplays.get(displayId);
         if (logicalDisplay != null) {
-            Slog.i(TAG, "  logicalDisplay=" + logicalDisplay.getDisplayInfoLocked());
             logicalDisplay.setDisplayLayerStack(layerStack);
             configureDisplayInTransactionLocked(logicalDisplay.getPrimaryDisplayDeviceLocked());
         }
@@ -1603,7 +1595,7 @@ public final class DisplayManagerService extends SystemService {
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Binder call of setDisplayLayerStack.
+         * Call binder call of setDisplayLayerStack.
          *
          * @param displayId, layerStack
          * @return void

@@ -43,13 +43,11 @@ import android.widget.Toast;
  * Date: Jul 21, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * Add android packages for NANS features.
+ * Add Android packages for NANS feature.
  */
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.hardware.display.DisplayManager;
-import android.os.RemoteException;
-import android.util.Slog;
 import android.view.Display;
 // END
 
@@ -176,6 +174,16 @@ public class TaskView extends FixedSizeFrameLayout implements Task.TaskCallbacks
 
     private Toast mDisabledAppToast;
 
+    /**
+     * Date: Aug 2, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add variabls for diaglog which shows list of external display devices.
+     */
+    private int mIndex;
+    private Display[] mDisplays;
+    // END
+
     public TaskView(Context context) {
         this(context, null);
     }
@@ -198,6 +206,15 @@ public class TaskView extends FixedSizeFrameLayout implements Task.TaskCallbacks
         }
         setOutlineProvider(mViewBounds);
         setOnLongClickListener(this);
+    
+        /**
+         * Date: Aug 2, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Initialize mIndex variable to 0.
+         */
+        mIndex = 0;
+        // END
     }
 
     /** Set callback */
@@ -661,22 +678,21 @@ public class TaskView extends FixedSizeFrameLayout implements Task.TaskCallbacks
      *
      * Add the event handler for the external display button.
      */
-    private int index;
-    private Display[] displays;
     void setExternalDisplay() {
-        index = 0;
         DisplayManager dm = (DisplayManager)mContext.getSystemService(Context.DISPLAY_SERVICE);
-        displays = dm.getDisplays();
-        final String[] items = new String[displays.length];
+        mDisplays = dm.getDisplays();
+        
+        final String[] items = new String[mDisplays.length];
         for (int i = 0; i < items.length; ++i) {
-            items[i] = displays[i].getName();
+            items[i] = mDisplays[i].getName();
         }
+        
         AlertDialog.Builder ab = new AlertDialog.Builder(mContext);
         ab.setTitle("Choose Target Display Device");
         ab.setSingleChoiceItems(items, 0,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        index = whichButton;
+                        mIndex = whichButton;
                     }
         }).setPositiveButton("OK",
             new DialogInterface.OnClickListener() {
@@ -684,7 +700,7 @@ public class TaskView extends FixedSizeFrameLayout implements Task.TaskCallbacks
                     final TaskView tv = TaskView.this;
                     tv.onClick(mHeaderView);
                     ActivityManager am = (ActivityManager)mContext.getSystemService(Context.ACTIVITY_SERVICE);
-                    am.setExternalDisplay(tv.getTask().key.id, displays[index]);
+                    am.setExternalDisplay(tv.getTask().key.id, mDisplays[mIndex]);
                     dialog.dismiss();
                 }
         }).setNegativeButton("Cancel",

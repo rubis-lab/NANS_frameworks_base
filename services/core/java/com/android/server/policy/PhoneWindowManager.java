@@ -154,7 +154,7 @@ import android.widget.Toast;
  * Date: Jul 21, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
- * Add DisplayManager package for NANS
+ * Add DisplayManager class for NANS feature.
  */
 import android.hardware.display.DisplayManager;
 // END
@@ -537,7 +537,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
      * Date: Jul 21, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Define a variable for forced rotation configuration.
+     * Initialize mForcedRotation to unspecified value.
      */
     int mForcedRotation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
     // END
@@ -2383,7 +2383,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Init the mForcedRotation.
+         * Initialize the mForcedRotation to "ROTATION_90".
          */
         if (display.getDisplayId() != Display.DEFAULT_DISPLAY) {
             mForcedRotation = Surface.ROTATION_90;
@@ -2479,7 +2479,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
          * Date: Jul 21, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Init the mForcedRotation
+         * Initialize the mForcedRotation to unspecified value.
          */
         if (mForcedRotation < 0) {
             mForcedRotation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
@@ -6328,13 +6328,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
      * Date: Jul 21, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Set the forced rotation.
+     * Set the forced rotation for NANS feature.
+     * TODO: Can we use different roration setting for each display?
      */
     @Override
     public void setForcedRotation(int rotation) {
-        Slog.d(TAG, "PhoneWindowManager::setForcedRotation()");
-        Slog.d(TAG, "  L mForcedRotation=" + mForcedRotation);
-        Slog.d(TAG, "  L rotation=" + rotation);
         if (mForcedRotation != rotation) {
             mForcedRotation = rotation;
             updateRotation(false);
@@ -7829,11 +7827,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
              * Date: Jul 21, 2017
              * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
              *
-             * mForcedRotation has the highest priority
-             * and modify next line if -> else if
+             * Check mForcedRotation first.
              */
-            Slog.d(TAG, "PhoneWindowManager::rotationForOrientationLw()");
-            Slog.d(TAG, "  L mForcedRotation=" + mForcedRotation);
             if (mForcedRotation >= 0) {
                 preferredRotation = mForcedRotation;
                 return Surface.ROTATION_90;

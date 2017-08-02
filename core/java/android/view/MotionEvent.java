@@ -3153,10 +3153,10 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     }
 
     /**
-     * Date: Jul 21, 2017
+     * Date: Aug 2, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * get the name of action.
+     * Return the name of the motion's action.
      */
     public String getActionString() {
         return actionToString(getAction());

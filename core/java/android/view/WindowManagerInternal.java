@@ -293,7 +293,7 @@ public abstract class WindowManagerInternal {
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add an interface function of setForcedRotation
+     * Add an interface function of setForcedRotation.
      */
     public abstract void setForcedRotation(int rotation);
     // END

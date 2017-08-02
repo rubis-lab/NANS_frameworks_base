@@ -96,9 +96,10 @@ class ActivityManagerDebugConfig {
      * Date: Jul 26, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * add static final boolean variable DEBUG_NANS
+     * Add DEBUG_NANS variable for debugging NANS feature.
      */
-    static final boolean DEBUG_NANS = DEBUG_ALL || true;
+    static final boolean DEBUG_NANS = DEBUG_ALL || false;
+    // END
 
     static final String POSTFIX_ADD_REMOVE = (APPEND_CATEGORY_NAME) ? "_AddRemove" : "";
     static final String POSTFIX_APP = (APPEND_CATEGORY_NAME) ? "_App" : "";
@@ -146,7 +147,8 @@ class ActivityManagerDebugConfig {
      * Date: Jul 28, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
+     * Add POSTFIX_NANS variable for debugging NANS feature.
      */
     static final String POSTFIX_NANS = (APPEND_CATEGORY_NAME) ? "_NANS" : "";
-
+    // END
 }

@@ -3030,7 +3030,7 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
          * Date: Jul 20, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Add NANS transaction handler SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME case
+         * Add NANS transaction handler SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME case.
          */
         case SET_EXTERNAL_DISPLAY_BY_PACKAGE_NAME: {
             data.enforceInterface(IActivityManager.descriptor);
@@ -3048,7 +3048,7 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
          * Date: Jul 20, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Add NANS transaction handler SET_EXTERNAL_DISPLAY_BY_TASK_ID case
+         * Add NANS transaction handler SET_EXTERNAL_DISPLAY_BY_TASK_ID case.
          */
         case SET_EXTERNAL_DISPLAY_BY_TASK_ID: {
             data.enforceInterface(IActivityManager.descriptor);
@@ -3066,7 +3066,7 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
          * Date: Jul 20, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Add NANS transaction handler GET_TASK_ID_BY_DISPLAY_ID case
+         * Add NANS transaction handler GET_TASK_ID_BY_DISPLAY_ID case.
          */
         case GET_TASK_ID_BY_DISPLAY_ID: {
             data.enforceInterface(IActivityManager.descriptor);
@@ -3082,7 +3082,7 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
          * Date: Jul 20, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Add NANS transaction handler GET_DISPLAY_ID_BY_TASK_ID case
+         * Add NANS transaction handler GET_DISPLAY_ID_BY_TASK_ID case.
          */
         case GET_DISPLAY_ID_BY_TASK_ID: {
             data.enforceInterface(IActivityManager.descriptor);
@@ -3098,7 +3098,7 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
          * Date: Jul 20, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Add NANS transaction handler GET_DISPLAY_ID_OF_FOCUSED_STACK case
+         * Add NANS transaction handler GET_DISPLAY_ID_OF_FOCUSED_STACK case.
          */
         case GET_DISPLAY_ID_OF_FOCUSED_STACK: {
             data.enforceInterface(IActivityManager.descriptor);
@@ -7202,7 +7202,7 @@ class ActivityManagerProxy implements IActivityManager
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add NANS transaction handler set external display by package name
+     * Add NANS transaction handler set external display by package name.
      */
     @Override
     public boolean setExternalDisplay(String packageName, int displayId, int flag)
@@ -7226,7 +7226,7 @@ class ActivityManagerProxy implements IActivityManager
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add NANS transaction handler set external display by task id
+     * Add NANS transaction handler set external display by task id.
      */
     @Override
     public boolean setExternalDisplay(int taskId, int displayId, int flag)
@@ -7250,7 +7250,7 @@ class ActivityManagerProxy implements IActivityManager
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add NANS transaction handler get task id by display id
+     * Add NANS transaction handler get task id by display id.
      */
     @Override
     public int getTaskIdByDisplayId(int displayId)
@@ -7269,10 +7269,10 @@ class ActivityManagerProxy implements IActivityManager
     // END
 
     /**
-     * Data: Jul 20, 2017
+     * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add NANS transaction handler get display id by task id
+     * Add NANS transaction handler get display id by task id.
      */
     @Override
     public int getDisplayIdByTaskId(int taskId)
@@ -7294,7 +7294,7 @@ class ActivityManagerProxy implements IActivityManager
      * Date: Jul 20, 2017
      * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
      *
-     * Add NANS transaction handler get display id of focused stack
+     * Add NANS transaction handler get display id of focused stack.
      */
     @Override
     public int getDisplayIdOfFocusedStack()
