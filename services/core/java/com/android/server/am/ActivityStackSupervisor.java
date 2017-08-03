@@ -1873,7 +1873,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         // END
 
         if (targetStack != null && isFocusedStack(targetStack)) {
-            if(target != null)
+            if (target != null)
             return targetStack.resumeTopActivityUncheckedLocked(target, targetOptions);
         }
         final ActivityRecord r = mFocusedStack.topRunningActivityLocked();
@@ -4023,7 +4023,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     ActivityDisplay mirroredDisplay = mActivityDisplays.get(mirroredDisplayId);
                     if (mirroredDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
                         Slog.d(TAG_NANS, "  Display " + mirroredDisplayId + ": MIRRORED --> NANS");
-                        ActivityStack mirroredStack = mirroredDisplay.mStacks.get(mirroredDisplay.mStacks.size() - 1);
+                        ActivityStack mirroredStack = 
+                                mirroredDisplay.mStacks.get(mirroredDisplay.mStacks.size() - 1);
                         mirroredDisplay.mDisplayMode = ActivityDisplay.NANS;
                         setDisplayLayerStack(mirroredDisplayId, mirroredDisplayId);
                         moveTaskToOtherStackLocked(mirroredTask, mirroredStack, mirroredDisplayId);

@@ -2484,6 +2484,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (mForcedRotation < 0) {
             mForcedRotation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
         }
+        // END
     }
 
     /**

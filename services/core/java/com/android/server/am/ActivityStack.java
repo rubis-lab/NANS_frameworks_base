@@ -4463,9 +4463,6 @@ final class ActivityStack {
 
     final void moveTaskToFrontLocked(TaskRecord tr, boolean noAnimation, ActivityOptions options,
             AppTimeTracker timeTracker, String reason) {
-        
-        ActivityStack lastStack = mStackSupervisor.getLastStack();
-        TaskRecord lastTask = lastStack.topTask();
 
         /**
          * Date: Aug 2, 2017
@@ -4479,8 +4476,10 @@ final class ActivityStack {
                 Slog.d(TAG_NANS, " [task] " + tr);
             if (reason != null)
                 Slog.d(TAG_NANS, " [reason] " + reason);
+            ActivityStack lastStack = mStackSupervisor.getLastStack();
             if (lastStack != null)
                 Slog.d(TAG_NANS, " [lastStack] " + lastStack);
+            TaskRecord lastTask = lastStack.topTask();
             if (lastTask != null) {
                 Slog.d(TAG_NANS, " [lastTask]" + lastTask);
                 Slog.d(TAG_NANS, " [lastTask.displayId] " + lastTask.displayId);

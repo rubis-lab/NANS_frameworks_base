@@ -3812,7 +3812,7 @@ public class ActivityManager {
      *
      * Set the external display, then stay here.
      */
-    public static final int SET_EXTERNAL_DISPLAY_AND_STAY = 0x00000001;
+    public static final int SET_EXTERNAL_DISPLAY_AND_STAY = 0x00000000;
     // END
 
     /**
@@ -3821,7 +3821,7 @@ public class ActivityManager {
      *
      * Set the external display, then start the launcher activity.
      */
-    public static final int SET_EXTERNAL_DISPLAY_AND_GO_HOME = 0x00000002;
+    public static final int SET_EXTERNAL_DISPLAY_AND_GO_HOME = 0x00000001;
     // END
 
     /**

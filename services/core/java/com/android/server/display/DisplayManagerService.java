@@ -723,7 +723,6 @@ public final class DisplayManagerService extends SystemService {
             mWindowManagerInternal.setForcedRotation(Surface.ROTATION_90);
         }
         // END
-
     }
 
     private void handleDisplayDeviceAddedLocked(DisplayDevice device) {

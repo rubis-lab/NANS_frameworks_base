@@ -824,12 +824,9 @@ public class TaskViewHeader extends FrameLayout
          *
          * Show or hide the external display button depending on NANS_MODE_ENABLED setting.
          */
-        int value = Settings.Secure.getInt(mContext.getContentResolver(), NANS_MODE_ENABLED, 0);
-        if (value == 1) {
-            mExternalDisplayButton.setVisibility(View.INVISIBLE);
-            mExternalDisplayButton.setAlpha(0f);
-            mExternalDisplayButton.setClickable(false);
-        }
+        mExternalDisplayButton.setVisibility(View.INVISIBLE);
+        mExternalDisplayButton.setAlpha(0f);
+        mExternalDisplayButton.setClickable(false);
         // END
 
         if (mMoveTaskButton != null) {

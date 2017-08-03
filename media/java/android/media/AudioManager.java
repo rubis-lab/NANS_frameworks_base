@@ -3742,6 +3742,7 @@ public class AudioManager {
     public int getForceUse(int usage) {
         return AudioSystem.getForceUse(usage);
     }
+    // END
 
     /**
      * Listener registered by client to be notified upon new audio port connections,
