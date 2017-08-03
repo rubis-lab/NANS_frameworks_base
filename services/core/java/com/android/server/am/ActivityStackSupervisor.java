@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,6 +95,15 @@ import com.android.server.LocalServices;
 import com.android.server.am.ActivityStack.ActivityState;
 import com.android.server.wm.WindowManagerService;
 
+/**
+ * Date: Jul 20, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add WindowSurfacePlacer class for NANS feature.
+ */
+import com.android.server.wm.WindowSurfacePlacer;
+// END
+
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -177,6 +187,16 @@ import static com.android.server.am.TaskRecord.LOCK_TASK_AUTH_PINNABLE;
 import static com.android.server.am.TaskRecord.LOCK_TASK_AUTH_WHITELISTED;
 import static com.android.server.wm.AppTransition.TRANSIT_DOCK_TASK_FROM_RECENTS;
 
+/**
+ * Date: Jul 26, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add DEBUG_NANS and POSTFIX_NANS variables for NANS feature.
+ */
+import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
+import static com.android.server.am.ActivityManagerDebugConfig.POSTFIX_NANS;
+// END
+
 public final class ActivityStackSupervisor implements DisplayListener {
     private static final String TAG = TAG_WITH_CLASS_NAME ? "ActivityStackSupervisor" : TAG_AM;
     private static final String TAG_CONTAINERS = TAG + POSTFIX_CONTAINERS;
@@ -190,6 +210,14 @@ public final class ActivityStackSupervisor implements DisplayListener {
     private static final String TAG_SWITCH = TAG + POSTFIX_SWITCH;
     static final String TAG_TASKS = TAG + POSTFIX_TASKS;
     private static final String TAG_VISIBLE_BEHIND = TAG + POSTFIX_VISIBLE_BEHIND;
+    /**
+     * Date: Jul 28, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add TAG_NANS combined TAG and POSTFIX_NANS.
+     */
+    private static final String TAG_NANS = TAG + POSTFIX_NANS;
+    // END
 
     /** How long we wait until giving up on the last activity telling us it is idle. */
     static final int IDLE_TIMEOUT = 10 * 1000;
@@ -1825,10 +1853,43 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
     boolean resumeFocusedStackTopActivityLocked(
             ActivityStack targetStack, ActivityRecord target, ActivityOptions targetOptions) {
+
+        /**
+         * Date: 2 Aug, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Print logs for debugging NANS feature.
+         */
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "ActivityStackSupervisor::resumeFocusedStackTopActivityLocked()");
+            if (targetStack != null) Slog.d(TAG_NANS, " [targetStack] " + targetStack);
+            if (target != null) Slog.d(TAG_NANS, " [target] " + target);
+        }
+        // END
+
         if (targetStack != null && isFocusedStack(targetStack)) {
+            if (target != null)
             return targetStack.resumeTopActivityUncheckedLocked(target, targetOptions);
         }
         final ActivityRecord r = mFocusedStack.topRunningActivityLocked();
+
+        /**
+         * Date: 2 Aug, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Force resume the top activity of this stack if this display was in "ActivityDisplay.MIRRORED" mode.
+         */
+        if (r != null && r.task.displayId != 0 &&
+                getActivityDisplay(r.task.displayId).mDisplayMode == ActivityDisplay.MIRRORED) {
+            if (DEBUG_NANS) {
+                Slog.d(TAG_NANS, " [focusedStack.topActivity] " + r);
+                Slog.d(TAG_NANS, " [focuesdStack.topActivity.state] " + r.state);
+            }
+            mFocusedStack.resumeTopActivityUncheckedLocked(null, null);
+            return false;
+        }
+        // END
+
         if (r == null || r.state != RESUMED) {
             mFocusedStack.resumeTopActivityUncheckedLocked(null, null);
         }
@@ -3484,7 +3545,17 @@ public final class ActivityStackSupervisor implements DisplayListener {
             if (activityDisplay != null) {
                 ArrayList<ActivityStack> stacks = activityDisplay.mStacks;
                 for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
-                    stacks.get(stackNdx).mActivityContainer.detachLocked();
+                    /**
+                     * Date: Aug 2, 2017
+                     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+                     *
+                     * Delete the ActivityContainer when this display has been disconnected.
+                     */
+                    // stacks.get(stackNdx).mActivityContainer.detachLocked();
+                    ActivityContainer ac = stacks.get(stackNdx).mActivityContainer;
+                    ac.detachLocked();
+                    deleteActivityContainer(ac);
+                    // END
                 }
                 mActivityDisplays.remove(displayId);
             }
@@ -3506,7 +3577,17 @@ public final class ActivityStackSupervisor implements DisplayListener {
         final ActivityDisplay display = mActivityDisplays.get(Display.DEFAULT_DISPLAY);
         StackInfo info = new StackInfo();
         mWindowManager.getStackBounds(stack.mStackId, info.bounds);
-        info.displayId = Display.DEFAULT_DISPLAY;
+
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Initialize displayId variable as the real displayId.
+         */
+        info.displayId = stack.mDisplayId;
+        // info.displayId = Display.DEFAULT_DISPLAY;
+        // END
+
         info.stackId = stack.mStackId;
         info.userId = stack.mCurrentUser;
         info.visible = stack.getStackVisibilityLocked(null) == STACK_VISIBLE;
@@ -3830,6 +3911,476 @@ public final class ActivityStackSupervisor implements DisplayListener {
             mService.mActivityStarter.showConfirmDeviceCredential(top.userId);
         }
     }
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the display of certain package.
+     *
+     * @param packageName, displayId
+     * @return boolean
+     */
+    public boolean setExternalDisplayLocked(String packageName, int displayId, int flag)
+            throws RemoteException {
+        int taskId = getTaskIdByPackageName(packageName);
+        return setExternalDisplayLocked(taskId, displayId, flag);
+    }
+    // END
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the display of certain task.
+     *
+     * @param taskId, displayId
+     * @return boolean
+     */
+    public boolean setExternalDisplayLocked(int taskId, int displayId)
+            throws RemoteException {
+        return setExternalDisplayLocked(taskId, displayId, ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the display of certain task.
+     *
+     * @param taskId, displayId, flag
+     * @return boolean
+     */
+    public boolean setExternalDisplayLocked (int taskId, int displayId, int flag)
+            throws RemoteException {
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "ActivityStackSupervisor::setExternalDisplayLocked()");
+            Slog.d(TAG_NANS, " [displayId] " + displayId);
+        }
+
+        final TaskRecord task = anyTaskForIdLocked(taskId);
+        if (task == null) {
+            throw new RemoteException("There is no task [taskId = " + taskId + "].");
+        }
+
+        if (!task.isApplicationTask() && (task.isOverHomeStack() || task.isHomeTask())) {
+            throw new RemoteException("It's home task.");
+        }
+
+        ActivityDisplay prevDisplay = getActivityDisplay(task.displayId);
+        ActivityDisplay nextDisplay = getActivityDisplay(displayId);
+        if (prevDisplay == null) {
+            prevDisplay = mActivityDisplays.get(0);
+        }
+
+        if (nextDisplay == null) {
+            throw new RemoteException("ActivityDisplay[displayId = " + displayId + "] does not exist.");
+        }
+
+        ArrayList<ActivityStack> stacks = nextDisplay.mStacks;
+        int topNdx = stacks.size() - 1;
+        if (topNdx < 0) {
+            throw new RemoteException("mStacks in ActivityDisplay[displayId = " + displayId + "] does not exist.");
+        }
+
+        ActivityStack prevStack = task.stack;
+        ActivityStack nextStack = stacks.get(topNdx);
+        if (nextStack.isHomeStack()) {
+            nextStack = stacks.get(topNdx - 1);
+        }
+
+        if (prevStack == null || nextStack == null) {
+            throw new RemoteException("ActivityStack is null.");
+        }
+        final int prevDisplayId = task.displayId;
+
+        if (displayId == 0) {
+            if (prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                Slog.d(TAG_NANS, "1.Display " + displayId + ": MIRRORED --> BLANK");
+                task.displayId = 0;
+                prevDisplay.mDisplayMode = ActivityDisplay.BLANK;
+                setDisplayLayerStack(prevDisplayId, prevDisplayId);
+                return true;
+            } else if (prevDisplay.mDisplayMode == ActivityDisplay.NANS) {
+                Slog.d(TAG_NANS, "2.Display " + prevDisplayId + ": NANS --> MIRRORING");
+                prevDisplay.mDisplayMode = ActivityDisplay.MIRRORING;
+
+                // Current mirrored task has to be NANS task
+                TaskRecord mirroredTask = anyTaskForIdLocked(getTaskIdByDisplayId(0));
+                int mirroredDisplayId = mirroredTask.displayId;
+                if (mirroredDisplayId != 0) {
+                    ActivityDisplay mirroredDisplay = mActivityDisplays.get(mirroredDisplayId);
+                    if (mirroredDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                        Slog.d(TAG_NANS, "  Display " + mirroredDisplayId + ": MIRRORED --> NANS");
+                        ActivityStack mirroredStack = mirroredDisplay.mStacks.get(mirroredDisplay.mStacks.size() - 1);
+                        mirroredDisplay.mDisplayMode = ActivityDisplay.NANS;
+                        setDisplayLayerStack(mirroredDisplayId, mirroredDisplayId);
+                        moveTaskToOtherStackLocked(mirroredTask, mirroredStack, mirroredDisplayId);
+                        if (isWifiDisplay(mirroredDisplayId)) {
+                            // TODO: input manager will be implemented
+                        }
+                    }
+                }
+
+                setDisplayLayerStack(prevDisplayId, 0);
+                moveTaskToOtherStackLocked(task, nextStack, 0);
+                Slog.d(TAG_NANS, "  MIRRORING --> MIRRORED");
+                prevDisplay.mDisplayMode = ActivityDisplay.MIRRORED;
+
+                if (isWifiDisplay(prevDisplayId)) {
+                    // TODO: input manager will be implemented
+                }
+                return true;
+            }
+        } else {
+            if (nextDisplay.mDisplayMode == ActivityDisplay.BLANK) {
+                Slog.d(TAG_NANS, "3.Display " + displayId + ": BLANK --> MIRRORED");
+                // Current mirrored display has to be blank
+                if (prevDisplayId != 0 && prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                    Slog.d(TAG_NANS, "  Display " + prevDisplayId + ": MIRRORED --> BLANK");
+                    prevDisplay.mDisplayMode = ActivityDisplay.BLANK;
+                    setDisplayLayerStack(prevDisplayId, prevDisplayId);
+                }
+
+                task.displayId = displayId;
+                nextDisplay.mDisplayMode = ActivityDisplay.MIRRORED;
+                setDisplayLayerStack(displayId, 0);
+                return true;
+            } else if (nextDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                if (prevDisplayId == nextDisplay.mDisplayId) {
+                    Slog.d(TAG_NANS, "4.Display " + displayId + ": MIRRORED --> NANS");
+                    task.displayId = displayId;
+                    nextDisplay.mDisplayMode = ActivityDisplay.NANS;
+                    setDisplayLayerStack(prevDisplayId, prevDisplayId);
+                    moveTaskToOtherStackLocked(task, nextStack, displayId);
+
+                    if (flag == ActivityManager.SET_EXTERNAL_DISPLAY_AND_GO_HOME) {
+                        resumeHomeStackTask(HOME_ACTIVITY_TYPE, prevStack.topActivity(),
+                                "setExternalDisplay by NANS");
+                    }
+
+                    if (isWifiDisplay(displayId)) {
+                        // TODO: input manager will be implemented
+                    }
+                    return true;
+                }
+            } else if (nextDisplay.mDisplayMode == ActivityDisplay.NANS) {
+                Slog.d(TAG_NANS, "5.Display " + prevDisplayId + ": NANS --> MIRRORED by other task");
+                TaskRecord nansTask = anyTaskForIdLocked(getTaskIdByDisplayId(displayId));
+
+                if (nansTask == null) {
+                    Slog.d(TAG_NANS, "  There is no running task on Display " + displayId + ".");
+                    setDisplayLayerStack(displayId, displayId);
+                    nextDisplay.mDisplayMode = ActivityDisplay.BLANK;
+                    return setExternalDisplayLocked(task.taskId, displayId);
+                }
+
+                if (prevDisplayId != 0 && prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                    Slog.d(TAG_NANS, "  Display " + prevDisplayId + ": MIRRORED --> BLANK");
+                    prevDisplay.mDisplayMode = ActivityDisplay.BLANK;
+                    setDisplayLayerStack(prevDisplayId, prevDisplayId);
+                }
+
+                nansTask.displayId = 0;
+                moveTaskToOtherStackLocked(nansTask, prevStack, 0);
+
+                task.displayId = displayId;
+                nextDisplay.mDisplayMode = ActivityDisplay.MIRRORED;
+                setDisplayLayerStack(displayId, 0);
+                moveTaskToOtherStackInnerLocked(task, prevStack);
+                return true;
+            }
+        }
+        throw new RemoteException("NOTHING HAPPENED.");
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Move the task to target stack.
+     *
+     * @param task, targetStack, displayId
+     * @return void
+     */
+    private void moveTaskToOtherStackLocked(TaskRecord task, ActivityStack targetStack, int displayId)
+            throws RemoteException {
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "moveTaskToOtherStackLocked()");
+            if (task != null) Slog.d(TAG_NANS, " [task] " + task);
+            Slog.d(TAG_NANS, " [target-displayId] " + displayId);
+        }
+
+        final ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
+        if (activityDisplay == null) {
+            throw new RemoteException("ActivityDisplay (displayId = " + displayId + ") does not exist.");
+        }
+
+        synchronized (mService) {
+            for (int i = task.mActivities.size() - 1; i >= 0; --i) {
+                ActivityRecord r = task.mActivities.get(i);
+                setLayerStackLocked(r, displayId);
+            }
+
+            // TODO: below two function is core part of NANS framework.
+            // moveTaskToOtherStackInnerLocked(task, targetStack);
+            mWindowManager.moveTaskToOtherStack(task.taskId, targetStack.mStackId);
+            moveTaskToOtherStackInnerLocked(task, targetStack);
+        }
+
+        activityDisplay.mDisplay.getDisplayInfo(activityDisplay.mDisplayInfo);
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, " [x] " + activityDisplay.mDisplayInfo.appWidth);
+            Slog.d(TAG_NANS, " [y] " + activityDisplay.mDisplayInfo.appHeight);
+        }
+        if (displayId != 0) {
+            resizeStackLocked(targetStack.mStackId, null, null, null, PRESERVE_WINDOWS,
+                    true /* allowResizeInDockedMode */, DEFER_RESUME);
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set layer stack of activity record.
+     *
+     * @param r, displayId
+     * @return void
+     */
+    private void setLayerStackLocked(ActivityRecord r, int displayId) {
+        try {
+            if (r != null)
+                mWindowManager.setLayerStack(r.appToken, displayId);
+        } catch (Exception e) {
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Move the task to target stack.
+     * @param task, targetStack
+     * @return void
+     */
+    private void moveTaskToOtherStackInnerLocked(TaskRecord task, ActivityStack targetStack) {
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "moveTaskToOtherStackInnerLocked()");
+            Slog.d(TAG_NANS, " [task] " + task);
+        }
+
+        // Remove Task
+        removeLockedTaskLocked(task);
+        ActivityStack prevStack = task.stack;
+        final ActivityRecord r = prevStack.mResumedActivity;
+        if (r != null && r.task == task) {
+            prevStack.mResumedActivity = null;
+        }
+
+        ArrayList<TaskRecord> taskHistory = prevStack.getTaskHistory();
+        final int taskNdx = taskHistory.indexOf(task);
+        final int topTaskNdx = taskHistory.size() - 1;
+        if (task.isOverHomeStack() && taskNdx < topTaskNdx) {
+            final TaskRecord nextTask = taskHistory.get(taskNdx + 1);
+            if (!nextTask.isOverHomeStack()) {
+                nextTask.setTaskToReturnTo(HOME_ACTIVITY_TYPE);
+            }
+        }
+        taskHistory.remove(task);
+
+        prevStack.updateTaskMovement(task, true);
+        if (task.mActivities.isEmpty()) {
+            final boolean isVoiceSession = task.voiceSession != null;
+            if (isVoiceSession) {
+                try {
+                    task.voiceSession.taskFinished(task.intent, task.taskId);
+                } catch (RemoteException e) {
+                }
+            }
+            if (task.autoRemoveFromRecents() || isVoiceSession) {
+                // Task creator asked to remove this when done, or this task was a voice
+                // interaction, so it should not remain on the recent tasks list.
+                mService.mRecentTasks.remove(task);
+                task.removedFromRecents();
+            }
+        }
+
+        if (taskHistory.isEmpty()) {
+            if (prevStack.isOnHomeDisplay() && !prevStack.isHomeStack()) {
+                moveHomeStackToFront("moveTaskToOtherStackInnerLocked");
+            }
+            if (prevStack.mStacks != null) {
+                prevStack.mStacks.remove(prevStack);
+                prevStack.mStacks.add(0, prevStack);
+            }
+            prevStack.mActivityContainer.onTaskListEmptyLocked();
+        }
+
+        // Add Task
+        task.stack = targetStack;
+        targetStack.insertTaskAtTop(task, null);
+        if (task.voiceSession != null) {
+            try {
+                task.voiceSession.taskStarted(task.intent, task.taskId);
+            } catch (RemoteException e) {
+            }
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Get the taskId of task which this display is showing.
+     *
+     * @param displayId
+     * @return int
+     */
+    public int getTaskIdByDisplayId(int displayId) {
+        ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
+        if (activityDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+            activityDisplay = mActivityDisplays.get(0);
+        }
+
+        ArrayList<ActivityStack> stacks = activityDisplay.mStacks;
+        ActivityStack topStack = stacks.get(stacks.size() - 1);
+        if (topStack != null) {
+            TaskRecord topTask = topStack.topTask();
+            if (topTask != null) {
+                return topTask.taskId;
+            }
+        }
+        return -1;
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Get the displayId which this task is being displayed.
+     *
+     * @param taskId
+     * @return int
+     */
+    public int getDisplayIdByTaskId(int taskId) {
+        final TaskRecord task = anyTaskForIdLocked(taskId);
+        if (task != null) {
+            return task.displayId;
+        }
+        return -1;
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Get the taskId using package name.
+     *
+     * @param packageName
+     * @return int
+     */
+    private int getTaskIdByPackageName(String packageName) {
+        int numDisplays = mActivityDisplays.size();
+        for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
+            ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
+            for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
+                ActivityStack stack = stacks.get(stackNdx);
+                ArrayList<TaskRecord> tasks = stack.getAllTasks();
+                final int numTasks = tasks.size();
+                for (int i = 0; i < numTasks; ++i) {
+                    final TaskRecord task = tasks.get(i);
+                    if (task.getTopActivity() != null && task.getTopActivity().packageName.equals(packageName)) {
+                        return task.taskId;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Get the activity display using displayId.
+     *
+     * @param displayId
+     * @return ActivityDisplay
+     */
+    public ActivityDisplay getActivityDisplay(int displayId) {
+        return mActivityDisplays.get(displayId);
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set layerStack of the display device.
+     *
+     * @param displayId, layerStack
+     * @return void
+     */
+    public void setDisplayLayerStack(int displayId, int layerStack) {
+        DisplayManagerGlobal.getInstance().setDisplayLayerStack(displayId, layerStack);
+        mWindowManager.mWindowPlacerLocked.performSurfacePlacement();
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Check whether this display device is an wifi display.
+     *
+     * @param layerStack
+     * @return boolean
+     */
+    private boolean isWifiDisplay(int layerStack) {
+        Display[] displays = mDisplayManager.getDisplays();
+        for (int i = 0; i < displays.length; ++i) {
+            Display d = displays[i];
+            if (d.getType() == Display.TYPE_WIFI && d.getLayerStack() == layerStack) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Dump the activity stack
+     *
+     * @param
+     * @return void
+     */
+    public void dumpActivityStack() {
+        Slog.d(TAG, "ActivityStackSupervisor::dumpActivityStack()");
+        for (int displayNdx = mActivityDisplays.size() - 1; displayNdx >= 0; --displayNdx) {
+            ActivityDisplay ad = mActivityDisplays.valueAt(displayNdx);
+            ArrayList<ActivityStack> stacks = ad.mStacks;
+            int displayId = ad.mDisplayId;
+            Slog.d(TAG_NANS, " [Display] " + displayId);
+            for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
+                final ActivityStack stack = stacks.get(stackNdx);
+                StackInfo info = getStackInfoLocked(stack);
+                Slog.d(TAG_NANS, info.toString());
+            }
+        }
+    }
+    // END
 
     private final class ActivityStackSupervisorHandler extends Handler {
 
@@ -4206,9 +4757,18 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
 
         void onTaskListEmptyLocked() {
+            /**
+             * Date: Aug 2, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Prohibit removing empty task list of ActivityContainer.
+             */
+            /*
             detachLocked();
             deleteActivityContainer(this);
             mHandler.obtainMessage(CONTAINER_CALLBACK_TASK_LIST_EMPTY, this).sendToTarget();
+            */
+            // END
         }
 
         @Override
@@ -4321,6 +4881,19 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
         ActivityRecord mVisibleBehindActivity;
 
+        /**
+         * Date: Jul 20, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add display modes of ActivityDisplay.
+         */
+        final static int BLANK      = 0;
+        final static int MIRRORED   = 1;
+        final static int MIRRORING  = 2;
+        final static int NANS       = 3;
+        int mDisplayMode;
+        // END
+
         ActivityDisplay() {
         }
 
@@ -4338,6 +4911,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
             mDisplay = display;
             mDisplayId = display.getDisplayId();
             mDisplay.getDisplayInfo(mDisplayInfo);
+
+            /**
+             * Date: Jul 20, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Initialize mDisplayMode to "ActivityDisplay.BLANK".
+             */
+            mDisplayMode = ActivityDisplay.BLANK;
+            // END
         }
 
         void attachActivities(ActivityStack stack, boolean onTop) {

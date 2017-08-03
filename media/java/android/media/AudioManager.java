@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3668,6 +3669,28 @@ public class AudioManager {
         config.mConfigMask = AudioPortConfig.GAIN;
         return AudioSystem.setAudioPortConfig(config);
     }
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the forced audio config for the usage.
+     */
+    public int setForceUse(int usage, int config) {
+        return AudioSystem.setForceUse(usage, config);
+    }
+    // END
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Get the forced audio config for the usage.
+     */
+    public int getForceUse(int usage) {
+        return AudioSystem.getForceUse(usage);
+    }
+    // END
 
     /**
      * Listener registered by client to be notified upon new audio port connections,

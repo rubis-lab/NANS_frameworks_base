@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1292,6 +1293,15 @@ public final class SystemServer {
 
         Trace.traceBegin(Trace.TRACE_TAG_SYSTEM_SERVER, "MakeDisplayManagerServiceReady");
         try {
+            /**
+             * Date: Aug 2, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Initialize OVERLAY_DISPLAY_DEVICE setting.
+             */
+            Settings.Global.putString(mContentResolver, Settings.Global.OVERLAY_DISPLAY_DEVICES, "");
+            // END
+
             // TODO: use boot phase and communicate these flags some other way
             mDisplayManagerService.systemReady(safeMode, mOnlyCore);
         } catch (Throwable e) {

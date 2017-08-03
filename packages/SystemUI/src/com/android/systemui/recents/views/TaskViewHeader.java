@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,9 +58,28 @@ import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.recents.misc.Utilities;
 import com.android.systemui.recents.model.Task;
 
+/**
+ * Date: Jul 21, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add libraries for NANS features.
+ */
+import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
+// END
+
 import static android.app.ActivityManager.StackId.FREEFORM_WORKSPACE_STACK_ID;
 import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
 import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
+
+/**
+ * Date: Jul 21, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add a system setting for NANS feature.
+ */
+import static android.provider.Settings.Secure.NANS_MODE_ENABLED;
+// END
 
 /* The task bar view */
 public class TaskViewHeader extends FrameLayout
@@ -188,6 +208,18 @@ public class TaskViewHeader extends FrameLayout
 
     private CountDownTimer mFocusTimerCountDown;
 
+    /**
+     * Date: Jul 6, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add variables for NANS features
+     */
+    ImageView mExternalDisplayButton;
+    Drawable mDarkExternalDisplayDrawable;
+    Drawable mLightExternalDisplayDrawable;
+    Context mContext;
+    // END
+
     public TaskViewHeader(Context context) {
         this(context, null);
     }
@@ -230,6 +262,17 @@ public class TaskViewHeader extends FrameLayout
         mOverlayBackground = new HighlightColorDrawable();
         mDimLayerPaint.setColor(Color.argb(255, 0, 0, 0));
         mDimLayerPaint.setAntiAlias(true);
+
+        /**
+         * Date: Jul 6, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Initializing variables of NANS features.
+         */
+        mLightExternalDisplayDrawable = context.getDrawable(R.drawable.ic_media_route_off_holo_light);
+        mDarkExternalDisplayDrawable = context.getDrawable(R.drawable.ic_media_route_off_holo_dark);
+        mContext = context;
+        // END
     }
 
     /**
@@ -248,6 +291,16 @@ public class TaskViewHeader extends FrameLayout
         mIconView.setOnLongClickListener(this);
         mTitleView = (TextView) findViewById(R.id.title);
         mDismissButton = (ImageView) findViewById(R.id.dismiss_task);
+
+        /**
+         * Date: Jul 6, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Initializing the external display button.
+         */
+        mExternalDisplayButton = (ImageView) findViewById(R.id.external_display_task);
+        // END
+
         if (ssp.hasFreeformWorkspaceSupport()) {
             mMoveTaskButton = (ImageView) findViewById(R.id.move_task);
         }
@@ -287,6 +340,46 @@ public class TaskViewHeader extends FrameLayout
     }
 
     /**
+     * Date: Jul 7, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Define another updateLayoutParams function for external display button.
+     */
+    private void updateLayoutParams(View icon, View title, View moveTaskButton, View externalDisplayButton, View dismissButton) {
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, mHeaderBarHeight, Gravity.TOP);
+        setLayoutParams(lp);
+        lp = new FrameLayout.LayoutParams(mHeaderBarHeight, mHeaderBarHeight, Gravity.START);
+        icon.setLayoutParams(lp);
+        lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.START | Gravity.CENTER_VERTICAL);
+        lp.setMarginStart(mHeaderBarHeight);
+        lp.setMarginEnd(mMoveTaskButton != null
+                ? 3 * mHeaderBarHeight
+                : 2 * mHeaderBarHeight);
+        title.setLayoutParams(lp);
+        if (moveTaskButton != null) {
+            lp = new FrameLayout.LayoutParams(mHeaderBarHeight, mHeaderBarHeight, Gravity.END);
+            lp.setMarginEnd(mHeaderBarHeight);
+            moveTaskButton.setLayoutParams(lp);
+            moveTaskButton.setPadding(mHeaderButtonPadding, mHeaderButtonPadding,
+                    mHeaderButtonPadding, mHeaderButtonPadding);
+        }
+
+        lp = new FrameLayout.LayoutParams(mHeaderBarHeight, mHeaderBarHeight, Gravity.END);
+        lp.setMarginEnd(mHeaderBarHeight);
+        externalDisplayButton.setLayoutParams(lp);
+        externalDisplayButton.setPadding(mHeaderButtonPadding, mHeaderButtonPadding,
+                mHeaderButtonPadding, mHeaderButtonPadding);
+
+        lp = new FrameLayout.LayoutParams(mHeaderBarHeight, mHeaderBarHeight, Gravity.END);
+        dismissButton.setLayoutParams(lp);
+        dismissButton.setPadding(mHeaderButtonPadding, mHeaderButtonPadding, mHeaderButtonPadding,
+                mHeaderButtonPadding);
+    }
+    // END
+
+    /**
      * Update the header view when the configuration changes.
      */
     public void onConfigurationChanged() {
@@ -312,7 +405,15 @@ public class TaskViewHeader extends FrameLayout
         if (headerBarHeight != mHeaderBarHeight || headerButtonPadding != mHeaderButtonPadding) {
             mHeaderBarHeight = headerBarHeight;
             mHeaderButtonPadding = headerButtonPadding;
-            updateLayoutParams(mIconView, mTitleView, mMoveTaskButton, mDismissButton);
+            /**
+             * Date: Jul 7, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Call the new updateLayoutParams function for external display button.
+             */
+            // updateLayoutParams(mIconView, mTitleView, mMoveTaskButton, mDismissButton);
+            updateLayoutParams(mIconView, mTitleView, mMoveTaskButton, mExternalDisplayButton, mDismissButton);
+            // END
             if (mAppOverlayView != null) {
                 updateLayoutParams(mAppIconView, mAppTitleView, null, mAppInfoView);
             }
@@ -359,6 +460,17 @@ public class TaskViewHeader extends FrameLayout
             mMoveTaskButton.setVisibility(showMoveIcon ? View.VISIBLE : View.INVISIBLE);
             mMoveTaskButton.setTranslationX(rightInset);
         }
+
+        /**
+         * Date: Jul 7, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Modify onTaskViewSizeChanged function for external display button.
+         */
+        mExternalDisplayButton.setVisibility(showDismissIcon ? View.VISIBLE : View.INVISIBLE);
+        mExternalDisplayButton.setTranslationX(rightInset);
+        // END
+
         mDismissButton.setVisibility(showDismissIcon ? View.VISIBLE : View.INVISIBLE);
         mDismissButton.setTranslationX(rightInset);
 
@@ -481,6 +593,20 @@ public class TaskViewHeader extends FrameLayout
         mDismissButton.setClickable(false);
         ((RippleDrawable) mDismissButton.getBackground()).setForceSoftware(true);
 
+        /**
+         * Date: Jul 7, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Modify bindToTask function for external display button.
+         */
+        mExternalDisplayButton.setImageDrawable(t.useLightOnPrimaryColor ?
+                mLightExternalDisplayDrawable : mDarkExternalDisplayDrawable);
+        mExternalDisplayButton.setContentDescription(t.dismissDescription);
+        mExternalDisplayButton.setOnClickListener(this);
+        mExternalDisplayButton.setClickable(false);
+        ((RippleDrawable) mExternalDisplayButton.getBackground()).setForceSoftware(true);
+        // END
+
         // When freeform workspaces are enabled, then update the move-task button depending on the
         // current task
         if (mMoveTaskButton != null) {
@@ -552,6 +678,29 @@ public class TaskViewHeader extends FrameLayout
         } else {
             mDismissButton.setAlpha(1f);
         }
+
+        /**
+         * Date: Jul 7, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * If NANS mode is enabled, show or hide the external display button.
+         */
+        int value = Settings.Secure.getInt(mContext.getContentResolver(), NANS_MODE_ENABLED, 0);
+        if (value == 1) {
+            mExternalDisplayButton.setVisibility(View.VISIBLE);
+            mExternalDisplayButton.setClickable(true);
+            if (mExternalDisplayButton.getVisibility() == VISIBLE) {
+                mExternalDisplayButton.animate()
+                        .alpha(1f)
+                        .setInterpolator(Interpolators.FAST_OUT_LINEAR_IN)
+                        .setDuration(duration)
+                        .start();
+            } else {
+                mExternalDisplayButton.setAlpha(1f);
+            }
+        }
+        // END
+
         if (mMoveTaskButton != null) {
             if (mMoveTaskButton.getVisibility() == VISIBLE) {
                 mMoveTaskButton.setVisibility(View.VISIBLE);
@@ -576,6 +725,22 @@ public class TaskViewHeader extends FrameLayout
         mDismissButton.animate().cancel();
         mDismissButton.setAlpha(1f);
         mDismissButton.setClickable(true);
+
+        /**
+         * Date: Jul 7, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * If NANS mode is enabled, show or hide the external display button.
+         */
+        int value = Settings.Secure.getInt(mContext.getContentResolver(), NANS_MODE_ENABLED, 0);
+        if (value == 1) {
+            mExternalDisplayButton.setVisibility(View.VISIBLE);
+            mExternalDisplayButton.animate().cancel();
+            mExternalDisplayButton.setAlpha(1f);
+            mExternalDisplayButton.setClickable(true);
+        }
+        // END
+
         if (mMoveTaskButton != null) {
             mMoveTaskButton.setVisibility(View.VISIBLE);
             mMoveTaskButton.animate().cancel();
@@ -592,6 +757,21 @@ public class TaskViewHeader extends FrameLayout
         mDismissButton.setVisibility(View.INVISIBLE);
         mDismissButton.setAlpha(0f);
         mDismissButton.setClickable(false);
+
+         /**
+          * Date: Jul 7, 2017
+          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+          *
+          * Show or hide the external display button depending on NANS_MODE_ENABLED setting.
+          */
+         int value = Settings.Secure.getInt(mContext.getContentResolver(), NANS_MODE_ENABLED, 0);
+         if (value == 1) {
+             mExternalDisplayButton.setVisibility(View.INVISIBLE);
+             mExternalDisplayButton.setAlpha(0f);
+             mExternalDisplayButton.setClickable(false);
+         }
+         // END
+
         if (mMoveTaskButton != null) {
             mMoveTaskButton.setVisibility(View.INVISIBLE);
             mMoveTaskButton.setAlpha(0f);
@@ -623,6 +803,18 @@ public class TaskViewHeader extends FrameLayout
             TaskView tv = Utilities.findParent(this, TaskView.class);
             EventBus.getDefault().send(new LaunchTaskEvent(tv, mTask, null,
                     mMoveTaskTargetStackId, false));
+
+        /**
+         * Date: Jul 6, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Call the event handler of external display button.
+         */
+        } else if (v == mExternalDisplayButton) {
+            TaskView tv = Utilities.findParent(this, TaskView.class);
+            tv.setExternalDisplay();
+        // END
+
         } else if (v == mAppInfoView) {
             EventBus.getDefault().send(new ShowApplicationInfoEvent(mTask));
         } else if (v == mAppIconView) {

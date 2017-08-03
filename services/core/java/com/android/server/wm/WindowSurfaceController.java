@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,8 +49,15 @@ class WindowSurfaceController {
     static final String TAG = TAG_WITH_CLASS_NAME ? "WindowSurfaceController" : TAG_WM;
 
     final WindowStateAnimator mAnimator;
-
-    private SurfaceControl mSurfaceControl;
+    /**
+     * Date: Aug 2, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Change access modifier of SurfaceControl to change layerStack.
+     */
+    // private SurfaceControl mSurfaceControl;
+    SurfaceControl mSurfaceControl;
+    // END
 
     private boolean mSurfaceShown = false;
     private float mSurfaceX = 0;

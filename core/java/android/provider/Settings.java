@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -6412,6 +6413,19 @@ public final class Settings {
         public static final String DEVICE_PAIRED = "device_paired";
 
         /**
+         * Date: Aug 2, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add settings about NANS feature.
+         * @hide
+         */
+        public static final String NANS_MODE_ENABLED = "nans_mode_enabled";
+        public static final String SWIPE_GESTURE_ENABLED = "swipe_gesture_enabled";
+        public static final String TOGGLE_OVERLAY_DISPLAY_DEVICE_ENABLED
+                = "toggle_overlay_display_device_enabled";
+        // END
+
+        /**
          * This are the settings to be backed up.
          *
          * NOTE: Settings are backed up and restored in the order they appear
@@ -6495,7 +6509,17 @@ public final class Settings {
             DOZE_ENABLED,
             DOZE_PULSE_ON_PICK_UP,
             DOZE_PULSE_ON_DOUBLE_TAP,
-            NFC_PAYMENT_DEFAULT_COMPONENT
+            NFC_PAYMENT_DEFAULT_COMPONENT,
+            /**
+             * Date: Jul 21, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Add settings about NANS feature.
+             */
+            NANS_MODE_ENABLED,
+            SWIPE_GESTURE_ENABLED,
+            TOGGLE_OVERLAY_DISPLAY_DEVICE_ENABLED
+            // END
         };
 
         /**

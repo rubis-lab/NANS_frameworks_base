@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006-2008 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -252,6 +253,15 @@ import dalvik.system.VMRuntime;
 import libcore.io.IoUtils;
 import libcore.util.EmptyArray;
 
+/**
+ * Date: Aug 2, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add ActivityDisplay class for NANS feature.
+ */
+import com.android.server.am.ActivityStackSupervisor.ActivityDisplay;
+// END
+
 import static android.Manifest.permission.INTERACT_ACROSS_USERS;
 import static android.Manifest.permission.INTERACT_ACROSS_USERS_FULL;
 import static android.Manifest.permission.MANAGE_ACTIVITY_STACKS;
@@ -371,6 +381,16 @@ import static com.android.server.wm.AppTransition.TRANSIT_TASK_TO_FRONT;
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
+/**
+ * Date: Aug 2, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add DEBUG_NANS and POSTFIX_NANS settings for NANS feature.
+ */
+import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_NANS;
+import static com.android.server.am.ActivityManagerDebugConfig.POSTFIX_NANS;
+// END
+
 public final class ActivityManagerService extends ActivityManagerNative
         implements Watchdog.Monitor, BatteryStatsImpl.BatteryCallback {
 
@@ -399,6 +419,14 @@ public final class ActivityManagerService extends ActivityManagerNative
     private static final String TAG_URI_PERMISSION = TAG + POSTFIX_URI_PERMISSION;
     private static final String TAG_VISIBILITY = TAG + POSTFIX_VISIBILITY;
     private static final String TAG_VISIBLE_BEHIND = TAG + POSTFIX_VISIBLE_BEHIND;
+    /**
+     * Date: Jul 28, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add TAG_NANS combined TAG and POSTFIX_NANS.
+     */
+    private static final String TAG_NANS = TAG + POSTFIX_NANS;
+    // END
 
     // Mock "pretend we're idle now" broadcast action to the job scheduler; declared
     // here so that while the job scheduler can depend on AMS, the other way around
@@ -2971,6 +2999,53 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     boolean setFocusedActivityLocked(ActivityRecord r, String reason) {
+
+        /**
+         * Date: Aug 2, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Print logs for debugging NANS feature.
+         */
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "ActivityManagerService::setFocusedActivityLocked()");
+            Slog.d(TAG_NANS, " [activity]" + r);
+            Slog.d(TAG_NANS, " [mFocusedActivity] " + mFocusedActivity);
+            Slog.d(TAG_NANS, " [reason] " + reason);
+        }
+        try {
+            ActivityRecord prev = mFocusedActivity;
+            ActivityRecord next = r;
+
+            ActivityDisplay prevDisplay = mStackSupervisor.getActivityDisplay(prev.task.displayId);
+            ActivityDisplay nextDisplay = mStackSupervisor.getActivityDisplay(next.task.displayId);
+
+            if (prev != null && next != null
+                    && prev.task.taskId != next.task.taskId
+                    && !reason.equals("setFocusedTask")) {
+                Slog.d(TAG_NANS, " [prev] " + prev);
+                Slog.d(TAG_NANS, " [next] " + next);
+
+                if (prev.task.displayId != 0 && prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                    if (reason.contains("finishActivity")) {
+                        setExternalDisplay(prev.task.taskId, Display.DEFAULT_DISPLAY,
+                                ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
+                    } else {
+                        setExternalDisplay(prev.task.taskId, prev.task.displayId,
+                                ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
+                    }
+                }
+                if (next.task.displayId != 0
+                        && (nextDisplay.mDisplayMode == ActivityDisplay.NANS
+                        || nextDisplay.mDisplayMode == ActivityDisplay.MIRRORED) ) {
+                    setExternalDisplay(next.task.taskId, Display.DEFAULT_DISPLAY,
+                            ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
+                }
+            }
+        } catch (Exception e) {
+
+        }
+        // END
+
         if (r == null || mFocusedActivity == r) {
             return false;
         }
@@ -9734,6 +9809,19 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     void moveTaskToFrontLocked(int taskId, int flags, Bundle bOptions) {
+
+        /**
+         * Date: Jul 28, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Print logs for debugging NANS feature.
+         */
+        if (DEBUG_NANS) {
+            Slog.d(TAG_NANS, "moveTaskToFrontLocked()");
+            Slog.d(TAG_NANS, " [taskId] " + taskId);
+        }
+        // END
+
         ActivityOptions options = ActivityOptions.fromBundle(bOptions);
 
         if (!checkAppSwitchAllowedLocked(Binder.getCallingPid(),
@@ -21928,6 +22016,51 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
         }
     }
+
+    /**
+     * Date: Aug 2, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add override functions to call the same functions of ActivityStackSupervisor.
+     */
+    @Override
+    public boolean setExternalDisplay(String packageName, int displayId, int flag)
+            throws RemoteException {
+        synchronized (this) {
+            return mStackSupervisor.setExternalDisplayLocked(packageName, displayId, flag);
+        }
+    }
+
+    @Override
+    public boolean setExternalDisplay(int taskId, int displayId, int flag)
+            throws RemoteException {
+        synchronized (this) {
+            return mStackSupervisor.setExternalDisplayLocked(taskId, displayId, flag);
+        }
+    }
+
+    @Override
+    public int getTaskIdByDisplayId(int displayId) {
+        synchronized (this) {
+            return mStackSupervisor.getTaskIdByDisplayId(displayId);
+        }
+    }
+
+    @Override
+    public int getDisplayIdByTaskId(int taskId) {
+        synchronized (this) {
+            return mStackSupervisor.getDisplayIdByTaskId(taskId);
+        }
+    }
+
+    @Override
+    public int getDisplayIdOfFocusedStack() {
+        synchronized (this) {
+            final TaskRecord top = getFocusedStack().topTask();
+            return top.displayId;
+        }
+    }
+    // END
 
     private final class LocalService extends ActivityManagerInternal {
         @Override

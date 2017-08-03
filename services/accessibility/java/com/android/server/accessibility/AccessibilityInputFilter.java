@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,9 +78,20 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
      */
     static final int FLAG_FEATURE_INJECT_MOTION_EVENTS = 0x00000010;
 
-    static final int FEATURES_AFFECTING_MOTION_EVENTS = FLAG_FEATURE_INJECT_MOTION_EVENTS
+    /**
+     * Date: Aug 2, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add a flag for enabling the swipe gesture feature, and change FEATURES_AFFECTING_MOTION_EVENTS.
+     */
+    static final int FLAG_FEATURE_SCREEN_SWIPER = 0x00000020;
+
+    static final int FEATURES_AFFECTING_MOTION_EVENTS = FLAG_FEATURE_SCREEN_SWIPER // added
+            | FLAG_FEATURE_INJECT_MOTION_EVENTS
             | FLAG_FEATURE_AUTOCLICK | FLAG_FEATURE_TOUCH_EXPLORATION
             | FLAG_FEATURE_SCREEN_MAGNIFIER;
+    // END
+
     /**
      * Flag for enabling the feature to control the screen magnifier. If
      * {@link #FLAG_FEATURE_SCREEN_MAGNIFIER} is set this flag is ignored
@@ -140,6 +152,15 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
     private EventStreamState mTouchScreenStreamState;
 
     private EventStreamState mKeyboardStreamState;
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add a swipe gesture handler.
+     */
+    private SwipeGestureHandler mSwipeGestureHandler;
+    // END
 
     AccessibilityInputFilter(Context context, AccessibilityManagerService service) {
         super(context.getMainLooper());
@@ -411,6 +432,18 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
             mKeyboardInterceptor = new KeyboardInterceptor(mAms);
             addFirstEventHandler(mKeyboardInterceptor);
         }
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add a SwipeGestureHandler for enabling the swipe gesture feature.
+         */
+        if ((mEnabledFeatures & FLAG_FEATURE_SCREEN_SWIPER) != 0) {
+            mSwipeGestureHandler = new SwipeGestureHandler(mContext);
+            addFirstEventHandler(mSwipeGestureHandler);
+        }
+        // END
     }
 
     /**
@@ -453,6 +486,18 @@ class AccessibilityInputFilter extends InputFilter implements EventStreamTransfo
             mKeyboardInterceptor.onDestroy();
             mKeyboardInterceptor = null;
         }
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Detroy the SwipeGestureHandler for disabling the swipe gesture feature.
+         */
+        if (mSwipeGestureHandler != null) {
+            mSwipeGestureHandler.onDestroy();
+            mSwipeGestureHandler = null;
+        }
+        // END
 
         mEventHandler = null;
         resetStreamState();

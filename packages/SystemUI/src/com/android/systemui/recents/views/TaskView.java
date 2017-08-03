@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +38,18 @@ import android.view.ViewDebug;
 import android.view.ViewOutlineProvider;
 import android.widget.TextView;
 import android.widget.Toast;
+
+/**
+ * Date: Jul 21, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add Android packages for NANS feature.
+ */
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.hardware.display.DisplayManager;
+import android.view.Display;
+// END
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.MetricsProto.MetricsEvent;
@@ -161,6 +174,16 @@ public class TaskView extends FixedSizeFrameLayout implements Task.TaskCallbacks
 
     private Toast mDisabledAppToast;
 
+    /**
+     * Date: Aug 2, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add variabls for diaglog which shows list of external display devices.
+     */
+    private int mIndex;
+    private Display[] mDisplays;
+    // END
+
     public TaskView(Context context) {
         this(context, null);
     }
@@ -183,6 +206,15 @@ public class TaskView extends FixedSizeFrameLayout implements Task.TaskCallbacks
         }
         setOutlineProvider(mViewBounds);
         setOnLongClickListener(this);
+
+        /**
+         * Date: Aug 2, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Initialize mIndex variable to 0.
+         */
+        mIndex = 0;
+        // END
     }
 
     /** Set callback */
@@ -639,6 +671,46 @@ public class TaskView extends FixedSizeFrameLayout implements Task.TaskCallbacks
         mHeaderView.bindToTask(mTask, mTouchExplorationEnabled, mIsDisabledInSafeMode);
         mHeaderView.onTaskDataLoaded();
     }
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add the event handler for the external display button.
+     */
+    void setExternalDisplay() {
+        DisplayManager dm = (DisplayManager)mContext.getSystemService(Context.DISPLAY_SERVICE);
+        mDisplays = dm.getDisplays();
+
+        final String[] items = new String[mDisplays.length];
+        for (int i = 0; i < items.length; ++i) {
+            items[i] = mDisplays[i].getName();
+        }
+
+        AlertDialog.Builder ab = new AlertDialog.Builder(mContext);
+        ab.setTitle("Choose Target Display Device");
+        ab.setSingleChoiceItems(items, 0,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        mIndex = whichButton;
+                    }
+        }).setPositiveButton("OK",
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    final TaskView tv = TaskView.this;
+                    tv.onClick(mHeaderView);
+                    ActivityManager am = (ActivityManager)mContext.getSystemService(Context.ACTIVITY_SERVICE);
+                    am.setExternalDisplay(tv.getTask().key.id, mDisplays[mIndex]);
+                    dialog.dismiss();
+                }
+        }).setNegativeButton("Cancel",
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+        });
+        ab.show();
+    }
+    // END
 
     /**** View.OnClickListener Implementation ****/
 

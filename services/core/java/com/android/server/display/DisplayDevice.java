@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,6 +143,17 @@ abstract class DisplayDevice {
      */
     public void requestDisplayModesInTransactionLocked(int colorMode, int modeId) {
     }
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Get the display layer stack.
+     */
+    public int getLayerStack() {
+        return mCurrentLayerStack;
+    }
+    // END
 
     /**
      * Sets the display layer stack while in a transaction.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +74,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Date: Jul 20, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add Display class for NANS feature.
+ */
+import android.view.Display;
+// END
 
 /**
  * <p>
@@ -3780,4 +3790,98 @@ public class ActivityManager {
             }
         }
     }
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the external display, then stay here.
+     */
+    public static final int SET_EXTERNAL_DISPLAY_AND_STAY = 0x00000001;
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the external display, then start the launcher activity.
+     */
+    public static final int SET_EXTERNAL_DISPLAY_AND_GO_HOME = 0x00000002;
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the external display, then stay here.
+     */
+    public boolean setExternalDisplay(String packageName, Display display) {
+        try {
+            if (display == null) {
+                return false;
+            }
+            return ActivityManagerNative.getDefault().setExternalDisplay(
+                    packageName, display.getDisplayId(), SET_EXTERNAL_DISPLAY_AND_STAY);
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the external display, then stay here.
+     */
+    public boolean setExternalDisplay(int taskId, Display display) {
+        try {
+            if (display == null) {
+                return false;
+            }
+            return ActivityManagerNative.getDefault().setExternalDisplay(
+                    taskId, display.getDisplayId(), SET_EXTERNAL_DISPLAY_AND_STAY);
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the external display, then do action depending on the flag.
+     */
+    public boolean setExternalDisplay(String packageName, Display display, int flag) {
+        try {
+            if (display == null) {
+                return false;
+            }
+            return ActivityManagerNative.getDefault().setExternalDisplay(
+                    packageName, display.getDisplayId(), flag);
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the external display, then do action depending on the flag.
+     */
+    public boolean setExternalDisplay(int taskId, Display display, int flag) {
+        try {
+            if (display == null) {
+                return false;
+            }
+            return ActivityManagerNative.getDefault().setExternalDisplay(
+                    taskId, display.getDisplayId(), flag);
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+    // END
 }

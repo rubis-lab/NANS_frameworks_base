@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3150,6 +3151,17 @@ public final class MotionEvent extends InputEvent implements Parcelable {
             return ev;
         }
     }
+
+    /**
+     * Date: Aug 2, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Return the name of the motion's action.
+     */
+    public String getActionString() {
+        return actionToString(getAction());
+    }
+    // END
 
     @Override
     public String toString() {

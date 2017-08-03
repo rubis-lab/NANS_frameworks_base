@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -498,6 +499,21 @@ public final class DisplayManagerGlobal {
             }
         }
     }
+
+    /**
+     * Date: Jul 20, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the display device's layerStack.
+     */
+    public void setDisplayLayerStack(int displayId, int layerStack) {
+        try {
+            mDm.setDisplayLayerStack(displayId, layerStack);
+       } catch (RemoteException e) {
+           Log.e(TAG, "Failed to set LayerStack of Display Device", e);
+       }
+    }
+    // END
 
     private final static class VirtualDisplayCallbackDelegate extends Handler {
         public static final int MSG_DISPLAY_PAUSED = 0;

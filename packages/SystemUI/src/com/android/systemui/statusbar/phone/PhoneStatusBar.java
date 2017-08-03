@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4938,6 +4939,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private boolean handleLongPressRecents() {
+        /**
+         * Date: Aug 2, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Disable toggling split screen mode for toggling overlay display device.
+         */
+        /*
         if (mRecents == null || !ActivityManager.supportsMultiWindow()
                 || !getComponent(Divider.class).getView().getSnapAlgorithm()
                 .isSplitScreenFeasible()) {
@@ -4947,6 +4955,34 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         toggleSplitScreenMode(MetricsEvent.ACTION_WINDOW_DOCK_LONGPRESS,
                 MetricsEvent.ACTION_WINDOW_UNDOCK_LONGPRESS);
         return true;
+        */
+        // END
+
+        /**
+         * Date: Aug 2, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Toggle overlay display device feature.
+         */
+        try {
+            int enabled = Settings.Secure.getInt(mContext.getContentResolver(),
+                    Settings.Secure.TOGGLE_OVERLAY_DISPLAY_DEVICE_ENABLED);
+            if (enabled == 1) {
+                String value = Settings.Global.getString(mContext.getContentResolver(),
+                        Settings.Global.OVERLAY_DISPLAY_DEVICES);
+                if (value.equals("1920x1080/320")) {
+                    Settings.Global.putString(mContext.getContentResolver(),
+                            Settings.Global.OVERLAY_DISPLAY_DEVICES, "");
+                } else {
+                    Settings.Global.putString(mContext.getContentResolver(),
+                            Settings.Global.OVERLAY_DISPLAY_DEVICES, "1920x1080/320");
+                }
+            }
+        } catch (Exception e) {
+
+        }
+        return false;
+        // END
     }
 
     @Override

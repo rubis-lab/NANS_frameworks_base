@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,6 +92,14 @@ class ActivityManagerDebugConfig {
     static final boolean DEBUG_USAGE_STATS = DEBUG_ALL || false;
     static final boolean DEBUG_PERMISSIONS_REVIEW = DEBUG_ALL || false;
     static final boolean DEBUG_WHITELISTS = DEBUG_ALL || false;
+    /**
+     * Date: Jul 26, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add DEBUG_NANS variable for debugging NANS feature.
+     */
+    static final boolean DEBUG_NANS = DEBUG_ALL || false;
+    // END
 
     static final String POSTFIX_ADD_REMOVE = (APPEND_CATEGORY_NAME) ? "_AddRemove" : "";
     static final String POSTFIX_APP = (APPEND_CATEGORY_NAME) ? "_App" : "";
@@ -134,5 +143,12 @@ class ActivityManagerDebugConfig {
     static final String POSTFIX_USER_LEAVING = (APPEND_CATEGORY_NAME) ? "_UserLeaving" : "";
     static final String POSTFIX_VISIBILITY = (APPEND_CATEGORY_NAME) ? "_Visibility" : "";
     static final String POSTFIX_VISIBLE_BEHIND = (APPEND_CATEGORY_NAME) ? "_VisibleBehind" : "";
-
+    /**
+     * Date: Jul 28, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add POSTFIX_NANS variable for debugging NANS feature.
+     */
+    static final String POSTFIX_NANS = (APPEND_CATEGORY_NAME) ? "_NANS" : "";
+    // END
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,6 +154,15 @@ import com.android.server.policy.keyguard.KeyguardServiceDelegate;
 import com.android.server.policy.keyguard.KeyguardServiceDelegate.DrawnListener;
 import com.android.server.statusbar.StatusBarManagerInternal;
 import com.android.server.vr.VrManagerInternal;
+
+/**
+ * Date: Jul 21, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add DisplayManager class for NANS feature.
+ */
+import android.hardware.display.DisplayManager;
+// END
 
 import java.io.File;
 import java.io.FileReader;
@@ -451,6 +461,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mDemoHdmiRotationLock;
     int mDemoRotation;
     boolean mDemoRotationLock;
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Initialize mForcedRotation to unspecified value.
+     */
+    int mForcedRotation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+    // END
 
     boolean mWakeGestureEnabledSetting;
     MyWakeGestureListener mWakeGestureListener;
@@ -1948,9 +1967,27 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public void setInitialDisplaySize(Display display, int width, int height, int density) {
         // This method might be called before the policy has been fully initialized
         // or for other displays we don't care about.
-        if (mContext == null || display.getDisplayId() != Display.DEFAULT_DISPLAY) {
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Initialize the mForcedRotation to "ROTATION_90".
+         */
+        if (display.getDisplayId() != Display.DEFAULT_DISPLAY) {
+            mForcedRotation = Surface.ROTATION_90;
             return;
         }
+        if (mContext == null) {
+            return;
+        }
+        /*
+         * if (mContext == null || display.getDisplayId() != Display.DEFAULT_DISPLAY) {
+         *     return;
+         * }
+         */
+        // END
+
         mDisplay = display;
 
         final Resources res = mContext.getResources();
@@ -2026,6 +2063,17 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // $ adb shell setprop config.override_forced_orient true
                 // $ adb shell wm size reset
                 !"true".equals(SystemProperties.get("config.override_forced_orient"));
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Initialize the mForcedRotation to unspecified value.
+         */
+        if (mForcedRotation < 0) {
+            mForcedRotation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        }
+        // END
     }
 
     /**
@@ -5578,6 +5626,22 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     }
 
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the forced rotation for NANS feature.
+     * TODO: Can we use different roration setting for each display?
+     */
+    @Override
+    public void setForcedRotation(int rotation) {
+        if (mForcedRotation != rotation) {
+            mForcedRotation = rotation;
+            updateRotation(false);
+        }
+    }
+    // END
+
     void initializeHdmiState() {
         boolean plugged = false;
         // watch for HDMI plug messages if the hdmi switch exists
@@ -6809,6 +6873,19 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             final int preferredRotation;
+
+            /**
+             * Date: Jul 21, 2017
+             * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+             *
+             * Check mForcedRotation first.
+             */
+            if (mForcedRotation >= 0) {
+                preferredRotation = mForcedRotation;
+                return Surface.ROTATION_90;
+            }
+            // END
+
             if (mLidState == LID_OPEN && mLidOpenRotation >= 0) {
                 // Ignore sensor when lid switch is open and rotation is forced.
                 preferredRotation = mLidOpenRotation;

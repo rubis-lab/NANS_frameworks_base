@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -254,6 +255,15 @@ import static com.android.server.wm.WindowManagerDebugConfig.TAG_WM;
 import static com.android.server.wm.WindowStateAnimator.DRAW_PENDING;
 import static com.android.server.wm.WindowStateAnimator.STACK_CLIP_NONE;
 
+/**
+ * Date: Jul 26, 2017
+ * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+ *
+ * Add DEBUG_NANS variable for NANS feature.
+ */
+import static com.android.server.wm.WindowManagerDebugConfig.DEBUG_NANS;
+// END
+
 /** {@hide} */
 public class WindowManagerService extends IWindowManager.Stub
         implements Watchdog.Monitor, WindowManagerPolicy.WindowManagerFuncs {
@@ -368,7 +378,16 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
     };
-    final WindowSurfacePlacer mWindowPlacerLocked;
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Change access and final modifier of mWindowPlacerLocked.
+     */
+    // final WindowSurfacePlacer mWindowPlacerLocked;
+    public WindowSurfacePlacer mWindowPlacerLocked;
+    // END
 
     /**
      * Current user when multi-user is enabled. Don't show windows of
@@ -4972,6 +4991,24 @@ public class WindowManagerService extends IWindowManager.Stub
         }
     }
 
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Dump windows for given window list.
+     *
+     * @param windows
+     * @return void
+     */
+    public void dumpWindowList(WindowList windows) {
+        WindowState win = null;
+        for (int winNdx = windows.size() - 1; winNdx >= 0; --winNdx) {
+            win = windows.get(winNdx);
+            Slog.d(TAG_WM, "  #" + winNdx + ": " + win + " (" + win.isVisibleNow() + ")");
+        }
+    }
+    // END
+
     private final int reAddWindowLocked(int index, WindowState win) {
         final WindowList windows = win.getWindowList();
         // Adding child windows relies on mChildWindows being ordered by mSubLayer.
@@ -5836,6 +5873,20 @@ public class WindowManagerService extends IWindowManager.Stub
     public void rebootSafeMode(boolean confirm) {
         ShutdownThread.rebootSafeMode(mContext, confirm);
     }
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set forced rotation configuration.
+     *
+     * @param rotation
+     * @return void
+     */
+    public void setForcedRotation(int rotation) {
+        mPolicy.setForcedRotation(rotation);
+    }
+    // END
 
     public void setCurrentProfileIds(final int[] currentProfileIds) {
         synchronized (mWindowMap) {
@@ -11058,11 +11109,26 @@ public class WindowManagerService extends IWindowManager.Stub
         configureDisplayPolicyLocked(displayContent);
 
         // TODO: Create an input channel for each display with touch capability.
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Register PointerEventListener for all kind of display.
+         */
+        /*
+         * if (displayId == Display.DEFAULT_DISPLAY) {
+         *     displayContent.mTapDetector = new TaskTapPointerEventListener(this, displayContent);
+         *     registerPointerEventListener(displayContent.mTapDetector);
+         *     registerPointerEventListener(mMousePositionTracker);
+         * }
+         */
+        displayContent.mTapDetector = new TaskTapPointerEventListener(this, displayContent);
+        registerPointerEventListener(displayContent.mTapDetector);
         if (displayId == Display.DEFAULT_DISPLAY) {
-            displayContent.mTapDetector = new TaskTapPointerEventListener(this, displayContent);
-            registerPointerEventListener(displayContent.mTapDetector);
             registerPointerEventListener(mMousePositionTracker);
         }
+        // END
 
         return displayContent;
     }
@@ -11132,6 +11198,19 @@ public class WindowManagerService extends IWindowManager.Stub
             final Display display = mDisplayManager.getDisplay(displayId);
             if (display != null) {
                 createDisplayContentLocked(display);
+
+                /**
+                 * Date: Jul 21, 2017
+                 * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+                 *
+                 * Create a stack for this display.
+                 */
+                try {
+                    mActivityManager.createStackOnDisplay(displayId);
+                } catch (RemoteException e) {
+                }
+                // END
+
                 displayReady(displayId);
             }
             mWindowPlacerLocked.requestTraversal();
@@ -11540,6 +11619,152 @@ public class WindowManagerService extends IWindowManager.Stub
         }
     }
 
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the layer stack for the given token.
+     *
+     * @param token, layerStack
+     * @return void
+     */
+    public void setLayerStack(IBinder token, int layerStack) {
+        AppWindowToken wtoken = findAppWindowToken(token);
+        setLayerStackLocked(wtoken, layerStack);
+    }
+    // END
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Set the layer stack for the given AppWindowToken.
+     *
+     * @param wtoken, layerStack
+     * @return void
+     */
+    public void setLayerStackLocked(AppWindowToken wtoken, int layerStack) {
+        if (DEBUG_NANS) {
+            Slog.d(TAG_WM, "WindowManagerService::setLayerStackLocked()");
+            if (wtoken != null) Slog.d(TAG_WM, " [wtoken] " + wtoken);
+            Slog.d(TAG_WM, " [layerStack] " + layerStack);
+            Slog.d(TAG_WM, " ==========  Windows Dump   ========== ");
+            dumpWindowsLocked();
+            Slog.d(TAG_WM, " ===================================== ");
+        }
+        DisplayContent displayContent = getDisplayContentLocked(layerStack);
+        final WindowList nextList = displayContent.getWindowList();
+        if (wtoken != null) {
+            for (int i = 0; i < wtoken.allAppWindows.size(); ++i) {
+                WindowState win = wtoken.allAppWindows.get(i);
+                final WindowList prevList = win.getWindowList();
+                if (DEBUG_NANS) Slog.d(TAG_WM, " [win["+i+"]]" + win.getWindowTag());
+                SurfaceControl surfaceControl = win.mWinAnimator.mSurfaceController.mSurfaceControl;
+                SurfaceControl.openTransaction();
+                try {
+                    surfaceControl.setLayerStack(layerStack);
+                } catch (Exception e) {
+                } finally {
+                    SurfaceControl.closeTransaction();
+                }
+                if (layerStack == 0) {
+                    prevList.remove(win);
+                    win.mDisplayContent = displayContent;
+                    win.layerStack = layerStack;
+                    int newIdx = findIdxBasedOnAppTokens(win);
+                    if (DEBUG_NANS) Slog.d(TAG_WM, " [newIdx] " + newIdx + "/" + nextList.size());
+                    nextList.add(newIdx + 1, win);
+                } else {
+                    getDefaultWindowListLocked().remove(win);
+                    win.mDisplayContent = displayContent;
+                    win.layerStack = layerStack;
+                    nextList.add(0, win);
+                }
+                win.mInputWindowHandle.displayId = layerStack;
+                mLayersController.assignLayersLocked(nextList);
+                mInputMonitor.updateInputWindowsLw(true);
+            }
+        }
+        if (DEBUG_NANS) {
+            Slog.d(TAG_WM, " ==========  Windows Dump   ========== ");
+            dumpWindowsLocked();
+            Slog.d(TAG_WM, " ===================================== ");
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Move the task to the target stack.
+     *
+     * @param taskId, stackId
+     * @return void
+     */
+    public void moveTaskToOtherStack(int taskId, int stackId) {
+        if (DEBUG_NANS) {
+            Slog.d(TAG_WM, "WindowManagerService::moveTaskToOtherStack()");
+            Slog.d(TAG_WM, " [taskId] " + taskId);
+            Slog.d(TAG_WM, " [stackId] " + stackId);
+        }
+        Task task = mTaskIdToTask.get(taskId);
+        TaskStack prevStack = task.mStack;
+        TaskStack nextStack = mStackIdToStack.get(stackId);
+
+        if (task != null && prevStack != null && nextStack != null) {
+            if (DEBUG_NANS) Slog.d(TAG_WM, " [prevStack] " + prevStack);
+            prevStack.removeTask(task);
+            nextStack.addTask(task, true);
+
+            if (DEBUG_NANS) {
+                Slog.d(TAG_WM, " === Successfully move task to other stack === ");
+                Slog.d(TAG_WM, " [nextStack] " + nextStack);
+            }
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Dump taskIds of all tasks.
+     *
+     * @param
+     * @return void
+     */
+    public void dumpTaskToTask() {
+        Slog.d(TAG_WM, "WindowManagerService::dumpTaskToTask()");
+        for (int i = 0; i < mTaskIdToTask.size() - 1; ++i) {
+            Task task = mTaskIdToTask.valueAt(i);
+            if (task != null) {
+                Slog.d(TAG_WM, " [tasks[" + i + "]] " + task);
+            }
+        }
+    }
+    // END
+
+    /**
+     * Date: Jul 21, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Dump stackIds of all stacks.
+     *
+     * @param
+     * @return void
+     */
+    public void dumpStackIdToStack() {
+        Slog.d(TAG_WM, "WindowManagerService::dumpStackIdToStack()");
+        for (int i = 0; i < mStackIdToStack.size() - 1; ++i) {
+            TaskStack stack = mStackIdToStack.valueAt(i);
+            if (stack != null) {
+                Slog.d(TAG_WM, " [stacks[" + i + "]] " + stack);
+            }
+        }
+    }
+    // END
+
     private final class LocalService extends WindowManagerInternal {
         @Override
         public void requestTraversalFromDisplayManager() {
@@ -11770,5 +11995,20 @@ public class WindowManagerService extends IWindowManager.Stub
                 return getDefaultDisplayContentLocked().getDockedDividerController().isResizing();
             }
         }
+
+        /**
+         * Date: Jul 21, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Set the forced rotation configuration.
+         *
+         * @param rotation
+         * @return void
+         */
+        @Override
+        public void setForcedRotation(int rotation) {
+            WindowManagerService.this.setForcedRotation(rotation);
+        }
+        // END
     }
 }
