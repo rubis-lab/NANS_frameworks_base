@@ -256,7 +256,6 @@ import static com.android.server.wm.WindowManagerDebugConfig.TAG_WITH_CLASS_NAME
 import static com.android.server.wm.WindowManagerDebugConfig.TAG_WM;
 import static com.android.server.wm.WindowStateAnimator.DRAW_PENDING;
 import static com.android.server.wm.WindowStateAnimator.STACK_CLIP_NONE;
-
 /**
  * Date: Jul 26, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -5083,7 +5082,7 @@ public class WindowManagerService extends IWindowManager.Stub
     void moveStackWindowsLocked(DisplayContent displayContent) {
         final WindowList windows = displayContent.getWindowList();
         mTmpWindows.addAll(windows);
-        
+
         rebuildAppWindowListLocked(displayContent);
 
         // Set displayContent.layoutNeeded if window order changed.
@@ -11250,7 +11249,6 @@ public class WindowManagerService extends IWindowManager.Stub
             final Display display = mDisplayManager.getDisplay(displayId);
             if (display != null) {
                 createDisplayContentLocked(display);
-
                 /**
                  * Date: Jul 21, 2017
                  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -11262,7 +11260,6 @@ public class WindowManagerService extends IWindowManager.Stub
                 } catch (RemoteException e) {
                 }
                 // END
-
                 displayReady(displayId);
             }
             mWindowPlacerLocked.requestTraversal();

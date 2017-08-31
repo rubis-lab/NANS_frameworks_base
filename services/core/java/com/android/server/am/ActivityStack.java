@@ -717,7 +717,6 @@ final class ActivityStack {
      * @param task If non-null, the task will be moved to the top of the stack.
      * */
     void moveToFront(String reason, TaskRecord task) {
-
         if (!isAttached()) {
             return;
         }
@@ -739,7 +738,6 @@ final class ActivityStack {
         if (isOnHomeDisplay()) {
             mStackSupervisor.setFocusStackUnchecked(reason, this);
         }
-
         if (task != null) {
             insertTaskAtTop(task, null);
         } else {
@@ -1485,7 +1483,6 @@ final class ActivityStack {
 
         updatePrivacyGuardNotificationLocked(next);
         updateProtectedAppNotificationLocked(next);
-        
     }
 
     private void setVisible(ActivityRecord r, boolean visible) {
@@ -1776,7 +1773,6 @@ final class ActivityStack {
                 && (isInStackLocked(starting) == null);
         boolean behindTranslucentActivity = false;
         final ActivityRecord visibleBehind = getVisibleBehindActivity();
-
         for (int taskNdx = mTaskHistory.size() - 1; taskNdx >= 0; --taskNdx) {
             final TaskRecord task = mTaskHistory.get(taskNdx);
             final ArrayList<ActivityRecord> activities = task.mActivities;
@@ -1928,7 +1924,6 @@ final class ActivityStack {
 
     private boolean makeVisibleAndRestartIfNeeded(ActivityRecord starting, int configChanges,
             boolean isTop, boolean andResume, ActivityRecord r) {
-        
         // We need to make sure the app is running if it's the top, or it is just made visible from
         // invisible. If the app is already visible, it must have died while it was visible. In this
         // case, we'll show the dead window but will not restart the app. Otherwise we could end up
@@ -1953,7 +1948,6 @@ final class ActivityStack {
     }
 
     private void makeInvisible(ActivityRecord r, ActivityRecord visibleBehind) {
-
         if (!r.visible) {
             if (DEBUG_VISIBILITY) Slog.v(TAG_VISIBILITY, "Already invisible: " + r);
             return;
@@ -2188,7 +2182,6 @@ final class ActivityStack {
     }
 
     private boolean resumeTopActivityInnerLocked(ActivityRecord prev, ActivityOptions options) {
-
         if (DEBUG_LOCKSCREEN) mService.logLockScreen("");
 
         if (!mService.mBooting && !mService.mBooted) {
@@ -2254,7 +2247,6 @@ final class ActivityStack {
             final String reason = "noMoreActivities";
             final int returnTaskType = prevTask == null || !prevTask.isOverHomeStack()
                     ? HOME_ACTIVITY_TYPE : prevTask.getTaskToReturnTo();
-
             if (!mFullscreen && adjustFocusToNextFocusableStackLocked(returnTaskType, reason)) {
                 // Try to move focus to the next visible stack with a running activity if this
                 // stack is not covering the entire screen.
@@ -4535,7 +4527,7 @@ final class ActivityStack {
         } else {
             updateTransitLocked(TRANSIT_TASK_TO_FRONT, options);
         }
-        
+
         mStackSupervisor.resumeFocusedStackTopActivityLocked();
         EventLog.writeEvent(EventLogTags.AM_TASK_TO_FRONT, tr.userId, tr.taskId);
 
@@ -5488,7 +5480,6 @@ final class ActivityStack {
      * created on this stack which the activity is added to.
      * */
     void moveActivityToStack(ActivityRecord r) {
-
         final ActivityStack prevStack = r.task.stack;
         if (prevStack.mStackId == mStackId) {
             // You are already in the right stack silly...

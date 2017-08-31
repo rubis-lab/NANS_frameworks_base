@@ -78,7 +78,6 @@ import static com.android.server.am.ActivityStackSupervisor.ON_TOP;
 import static com.android.server.am.ActivityStackSupervisor.PRESERVE_WINDOWS;
 import static com.android.server.am.ActivityStackSupervisor.TAG_TASKS;
 import static com.android.server.am.EventLogTags.AM_NEW_INTENT;
-
 /**
  * Date: Jul 26, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -1091,7 +1090,6 @@ class ActivityStarter {
     private int startActivityUnchecked(final ActivityRecord r, ActivityRecord sourceRecord,
             IVoiceInteractionSession voiceSession, IVoiceInteractor voiceInteractor,
             int startFlags, boolean doResume, ActivityOptions options, TaskRecord inTask) {
-
         /**
          * Date: Jul 20, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -1663,13 +1661,10 @@ class ActivityStarter {
                         // We only want to move to the front, if we aren't going to launch on a
                         // different stack. If we launch on a different stack, we will put the
                         // task on top there.
-
                         mTargetStack.moveTaskToFrontLocked(
                                 intentActivity.task, mNoAnimation, mOptions,
                                 mStartActivity.appTimeTracker, "bringingFoundTaskToFront");
-
                         mMovedToFront = true;
-
                     } else if (launchStack.mStackId == DOCKED_STACK_ID
                             || launchStack.mStackId == FULLSCREEN_WORKSPACE_STACK_ID) {
                         if ((mLaunchFlags & FLAG_ACTIVITY_LAUNCH_ADJACENT) != 0) {

@@ -149,7 +149,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
-
 /**
  * Date: Jul 21, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -2378,27 +2377,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public void setInitialDisplaySize(Display display, int width, int height, int density) {
         // This method might be called before the policy has been fully initialized
         // or for other displays we don't care about.
-
-        /**
-         * Date: Jul 21, 2017
-         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-         *
-         * Initialize the mForcedRotation to "ROTATION_90".
-         */
-        if (display.getDisplayId() != Display.DEFAULT_DISPLAY) {
-            mForcedRotation = Surface.ROTATION_90;
+        if (mContext == null || display.getDisplayId() != Display.DEFAULT_DISPLAY) {
             return;
         }
-        if (mContext == null) {
-            return;
-        }
-        /*
-         * if (mContext == null || display.getDisplayId() != Display.DEFAULT_DISPLAY) {
-         *     return;
-         * }
-         */
-        // END
-
         mDisplay = display;
 
         final Resources res = mContext.getResources();
@@ -7823,7 +7804,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             final int preferredRotation;
-
             /**
              * Date: Jul 21, 2017
              * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -7835,7 +7815,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 return Surface.ROTATION_90;
             }
             // END
-
             else if (mDesiredRotation >= 0) {
                 preferredRotation = mDesiredRotation;
                 Slog.i(TAG, "mDesiredRotation:" + mDesiredRotation);

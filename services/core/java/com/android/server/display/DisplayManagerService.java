@@ -55,7 +55,6 @@ import android.view.Display;
 import android.view.DisplayInfo;
 import android.view.Surface;
 import android.view.WindowManagerInternal;
-
 /**
  * Date: Jul 20, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -330,7 +329,6 @@ public final class DisplayManagerService extends SystemService {
         synchronized (mSyncRoot) {
             LogicalDisplay display = mLogicalDisplays.get(displayId);
             if (display != null) {
-
                 /**
                  * Date: Jul 21, 2017
                  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -341,7 +339,6 @@ public final class DisplayManagerService extends SystemService {
                     info = mLogicalDisplays.get(Display.DEFAULT_DISPLAY).getDisplayInfoLocked();
                 }
                 // END
-
                 if (display.setDisplayInfoOverrideFromWindowManagerLocked(info)) {
                     sendDisplayEventLocked(displayId, DisplayManagerGlobal.EVENT_DISPLAY_CHANGED);
                     scheduleTraversalLocked(false);
@@ -802,7 +799,6 @@ public final class DisplayManagerService extends SystemService {
             mWindowManagerInternal.setForcedRotation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
         // END
-
     }
 
     private void handleDisplayDeviceRemovedLocked(DisplayDevice device) {
@@ -998,7 +994,6 @@ public final class DisplayManagerService extends SystemService {
             if (display != null && !display.hasContentLocked()) {
                 // If the display does not have any content of its own, then
                 // automatically mirror the default logical display contents.
-
                 /**
                  * Date: Jul 21, 2017
                  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University

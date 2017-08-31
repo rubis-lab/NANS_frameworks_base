@@ -23,8 +23,8 @@
   <!-- Content description of the light brightness slider (not shown on the screen). [CHAR LIMIT=NONE] -->
   <string name="accessibility_notification_brightness">Ajuste de brillo</string>
   <!-- Lights settings, LED notification -->
-  <string name="led_notification_title">Ajustes de luz de notificación</string>
-  <string name="led_notification_text">Luz LED activada por ajustes</string>
+  <string name="led_notification_title">Configuración de la luz de notificación</string>
+  <string name="led_notification_text">Luz LED activada por los ajustes</string>
   <!-- Notification which notifies user flashlight is enabled -->
   <string name="quick_settings_tile_flashlight_not_title">La linterna está encendida</string>
   <string name="quick_settings_tile_flashlight_not_summary">Pulsa para apagar</string>
@@ -130,8 +130,8 @@
   <string name="quick_settings_location_battery_saving_label">Ahorro de batería</string>
   <string name="quick_settings_location_battery_saving_label_twoline">Ahorro\nde batería</string>
   <!-- QuickSettings: Location (On, gps-only) [CHAR LIMIT=NONE] -->
-  <string name="quick_settings_location_gps_only_label">Sólo GPS</string>
-  <string name="quick_settings_location_gps_only_label_twoline">Sólo GPS</string>
+  <string name="quick_settings_location_gps_only_label">Sólo dispositivo</string>
+  <string name="quick_settings_location_gps_only_label_twoline">Sólo\ndispositivo</string>
   <!-- QuickSettings: Location (On, high-accuracy) [CHAR LIMIT=NONE] -->
   <string name="quick_settings_location_high_accuracy_label">Alta precisión</string>
   <string name="quick_settings_location_high_accuracy_label_twoline">Alta\nprecisión</string>

@@ -94,7 +94,6 @@ import com.android.internal.widget.LockPatternUtils;
 import com.android.server.LocalServices;
 import com.android.server.am.ActivityStack.ActivityState;
 import com.android.server.wm.WindowManagerService;
-
 /**
  * Date: Jul 20, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -103,7 +102,6 @@ import com.android.server.wm.WindowManagerService;
  */
 import com.android.server.wm.WindowSurfacePlacer;
 // END
-
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -187,7 +185,6 @@ import static com.android.server.am.TaskRecord.LOCK_TASK_AUTH_LAUNCHABLE_PRIV;
 import static com.android.server.am.TaskRecord.LOCK_TASK_AUTH_PINNABLE;
 import static com.android.server.am.TaskRecord.LOCK_TASK_AUTH_WHITELISTED;
 import static com.android.server.wm.AppTransition.TRANSIT_DOCK_TASK_FROM_RECENTS;
-
 /**
  * Date: Jul 26, 2017
  * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
@@ -1873,7 +1870,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
         // END
 
         if (targetStack != null && isFocusedStack(targetStack)) {
-            if (target != null)
             return targetStack.resumeTopActivityUncheckedLocked(target, targetOptions);
         }
         final ActivityRecord r = mFocusedStack.topRunningActivityLocked();
