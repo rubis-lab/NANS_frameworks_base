@@ -4083,10 +4083,19 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     return setExternalDisplayLocked(task.taskId, displayId);
                 }
 
-                if (prevDisplayId != 0 && prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
-                    Slog.d(TAG_NANS, "  Display " + prevDisplayId + ": MIRRORED --> BLANK");
-                    prevDisplay.mDisplayMode = ActivityDisplay.BLANK;
-                    setDisplayLayerStack(prevDisplayId, prevDisplayId);
+                if (prevDisplayId != 0) {
+                    if (prevDisplay.mDisplayMode == ActivityDisplay.MIRRORED) {
+                        Slog.d(TAG_NANS, "  Display " + prevDisplayId + ": MIRRORED --> BLANK");
+                        prevDisplay.mDisplayMode = ActivityDisplay.BLANK;
+                        setDisplayLayerStack(prevDisplayId, prevDisplayId);
+                    } else if (prevDisplay.mDisplayMode == ActivityDisplay.NANS) {
+                        Slog.d(TAG_NANS, "  Display " + prevDisplayId + " <--> Display " + displayId);
+                        moveTaskToOtherStackLocked(nansTask, prevStack, prevDisplayId);
+                        moveTaskToOtherStackLocked(task, nextStack, displayId);
+                        nansTask.displayId = prevDisplayId;
+                        task.displayId = displayId;
+                        return true;
+                    }
                 }
 
                 nansTask.displayId = 0;
@@ -4374,7 +4383,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
      * @return void
      */
     public void dumpActivityStack() {
-        Slog.d(TAG, "ActivityStackSupervisor::dumpActivityStack()");
         for (int displayNdx = mActivityDisplays.size() - 1; displayNdx >= 0; --displayNdx) {
             ActivityDisplay ad = mActivityDisplays.valueAt(displayNdx);
             ArrayList<ActivityStack> stacks = ad.mStacks;
@@ -4388,6 +4396,20 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
     }
     // END
+
+    /**
+     * Date: Aug 31, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Get the display mode by display id
+     *
+     * @param displayId
+     * @return int
+     */
+    public int getDisplayModeByDisplayId(int displayId) {
+        return getActivityDisplay(displayId).mDisplayMode;
+    }
+    
 
     private final class ActivityStackSupervisorHandler extends Handler {
 

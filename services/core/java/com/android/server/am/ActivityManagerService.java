@@ -22332,6 +22332,13 @@ public final class ActivityManagerService extends ActivityManagerNative
             return top.displayId;
         }
     }
+
+    @Override
+    public int getDisplayModeByDisplayId(int displayId) {
+        synchronized (this) {
+            return mStackSupervisor.getDisplayModeByDisplayId(displayId);
+        }
+    }
     // END
 
     private final class LocalService extends ActivityManagerInternal {

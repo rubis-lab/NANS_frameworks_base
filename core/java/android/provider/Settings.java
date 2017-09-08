@@ -6616,8 +6616,7 @@ public final class Settings {
          */
         public static final String NANS_MODE_ENABLED = "nans_mode_enabled";
         public static final String SWIPE_GESTURE_ENABLED = "swipe_gesture_enabled";
-        public static final String TOGGLE_OVERLAY_DISPLAY_DEVICE_ENABLED 
-                = "toggle_overlay_display_device_enabled";
+        public static final String RECENT_LONG_TOUCH = "recent_long_touch";
         // END
 
         /**
@@ -6728,7 +6727,7 @@ public final class Settings {
              */
             NANS_MODE_ENABLED,
             SWIPE_GESTURE_ENABLED,
-            TOGGLE_OVERLAY_DISPLAY_DEVICE_ENABLED
+            RECENT_LONG_TOUCH
             // END
         };
 

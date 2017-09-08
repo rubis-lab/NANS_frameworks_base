@@ -3109,6 +3109,21 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
         }
         // END
 
+        /**
+         * Date: Aug 31, 2017
+         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+         *
+         * Add NANS transaction handler GET_DISPLAY_MODE_BY_DISPLAY_ID case.
+         */
+        case GET_DISPLAY_MODE_BY_DISPLAY_ID: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int displayId = data.readInt();
+            final int res = getDisplayModeByDisplayId(displayId);
+            reply.writeNoException();
+            reply.writeInt(res);
+            return true;
+        }
+        // END
         }
 
         return super.onTransact(code, data, reply, flags);
@@ -7303,6 +7318,28 @@ class ActivityManagerProxy implements IActivityManager
         Parcel reply = Parcel.obtain();
         data.writeInterfaceToken(IActivityManager.descriptor);
         mRemote.transact(GET_DISPLAY_ID_OF_FOCUSED_STACK, data, reply, 0);
+        reply.readException();
+        int res = reply.readInt();
+        data.recycle();
+        reply.recycle();
+        return res;
+    }
+    // END
+
+    /**
+     * Date: Aug 31, 2017
+     * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
+     *
+     * Add NANS transaction handler get display mode by display id.
+     */
+    @Override
+    public int getDisplayModeByDisplayId(int displayId)
+            throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(displayId);
+        mRemote.transact(GET_DISPLAY_MODE_BY_DISPLAY_ID, data, reply, 0);
         reply.readException();
         int res = reply.readInt();
         data.recycle();

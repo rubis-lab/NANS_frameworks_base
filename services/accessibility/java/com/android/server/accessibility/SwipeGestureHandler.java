@@ -76,6 +76,11 @@ class SwipeGestureHandler implements EventStreamTransformation {
     static final int THIRD_EXTERNAL_DISPLAY     = 3;
     static final int FOURTH_EXTERNAL_DISPLAY    = 4;
 
+    static final int BLANK = 0;
+    static final int MIRRORED = 1;
+    static final int MIRRORING = 2;
+    static final int NANS = 3;
+
     int GLOBAL_TOUCH_POSITION_X         = 0;
     int GLOBAL_TOUCH_CURRENT_POSITION_X = 0;
     int GLOBAL_TOUCH_POSITION_Y         = 0;
@@ -229,9 +234,13 @@ class SwipeGestureHandler implements EventStreamTransformation {
             if (displays.length > index && displays[index] != null) {
                 int displayId = displays[index].getLayerStack();
                 int taskId = iam.getTaskIdByDisplayId(displayId);
-                if (taskId != -1) {
+                int displayMode = iam.getDisplayModeByDisplayId(displayId);
+                if (displayMode == MIRRORED) {
+                    iam.setExternalDisplay(taskId, displays[0].getLayerStack(),
+                                ActivityManager.SET_EXTERNAL_DISPLAY_AND_STAY);
+                } else if (displayMode == NANS) {
                     am.moveTaskToFront(taskId, ActivityManager.MOVE_TASK_NO_USER_ACTION);
-                }   
+                }
             }
         } catch (RemoteException e) {
             Slog.e(TAG, "Failed to bring the task to default display: " + e.toString());

@@ -695,6 +695,7 @@ public interface IActivityManager extends IInterface {
     public int getTaskIdByDisplayId(int displayId) throws RemoteException;
     public int getDisplayIdByTaskId(int taskId) throws RemoteException;
     public int getDisplayIdOfFocusedStack() throws RemoteException;
+    public int getDisplayModeByDisplayId(int displayId) throws RemoteException;
     // END
 
     /*
@@ -1102,5 +1103,6 @@ public interface IActivityManager extends IInterface {
     int GET_TASK_ID_BY_DISPLAY_ID = IBinder.FIRST_CALL_TRANSACTION + 383;
     int GET_DISPLAY_ID_BY_TASK_ID = IBinder.FIRST_CALL_TRANSACTION + 384;
     int GET_DISPLAY_ID_OF_FOCUSED_STACK = IBinder.FIRST_CALL_TRANSACTION + 385;
+    int GET_DISPLAY_MODE_BY_DISPLAY_ID = IBinder.FIRST_CALL_TRANSACTION + 386;
     // END
 }

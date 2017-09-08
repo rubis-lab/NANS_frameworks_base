@@ -36,6 +36,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.NonNull;
 import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.ActivityManagerNative;
 import android.app.ActivityOptions;
 import android.app.admin.DevicePolicyManager;
@@ -5250,31 +5251,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
          * Date: Aug 2, 2017
          * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
          *
-         * Disable toggling split screen mode for toggling overlay display device.
-         */
-        /* 
-        if (mRecents == null || !ActivityManager.supportsMultiWindow()
-                || !getComponent(Divider.class).getView().getSnapAlgorithm()
-                .isSplitScreenFeasible()) {
-            return false;
-        }
-
-        toggleSplitScreenMode(MetricsEvent.ACTION_WINDOW_DOCK_LONGPRESS,
-                MetricsEvent.ACTION_WINDOW_UNDOCK_LONGPRESS);
-        return true;
-        */
-        // END
-        
-        /**
-         * Date: Aug 2, 2017
-         * Copyright (C) 2017 RUBIS Laboratory at Seoul National University
-         *
-         * Toggle overlay display device feature.
+         * branch recent long touch mode
          */
         try {
-            int enabled = Settings.Secure.getInt(mContext.getContentResolver(),
-                    Settings.Secure.TOGGLE_OVERLAY_DISPLAY_DEVICE_ENABLED);
-            if (enabled == 1) {
+            int mode = Settings.Secure.getInt(mContext.getContentResolver(),
+                    Settings.Secure.RECENT_LONG_TOUCH);
+            if (mode == 0) {
+                if (mRecents == null || !ActivityManager.supportsMultiWindow()
+                        || !getComponent(Divider.class).getView().getSnapAlgorithm()
+                        .isSplitScreenFeasible()) {
+                    return false;
+                }
+
+                toggleSplitScreenMode(MetricsEvent.ACTION_WINDOW_DOCK_LONGPRESS,
+                        MetricsEvent.ACTION_WINDOW_UNDOCK_LONGPRESS);
+                return true;
+            }
+            else if (mode == 1) {
                 String value = Settings.Global.getString(mContext.getContentResolver(),
                         Settings.Global.OVERLAY_DISPLAY_DEVICES);
                 if (value.equals("1920x1080/320")) {
@@ -5284,12 +5277,38 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.Global.putString(mContext.getContentResolver(),
                             Settings.Global.OVERLAY_DISPLAY_DEVICES, "1920x1080/320");
                 }
+                return false;
+            }
+            else if (mode == 2) {
+                IActivityManager activityManager = ActivityManagerNative.getDefault();
+                final List<RunningTaskInfo> tasks = activityManager.getTasks(2, 0);
+                final RunningTaskInfo task = tasks.get(0);
+                if (!isHomeActivity(task)) {
+                    Intent intent = new Intent();
+                    intent.setClassName("com.android.systemui", "com.android.systemui.NansUIActivity");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                            | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+                    mContext.startActivityAsUser(intent, UserHandle.CURRENT);
+                    return false;
+                }
+            return false;
             }
         } catch (Exception e) {
-        
+
         }
         return false;
         // END
+    }
+
+    private boolean isHomeActivity(RunningTaskInfo task) {
+        IActivityManager activityManager = ActivityManagerNative.getDefault();
+        try {
+            return activityManager.isInHomeStack(task.id);
+        } catch (RemoteException e) {
+
+        }
+        return false;
     }
 
     @Override
